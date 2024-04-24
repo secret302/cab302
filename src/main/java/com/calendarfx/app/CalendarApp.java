@@ -19,7 +19,9 @@ package com.calendarfx.app;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarSource;
+import com.calendarfx.view.AgendaView;
 import com.calendarfx.view.DetailedDayView;
+import com.calendarfx.view.YearMonthView;
 
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
@@ -29,6 +31,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -71,12 +74,37 @@ public class CalendarApp extends Application {
         StackPane switchViewButton = new StackPane();
         switchViewButton.getChildren().addAll(switchViewBox, switchViewText);
 
-        HBox stackPane = new HBox();
-        stackPane.getChildren().addAll(calendarView, switchViewButton);
-        stackPane.setAlignment(Pos.CENTER);
+        Text dateToday = new Text(LocalDate.now().toString());
+        StackPane dateTodayPanel = new StackPane();
+        dateTodayPanel.getChildren().addAll(dateToday);
+        dateTodayPanel.setMaxWidth(600);
+
+        VBox leftPanel = new VBox();
+        leftPanel.getChildren().addAll(dateTodayPanel, calendarView);
+        VBox.setVgrow(calendarView, Priority.ALWAYS);
+        leftPanel.setMaxWidth(600);
+
+        AgendaView agenda = new AgendaView();
+        agenda.setEnableTimeZoneSupport(true);
+        agenda.getCalendarSources().setAll(mainCalendarSource);
+        agenda.setRequestedTime(LocalTime.now());
+        agenda.setMaxWidth(600);
+        agenda.lookAheadPeriodInDaysProperty().set(3);
+
+        YearMonthView heatmap = new YearMonthView();
+        heatmap.showUsageColorsProperty().set(true);
+        VBox rightPanel = new VBox();
+        rightPanel.getChildren().addAll(heatmap, agenda);
+        VBox.setVgrow(rightPanel, Priority.ALWAYS);
+        rightPanel.setMaxWidth(400);
+
+
+        HBox calendarDisplay = new HBox();
+        calendarDisplay.getChildren().addAll(leftPanel, switchViewButton, rightPanel);
+        calendarDisplay.setAlignment(Pos.CENTER);
 
         // Prevents Calendar from being squished by other HBox Components
-        HBox.setHgrow(calendarView, Priority.ALWAYS);
+        HBox.setHgrow(leftPanel, Priority.ALWAYS);
 
         Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
             @Override
@@ -102,7 +130,7 @@ public class CalendarApp extends Application {
         updateTimeThread.setDaemon(true);
         updateTimeThread.start();
 
-        Scene scene = new Scene(stackPane);
+        Scene scene = new Scene(calendarDisplay);
         scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
         CSSFX.start(scene);
 
