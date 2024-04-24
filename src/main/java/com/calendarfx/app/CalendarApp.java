@@ -37,34 +37,24 @@ public class CalendarApp extends Application {
         CalendarView calendarView = new CalendarView();
         calendarView.setEnableTimeZoneSupport(true);
 
-        Calendar katja = new Calendar("Katja");
-        Calendar dirk = new Calendar("Dirk");
-        Calendar philip = new Calendar("Philip");
-        Calendar jule = new Calendar("Jule");
-        Calendar armin = new Calendar("Armin");
-        Calendar birthdays = new Calendar("Birthdays");
-        Calendar holidays = new Calendar("Holidays");
+        // Users can categories events to seperate work from life
+        // This helps create work-life balance, thus mental wellbeing
+        Calendar personal = new Calendar("Personal Events");
+        Calendar study = new Calendar("Study");
+        Calendar work = new Calendar("Work");
 
-        katja.setShortName("K");
-        dirk.setShortName("D");
-        philip.setShortName("P");
-        jule.setShortName("J");
-        armin.setShortName("A");
-        birthdays.setShortName("B");
-        holidays.setShortName("H");
+        personal.setShortName("P");
+        study.setShortName("S");
+        work.setShortName("W");
 
-        katja.setStyle(Style.STYLE1);
-        dirk.setStyle(Style.STYLE2);
-        philip.setStyle(Style.STYLE3);
-        jule.setStyle(Style.STYLE4);
-        armin.setStyle(Style.STYLE5);
-        birthdays.setStyle(Style.STYLE6);
-        holidays.setStyle(Style.STYLE7);
+        // Colours can be specified to meet colour blind needs
+        personal.setStyle(Style.STYLE5);
+        study.setStyle(Style.STYLE7);
+        work.setStyle(Style.STYLE6);
 
-        CalendarSource familyCalendarSource = new CalendarSource("Family");
-        familyCalendarSource.getCalendars().addAll(birthdays, holidays, katja, dirk, philip, jule, armin);
-
-        calendarView.getCalendarSources().setAll(familyCalendarSource);
+        CalendarSource mainCalendarSource = new CalendarSource("Main");
+        mainCalendarSource.getCalendars().addAll(personal, study, work);
+        calendarView.getCalendarSources().setAll(mainCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
 
         StackPane stackPane = new StackPane();
@@ -98,7 +88,7 @@ public class CalendarApp extends Application {
         scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
         CSSFX.start(scene);
 
-        primaryStage.setTitle("Calendar");
+        primaryStage.setTitle("SereniTask");
         primaryStage.setScene(scene);
         primaryStage.setWidth(1300);
         primaryStage.setHeight(1000);
