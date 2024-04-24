@@ -19,12 +19,19 @@ package com.calendarfx.app;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarSource;
-import com.calendarfx.view.CalendarView;
+import com.calendarfx.view.DetailedDayView;
+
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -34,7 +41,8 @@ public class CalendarApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        CalendarView calendarView = new CalendarView();
+        DetailedDayView calendarView = new DetailedDayView();
+        
         calendarView.setEnableTimeZoneSupport(true);
 
         // Users can categories events to seperate work from life
@@ -42,7 +50,6 @@ public class CalendarApp extends Application {
         Calendar personal = new Calendar("Personal Events");
         Calendar study = new Calendar("Study");
         Calendar work = new Calendar("Work");
-
         personal.setShortName("P");
         study.setShortName("S");
         work.setShortName("W");
@@ -56,9 +63,20 @@ public class CalendarApp extends Application {
         mainCalendarSource.getCalendars().addAll(personal, study, work);
         calendarView.getCalendarSources().setAll(mainCalendarSource);
         calendarView.setRequestedTime(LocalTime.now());
+        calendarView.setMaxWidth(600);
 
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(calendarView); // introPane);
+        Rectangle switchViewBox = new Rectangle(100, 1000);
+        switchViewBox.setFill(Color.GREY);
+        Text switchViewText = new Text(">");
+        StackPane switchViewButton = new StackPane();
+        switchViewButton.getChildren().addAll(switchViewBox, switchViewText);
+
+        HBox stackPane = new HBox();
+        stackPane.getChildren().addAll(calendarView, switchViewButton);
+        stackPane.setAlignment(Pos.CENTER);
+
+        // Prevents Calendar from being squished by other HBox Components
+        HBox.setHgrow(calendarView, Priority.ALWAYS);
 
         Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
             @Override
