@@ -10,7 +10,7 @@ import com.serenitask.model.Event;
 import com.serenitask.util.DatabaseManager.EventDAO;
 
 // EventDAOTest class tests the EventDAO class
-public class EventDAOTest {
+public class EventDAO_Test {
     private EventDAO eventDAO = new EventDAO(); // Assuming you have a constructor for EventDAO
     private int eventId = 0; // Example event ID for testing
 

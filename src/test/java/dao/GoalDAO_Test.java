@@ -9,7 +9,7 @@ import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 
 // GoalDAOTest class tests the GoalDAO class
-public class GoalDAOTest {
+public class GoalDAO_Test {
     private GoalDAO goalDAO = new GoalDAO(); // Assuming you have a constructor for GoalDAO
     private int goalId = 0; // Example goal ID for testing
 
