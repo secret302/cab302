@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.calendarfx.app;
+package com.serenitask.app;
 
 import com.calendarfx.view.MonthView;
 import javafx.application.Application;
