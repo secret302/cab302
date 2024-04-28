@@ -17,7 +17,16 @@ public class Event {
     public Event(String title, String description, String location, String start_time, int duration, Boolean fullDay,
                  Boolean staticPos, String calendar, String recurrenceRules, String recurrenceEnd)
     {
-
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.start_time = start_time;
+        this.duration = duration;
+        this.fullDay = fullDay;
+        this.staticPos = staticPos;
+        this.calendar = calendar;
+        this.recurrenceRules = recurrenceRules;
+        this.recurrenceEnd = recurrenceEnd;
     }
 
     public int getId() {
