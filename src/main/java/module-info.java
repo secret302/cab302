@@ -3,6 +3,7 @@ module com.calendarfx.app {
     requires fr.brouillard.oss.cssfx;
     requires javafx.controls;
     requires com.calendarfx.view;
+    requires java.sql;
 
     exports com.calendarfx.app;
 }
