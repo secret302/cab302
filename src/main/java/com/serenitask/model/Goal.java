@@ -2,8 +2,6 @@ package com.serenitask.model;
 
 public class Goal {
 
-
-
     private int id;
     private String title;
     private String description;
@@ -12,8 +10,6 @@ public class Goal {
     private int periodicity;
     private String endDate;
     private String recurrenceRules;
-
-
 
 
     public Goal(String title, String description, int minChunk, int maxChunk, int periodicity, String endDate,
