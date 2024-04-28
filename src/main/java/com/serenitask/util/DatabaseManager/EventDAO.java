@@ -66,7 +66,7 @@ public class EventDAO {
             String query = "INSERT INTO events (title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES" +
                     "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
-            // Update new row with values from event
+            // Update new row with values from contact
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
@@ -79,7 +79,7 @@ public class EventDAO {
             statement.setString(10, event.getRecurrenceEnd());
             // Execute update
             statement.executeUpdate();
-            // Set the id of the new event
+            // Set the id of the new contact
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 event.setId(generatedKeys.getInt(1));
@@ -88,8 +88,6 @@ public class EventDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // return -1 if event wasn't created
-        return -1;
     }
 
     public boolean updateEvent(Event event) {
@@ -108,7 +106,7 @@ public class EventDAO {
                     "recurrenceEnd = ?" +
                     "WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
-            // Update row with values from event
+            // Update row with values from contact
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
@@ -128,26 +126,24 @@ public class EventDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 
     // To be brought pack as an optional.
-    public void deleteEvent(Event event) {
-        try {
-            // Create delete query
-            String query = "DELETE FROM events WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            // Delete row id
-            statement.setInt(1, event.getId());
-            // Execute update
-            statement.executeUpdate();
+//    public void deleteEvent(Event event) {
+//        try {
+//            // Create delete query
+//            String query = "DELETE FROM events WHERE id = ?";
+//            PreparedStatement statement = connection.prepareStatement(query);
+//            // Delete row id
+//            statement.setInt(1, event.getId());
+//            // Execute update
+//            statement.executeUpdate();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*
     public boolean deleteEvent(int id) {
         try {
             // Create delete query
@@ -166,7 +162,6 @@ public class EventDAO {
         }
         return false;
     }
-     */
 
     public Event getEventById(int id) {
         try {
@@ -215,7 +210,7 @@ public class EventDAO {
                 String calendar = resultSet.getString("calendar");
                 String recurrenceRules = resultSet.getString("recurrence_rules");
                 String recurrenceEnd = resultSet.getString("recurrence_end");
-                // Create a new event object
+                // Create a new Contact object
                 Event event = new Event(title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 event.setId(id);
                 events.add(event);
