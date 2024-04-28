@@ -108,9 +108,34 @@ public class GoalDAOTest {
     }
 
     @Test
+    public void testAddInvalidGoal() {
+        // Create an invalid goal and check if the goal ID is 0
+        Goal invalidGoal = new Goal("", ""); // Invalid goal with empty title and description
+        int goalId = goalDAO.addGoal(invalidGoal);
+        assertEquals(0, goalId, "Adding an invalid goal should return 0");
+
+        // Create two identical goals and check if the goal IDs are different
+        Goal goal1 = createTestGoal();
+        Goal goal2 = createTestGoal();
+        int goalId1 = goalDAO.addGoal(goal1);
+        int goalId2 = goalDAO.addGoal(goal2);
+        assertNotEquals(goalId1, goalId2, "Adding identical goals should return different IDs");
+    }
+
+    @Test
+    public void testUpdateInvalidGoal() {
+        // Create an goal and try an invalid update
+        goalId = goalDAO.addGoal(createTestGoal());
+        Goal goal = goalDAO.getGoalById(goalId);
+        goal.setTitle(""); // Invalid title
+        boolean success = goalDAO.editGoal(goal);
+        assertFalse(success, "Updating an invalid goal should fail");
+    }
+
+    @Test
     public void testDeleteNonExistentGoal() {
-        int nonExistentGoalId = -1; // Or any ID that doesn't exist
-        boolean success = goalDAO.deleteGoal(nonExistentGoalId);
+        // Try to delete a non-existent goal
+        boolean success = goalDAO.deleteGoal(-1);
         assertFalse(success, "Deleting a non-existent goal should fail");
     }
 }
