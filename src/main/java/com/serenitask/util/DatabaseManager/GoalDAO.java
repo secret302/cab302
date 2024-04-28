@@ -1,16 +1,12 @@
-package com.calendarfx.util.DatabaseManager;
+package com.serenitask.util.DatabaseManager;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-public class SqliteGoalsDao {
+public class GoalDAO {
     private Connection connection;
-    public SqliteGoalsDao() {
-        connection = SqliteConnection.getInstance();
+    public GoalDAO() {
+        connection = SqliteConnection.getConnection();
         createTable();
         // Used for debugging
         // addSampleEntries();

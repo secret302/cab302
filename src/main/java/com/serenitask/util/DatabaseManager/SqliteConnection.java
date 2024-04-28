@@ -1,4 +1,4 @@
-package com.calendarfx.util.DatabaseManager;
+package com.serenitask.util.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ public class SqliteConnection {
         }
     }
 
-    public static Connection getInstance() {
+    public static Connection getConnection() {
         if (instance == null) {
             new SqliteConnection();
         }

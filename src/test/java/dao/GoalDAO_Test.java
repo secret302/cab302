@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.calendarfx.model.Goal;
-import com.calendarfx.util.GoalDAO;
+import com.serenitask.model.Goal;
+import com.serenitask.util.DatabaseManager.GoalDAO;
 
 // GoalDAOTest class tests the GoalDAO class
 public class GoalDAOTest {
@@ -16,7 +16,7 @@ public class GoalDAOTest {
     private Goal createTestGoal() {
         // Generate a unique title or use other attributes to ensure uniqueness
         String uniqueTitle = "Test Goal " + System.currentTimeMillis();
-        return new Goal(uniqueTitle, "Test description", ...); // Fill in other goal details
+        return new Goal(uniqueTitle, "Test description"); // Fill in other goal details
     }
 
     @AfterEach
@@ -29,7 +29,7 @@ public class GoalDAOTest {
     @Test
     public void testCreateGoal() {
         // Create an goal and check if the goal ID is greater than 0
-        goalId = goalDAO.createGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal());
         assertTrue(goalId > 0, "Goal ID should be greater than 0");
 
         // Verify details of the created goal
@@ -42,7 +42,7 @@ public class GoalDAOTest {
     @Test
     public void testGetGoalById() {
         // Create an goal for testing
-        goalId = goalDAO.createGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal());
 
         // Get an goal by ID and check if it is not null
         Goal goal = goalDAO.getGoalById(goalId);
@@ -52,7 +52,7 @@ public class GoalDAOTest {
     @Test
     public void testEditGoal() {
         // Create an goal for testing
-        goalId = goalDAO.createGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal());
 
         // Edit an goal and check if successful
         goal = goalDAO.getGoalById(goalId);
@@ -71,7 +71,7 @@ public class GoalDAOTest {
     @Test
     public void testDeleteGoal() {
         // Create an goal for testing
-        goalId = goalDAO.createGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal());
 
         // Delete an goal and check if successful
         boolean success = goalDAO.deleteGoal(goalId);
@@ -85,9 +85,9 @@ public class GoalDAOTest {
     @Test
     public void testGetGoals() {
         // Create more goals for testing
-        int goalID1 = goalDAO.createGoal(createTestGoal());
-        int goalID2 = goalDAO.createGoal(createTestGoal());
-        int goalID3 = goalDAO.createGoal(createTestGoal());
+        int goalID1 = goalDAO.addGoal(createTestGoal());
+        int goalID2 = goalDAO.addGoal(createTestGoal());
+        int goalID3 = goalDAO.addGoal(createTestGoal());
 
         // Get all goals at date and check if the list is equal to 2
         List<Goal> goals = goalDAO.getGoals(date);

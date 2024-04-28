@@ -1,4 +1,6 @@
-package com.calendarfx.util.DatabaseManager;
+package com.serenitask.util.DatabaseManager;
+
+import com.serenitask.model.Event;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,12 +9,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqliteEventsDao {
+public class EventDAO {
 
     private Connection connection;
 
-    public SqliteEventsDao() {
-        connection = SqliteConnection.getInstance();
+    public EventDAO() {
+        connection = SqliteConnection.getConnection();
         createTable();
         // Used for debugging
         // addSampleEntries();
@@ -58,8 +60,7 @@ public class SqliteEventsDao {
         }
     }
 
-    @Override
-    public void addEvent(Event event) {
+    public int addEvent(Event event) {
         try {
             // Create insert query
             String query = "INSERT INTO events (title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES" +
@@ -83,13 +84,13 @@ public class SqliteEventsDao {
             if (generatedKeys.next()) {
                 event.setId(generatedKeys.getInt(1));
             }
+            return event.getId();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void updateEvent(Event event) {
+    public boolean updateEvent(Event event) {
         try {
             // Create update query
             String query = "UPDATE events SET " +
@@ -119,29 +120,50 @@ public class SqliteEventsDao {
             statement.setInt(11, event.getId());
             // Execute update
             statement.executeUpdate();
+
+            // If success
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void deleteContact(Event event) {
+    // To be brought pack as an optional.
+//    public void deleteEvent(Event event) {
+//        try {
+//            // Create delete query
+//            String query = "DELETE FROM events WHERE id = ?";
+//            PreparedStatement statement = connection.prepareStatement(query);
+//            // Delete row id
+//            statement.setInt(1, event.getId());
+//            // Execute update
+//            statement.executeUpdate();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public boolean deleteEvent(int id) {
         try {
             // Create delete query
             String query = "DELETE FROM events WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             // Delete row id
-            statement.setInt(1, event.getId());
+            statement.setInt(1, id);
             // Execute update
             statement.executeUpdate();
+
+            // If success
+            return true;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    @Override
-    public Event getEvent(int id) {
+    public Event getEventById(int id) {
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM events WHERE id = ?");
             statement.setInt(1, id);
@@ -168,7 +190,6 @@ public class SqliteEventsDao {
         return null;
     }
 
-    @Override
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
         try {

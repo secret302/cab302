@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.calendarfx.model.GoalTracking;
-import com.calendarfx.util.GoalTrackingDAO;
+import com.serenitask.model.GoalTracking;
+import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 
 public class GoalTrackingDAO_Test {
     private GoalTrackingDAO goalTrackingDAO = new GoalTrackingDAO(); // Assuming constructor exists

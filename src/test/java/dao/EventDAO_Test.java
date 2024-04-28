@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.calendarfx.model.Event;
-import com.calendarfx.util.EventDAO;
+import com.serenitask.model.Event;
+import com.serenitask.util.DatabaseManager.EventDAO;
 
 // EventDAOTest class tests the EventDAO class
 public class EventDAOTest {
@@ -16,7 +16,7 @@ public class EventDAOTest {
     private Event createTestEvent() {
         // Generate a unique title or use other attributes to ensure uniqueness
         String uniqueTitle = "Test Event " + System.currentTimeMillis();
-        return new Event(uniqueTitle, "Test description", ...); // Fill in other event details
+        return new Event(uniqueTitle, "Test description"); // Fill in other event details
     }
 
     @AfterEach
@@ -29,7 +29,7 @@ public class EventDAOTest {
     @Test
     public void testCreateEvent() {
         // Create an event and check if the event ID is greater than 0
-        eventId = eventDAO.createEvent(createTestEvent());
+        eventId = eventDAO.addEvent(createTestEvent());
         assertTrue(eventId > 0, "Event ID should be greater than 0");
 
         // Verify details of the created event
@@ -42,7 +42,7 @@ public class EventDAOTest {
     @Test
     public void testGetEventById() {
         // Create an event for testing
-        eventId = eventDAO.createEvent(createTestEvent());
+        eventId = eventDAO.addEvent(createTestEvent());
 
         // Get an event by ID and check if it is not null
         Event event = eventDAO.getEventById(eventId);
@@ -50,16 +50,16 @@ public class EventDAOTest {
     }
 
     @Test
-    public void testEditEvent() {
+    public void testUpdateEvent() {
         // Create an event for testing
-        eventId = eventDAO.createEvent(createTestEvent());
+        eventId = eventDAO.addEvent(createTestEvent());
 
-        // Edit an event and check if successful
-        event = eventDAO.getEventById(eventId);
+        // Update an event and check if successful
+        Event event = eventDAO.getEventById(eventId);
         event.setTitle("New Title");
         event.setDescription("New Description");
-        boolean success = eventDAO.editEvent(event);
-        assertTrue(success, "Event should be edited successfully");
+        boolean success = eventDAO.updateEvent(event);
+        assertTrue(success, "Event should be updated successfully");
 
         // Check if the changes are reflected
         event = eventDAO.getEventById(eventId);
@@ -71,7 +71,7 @@ public class EventDAOTest {
     @Test
     public void testDeleteEvent() {
         // Create an event for testing
-        eventId = eventDAO.createEvent(createTestEvent());
+        eventId = eventDAO.addEvent(createTestEvent());
 
         // Delete an event and check if successful
         boolean success = eventDAO.deleteEvent(eventId);
@@ -85,9 +85,9 @@ public class EventDAOTest {
     @Test
     public void testGetEvents() {
         // Create more events for testing
-        int eventID1 = eventDAO.createEvent(createTestEvent());
-        int eventID2 = eventDAO.createEvent(createTestEvent());
-        int eventID3 = eventDAO.createEvent(createTestEvent());
+        int eventID1 = eventDAO.addEvent(createTestEvent());
+        int eventID2 = eventDAO.addEvent(createTestEvent());
+        int eventID3 = eventDAO.addEvent(createTestEvent());
 
         // Get all events at date and check if the list is equal to 2
         List<Event> events = eventDAO.getEvents(date);

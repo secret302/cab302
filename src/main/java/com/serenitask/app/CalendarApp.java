@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.calendarfx.app;
+package com.serenitask.app;
 
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;

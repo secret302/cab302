@@ -1,4 +1,4 @@
-package com.calendarfx.util.DatabaseManager;
+package com.serenitask.model;
 
 public class Goal {
 

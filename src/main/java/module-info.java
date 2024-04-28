@@ -5,5 +5,5 @@ module com.calendarfx.app {
     requires com.calendarfx.view;
     requires java.sql;
 
-    exports com.calendarfx.app;
+    exports com.serenitask.app;
 }
