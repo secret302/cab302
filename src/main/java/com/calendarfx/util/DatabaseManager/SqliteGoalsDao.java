@@ -7,9 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqliteGoalsDaeo {
+public class SqliteGoalsDao {
     private Connection connection;
-    public SqliteGoalsDaeo() {
+    public SqliteGoalsDao() {
         connection = SqliteConnection.getInstance();
         createTable();
         // Used for debugging
