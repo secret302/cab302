@@ -132,21 +132,6 @@ public class EventDAO {
     }
 
     // To be brought pack as an optional.
-    public void deleteEvent(Event event) {
-        try {
-            // Create delete query
-            String query = "DELETE FROM events WHERE id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            // Delete row id
-            statement.setInt(1, event.getId());
-            // Execute update
-            statement.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /*
     public boolean deleteEvent(int id) {
         try {
