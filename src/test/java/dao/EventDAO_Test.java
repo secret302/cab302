@@ -1,5 +1,6 @@
 package dao;
 
+import com.serenitask.model.Goal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -108,9 +109,34 @@ public class EventDAOTest {
     }
 
     @Test
-    public void testDeleteNonExistentEvent() {
-        int nonExistentEventId = -1; // Or any ID that doesn't exist
-        boolean success = eventDAO.deleteEvent(nonExistentEventId);
+    public void testAddInvalidEvent() {
+        // Create an invalid event and check if the goal ID is 0
+        Event invalidEvent = new Event("", "Test description");
+        boolean success = eventDAO.addEvent(invalidEvent);
+        assertFalse(success, "Event creation should fail with invalid title");
+
+        // Create two identical events and check if the event IDs are different
+        Event event1 = createTestEvent();
+        Event event2 = createTestEvent();
+        int eventID1 = eventDAO.addEvent(event1);
+        int eventID2 = eventDAO.addEvent(event2);
+        assertNotEquals(eventID1, eventID2, "Event IDs should be different");
+    }
+
+    @Test
+    public void testUpdateInvalidEvent() {
+        // Create an event and try an invalid update
+        eventId = eventDAO.addEvent(createTestEvent());
+        Event event = eventDAO.getEventById(eventId);
+        event.setTitle(""); // Invalid title
+        boolean success = eventDAO.updateEvent(event);
+        assertFalse(success, "Updating an invalid event should fail");
+    }
+
+    @Test
+    public void testDeleteNonExistentGoal() {
+        // Try to delete a non-existent event
+        boolean success = eventDAO.deleteEvent(-1);
         assertFalse(success, "Deleting a non-existent event should fail");
     }
 }
