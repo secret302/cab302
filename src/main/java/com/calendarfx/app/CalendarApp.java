@@ -27,8 +27,11 @@ import com.calendarfx.view.YearMonthView;
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -70,7 +73,6 @@ public class CalendarApp extends Application {
         mainCalendarSource.getCalendars().addAll(personal, study, work);
         calendarDayView.getCalendarSources().setAll(mainCalendarSource);
         calendarDayView.setRequestedTime(LocalTime.now());
-        calendarDayView.setMaxWidth(600);
         calendarWeekView.getCalendarSources().setAll(mainCalendarSource);
         calendarWeekView.setRequestedTime(LocalTime.now());
         calendarWeekView.setMaxWidth(1600);
@@ -86,46 +88,70 @@ public class CalendarApp extends Application {
         Text dateToday = new Text(LocalDate.now().toString());
         StackPane dateTodayPanel = new StackPane();
         dateTodayPanel.getChildren().addAll(dateToday);
-        dateTodayPanel.setMaxWidth(600);
+
 
         VBox leftPanel = new VBox();
         leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
         VBox.setVgrow(calendarDayView, Priority.ALWAYS);
-        leftPanel.prefWidth(600);
     
 
         AgendaView agenda = new AgendaView();
         agenda.setEnableTimeZoneSupport(true);
         agenda.getCalendarSources().setAll(mainCalendarSource);
         agenda.setRequestedTime(LocalTime.now());
-        agenda.setMaxWidth(600);
         agenda.lookAheadPeriodInDaysProperty().set(3);
+        agenda.setPadding(new Insets(10));
 
+
+        VBox dailygoals = new VBox();
+        dailygoals.setSpacing(10);
+        dailygoals.setPadding(new Insets(10));
+
+        TextField goalTextField = new TextField();
+        goalTextField.setPromptText("Enter your goal here");
+
+        Button createGoalButton = new Button("Create Goal");
+        createGoalButton.setOnAction(event -> {
+            String goal = goalTextField.getText().trim();
+            if (!goal.isEmpty()) {
+                dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
+                goalTextField.clear();
+            }
+            // Integrate SQL goal INSERT INTO statement here
+        });
+
+        dailygoals.getChildren().addAll(new javafx.scene.control.Label("I want to"), goalTextField, createGoalButton);
         YearMonthView heatmap = new YearMonthView();
         heatmap.showUsageColorsProperty().set(true);
         VBox rightPanel = new VBox();
-        rightPanel.getChildren().addAll(heatmap, agenda);
+        rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
         VBox.setVgrow(rightPanel, Priority.ALWAYS);
-        rightPanel.setMaxWidth(400);
+        rightPanel.setMaxWidth(800);
 
 
         HBox calendarDisplay = new HBox();
         calendarDisplay.getChildren().addAll(leftPanel, switchViewButton, rightPanel);
-        calendarDisplay.setAlignment(Pos.CENTER);
+        calendarDisplay.setAlignment(Pos.CENTER_LEFT);
 
         // Prevents Calendar from being squished by other HBox Components
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
+        leftPanel.setMaxWidth(1020);
+
 
         switchViewButton.setOnMouseClicked(event -> {
             if (leftPanel.getChildren().contains(calendarDayView)){
                 leftPanel.getChildren().remove(calendarDayView);
                 leftPanel.getChildren().add(1, calendarWeekView);
                 VBox.setVgrow(calendarWeekView, Priority.ALWAYS);
+                leftPanel.setMaxWidth(1420);
+                rightPanel.setMaxWidth(400);
             }
             else {
                 leftPanel.getChildren().remove(calendarWeekView);
                 leftPanel.getChildren().add(1, calendarDayView);
                 VBox.setVgrow(calendarDayView, Priority.ALWAYS);
+                leftPanel.setMaxWidth(1020);
+                rightPanel.setMaxWidth(800);
             }
         });
 
@@ -160,10 +186,11 @@ public class CalendarApp extends Application {
 
         primaryStage.setTitle("SereniTask");
         primaryStage.setScene(scene);
-        primaryStage.setWidth(1300);
-        primaryStage.setHeight(1000);
+        primaryStage.setWidth(1920);
+        primaryStage.setHeight(1080);
         primaryStage.centerOnScreen();
         primaryStage.show();
+        primaryStage.setMaximized(true);
     }
 
     public static void main(String[] args) {
