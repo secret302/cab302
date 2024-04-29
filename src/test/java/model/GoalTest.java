@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.serenitask.model.Goal;
 
-public class Goal_Test {
+public class GoalTest {
     @Test
     public void testGoalConstructor() {
         // Test the constructor of the Goal class

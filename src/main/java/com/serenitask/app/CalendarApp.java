@@ -44,8 +44,7 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import com.serenitask.controller.*;
 
 import com.serenitask.controller.GoalController;
 
@@ -53,6 +52,7 @@ public class CalendarApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         DetailedDayView calendarDayView = new DetailedDayView();
         DetailedWeekView calendarWeekView = new DetailedWeekView();
         calendarDayView.setEnableTimeZoneSupport(true);
@@ -62,9 +62,15 @@ public class CalendarApp extends Application {
         Calendar personal = new Calendar("Personal Events");
         Calendar study = new Calendar("Study");
         Calendar work = new Calendar("Work");
+        
         personal.setShortName("P");
         study.setShortName("S");
         work.setShortName("W");
+
+        EventListener setEventListener = new EventListener();
+        setEventListener.setupListeners(personal);
+        setEventListener.setupListeners(study);
+        setEventListener.setupListeners(work);
 
         // Colours can be specified to meet colour blind needs
         personal.setStyle(Style.STYLE5);
@@ -119,12 +125,11 @@ public class CalendarApp extends Application {
                 dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
                 goalTextField.clear();
             }
-
             // Create a component that does the
-
             GoalController goalController = new GoalController();
             goalController.controlSimpleGoal0(goal);
 
+            // Integrate SQL goal INSERT INTO statement here
         });
 
         dailygoals.getChildren().addAll(new javafx.scene.control.Label("I want to"), goalTextField, createGoalButton);
@@ -136,6 +141,7 @@ public class CalendarApp extends Application {
         rightPanel.setMaxWidth(800);
 
 
+        // Creates vertical box that can be clicked to change view
         HBox calendarDisplay = new HBox();
         calendarDisplay.getChildren().addAll(leftPanel, switchViewButton, rightPanel);
         calendarDisplay.setAlignment(Pos.CENTER_LEFT);
@@ -145,6 +151,7 @@ public class CalendarApp extends Application {
         leftPanel.setMaxWidth(1020);
 
 
+        // Switches betwenn Day view and Week View
         switchViewButton.setOnMouseClicked(event -> {
             if (leftPanel.getChildren().contains(calendarDayView)){
                 leftPanel.getChildren().remove(calendarDayView);
