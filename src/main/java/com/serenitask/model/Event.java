@@ -2,7 +2,7 @@ package com.serenitask.model;
 
 public class Event {
 
-    private int id;
+    private String id;
     private String title;
     private String description;
     private String location;
@@ -14,9 +14,10 @@ public class Event {
     private String recurrenceRules;
     private String recurrenceEnd;
 
-    public Event(String title, String description, String location, String start_time, int duration, Boolean fullDay,
+    public Event(String id, String title, String description, String location, String start_time, int duration, Boolean fullDay,
                  Boolean staticPos, String calendar, String recurrenceRules, String recurrenceEnd)
     {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
@@ -29,10 +30,10 @@ public class Event {
         this.recurrenceEnd = recurrenceEnd;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
     public String getTitle() {
