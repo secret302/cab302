@@ -12,6 +12,9 @@ import java.util.List;
 
 public class GoalDAO {
     private Connection connection;
+
+
+
     public GoalDAO() {
         connection = SqliteConnection.getConnection();
         createTable();
@@ -49,7 +52,7 @@ public class GoalDAO {
                     + "description TEXT,"
                     + "min_chunk INTEGER,"
                     + "max_chunk INTEGER,"
-                    + "periodicity INTEGER NOT NULL,"
+                    + "periodicity INTEGER,"
                     + "end_date TEXT,"
                     + "recurrence_rules TEXT"
                     + ");";
@@ -59,6 +62,10 @@ public class GoalDAO {
             e.printStackTrace();
         }
     }
+
+
+
+    
 
 // Adding a goal
     public int addGoal(Goal goal) {
