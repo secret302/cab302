@@ -46,6 +46,8 @@ import java.time.LocalTime;
 
 import com.serenitask.controller.*;
 
+import com.serenitask.controller.GoalController;
+
 public class CalendarApp extends Application {
 
     @Override
@@ -123,7 +125,9 @@ public class CalendarApp extends Application {
                 dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
                 goalTextField.clear();
             }
-
+            // Create a component that does the
+            GoalController goalController = new GoalController();
+            goalController.controlSimpleGoal0(goal);
 
             // Integrate SQL goal INSERT INTO statement here
         });
