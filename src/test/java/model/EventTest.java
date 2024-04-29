@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.serenitask.model.Event;
 
-public class Event_Test {
+public class EventTest {
     @Test
     public void testEventConstructor() {
         // Test the constructor of the Event class

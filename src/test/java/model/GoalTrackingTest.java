@@ -8,7 +8,7 @@ import com.serenitask.model.Goal;
 import java.time.LocalDate;
 import java.util.Date;
 
-public class GoalTracking_Test {
+public class GoalTrackingTest {
     @Test
     public void testGoalTrackingConstructor() {
         // LocalDate date
