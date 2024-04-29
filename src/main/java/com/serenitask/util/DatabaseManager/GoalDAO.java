@@ -121,6 +121,7 @@ public class GoalDAO {
         return false;
     }
     // To be brought pack as an optional.
+    public boolean deleteGoal(int id) {return true;} // To be implemented as optional
 
     /*
     public void deleteGoal(Goal goal) {
@@ -163,6 +164,10 @@ public class GoalDAO {
         }
         return null;
     }
+
+    // Needed: Require the method getAllGoals to have two different parameter inputs. Dates are passed as Java dates.
+    // getAllGoals(date) - To get all events associated with that day/date (Note that the date provided may be in DateTime format
+    // getAllGoals(startDate, endDate) - Get all events between two dates
 
     public List<Goal> getAllGoals() {
         List<Goal> goals = new ArrayList<>();

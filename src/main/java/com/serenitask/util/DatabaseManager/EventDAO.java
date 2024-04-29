@@ -180,6 +180,10 @@ public class EventDAO {
         return null;
     }
 
+    // Needed: Require the method getAllEvents to have two different parameter inputs. Dates are passed as Java dates.
+    // getAllEvents(date) - To get all events associated with that day/date (Note that the date provided may be in DateTime format
+    // getAllEvents(startDate, endDate) - Get all events between two dates
+
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
         try {
