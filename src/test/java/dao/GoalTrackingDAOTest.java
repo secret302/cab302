@@ -13,17 +13,18 @@ import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 
-public class GoalTrackingDAO_Test {
+public class GoalTrackingDAOTest {
     private GoalTrackingDAO goalTrackingDAO = new GoalTrackingDAO(); // Assuming constructor exists
     private GoalDAO goalDAO = new GoalDAO(); // Assuming constructor exists
-    private Goal exampleGoal = new Goal("Test Goal", "Test description"); // Fill in other goal details
+    private Goal exampleGoal = new Goal("Test Goal", "Test description", 120, 230,
+            0, "Test emdDate", "");
     private LocalDate goalDate;
 
     private GoalTracking createTestGoalTracking(boolean completed) {
         // Create a goal and get its ID
         int goalId = goalDAO.addGoal(exampleGoal);
         // Generate a unique goal ID if needed (e.g., using a counter or timestamp)
-        return new GoalTracking(goalId, LocalDate.now(), completed);
+        return new GoalTracking(goalId, LocalDate.now().toString(), completed);
     }
 
     @AfterEach

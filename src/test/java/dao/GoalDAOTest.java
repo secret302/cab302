@@ -16,7 +16,8 @@ public class GoalDAOTest {
     private Goal createTestGoal() {
         // Generate a unique title or use other attributes to ensure uniqueness
         String uniqueTitle = "Test Goal " + System.currentTimeMillis();
-        return new Goal(uniqueTitle, "Test description"); // Fill in other goal details
+        return new Goal(uniqueTitle, "Test description", 120, 230, 0,
+                "Test emdDate", "");
     }
 
     @AfterEach
@@ -34,7 +35,7 @@ public class GoalDAOTest {
 
         // Verify details of the created goal
         Goal createdGoal = goalDAO.getGoalById(goalId);
-        assertNotNull(createdGoal.getId(), "Created goal should not be null");
+        assertNotNull(createdGoal, "Created goal should not be null");
         assertEquals(goalId, createdGoal.getId(), "Goal ID should match");
         // ADD MORE HERE
     }
@@ -46,19 +47,19 @@ public class GoalDAOTest {
 
         // Get an goal by ID and check if it is not null
         Goal goal = goalDAO.getGoalById(goalId);
-        assertNotNull(goal.getId(), "Goal should not be null");
+        assertNotNull(goal, "Goal should not be null");
     }
 
     @Test
-    public void testEditGoal() {
+    public void testUpdateGoal() {
         // Create an goal for testing
         goalId = goalDAO.addGoal(createTestGoal());
 
         // Edit an goal and check if successful
-        goal = goalDAO.getGoalById(goalId);
+        Goal goal = goalDAO.getGoalById(goalId);
         goal.setTitle("New Title");
         goal.setDescription("New Description");
-        boolean success = goalDAO.editGoal(goal);
+        boolean success = goalDAO.updateGoal(goal);
         assertTrue(success, "Goal should be edited successfully");
 
         // Check if the changes are reflected
@@ -79,7 +80,7 @@ public class GoalDAOTest {
 
         // Check if the goal is deleted
         Goal goal = goalDAO.getGoalById(goalId);
-        assertNull(goal.getId(), "Goal should not exist");
+        assertNull(goal, "Goal should not exist");
     }
 
     @Test
@@ -90,15 +91,15 @@ public class GoalDAOTest {
         int goalID3 = goalDAO.addGoal(createTestGoal());
 
         // Get all goals at date and check if the list is equal to 2
-        List<Goal> goals = goalDAO.getGoals(date);
+        List<Goal> goals = goalDAO.getAllGoals(date);
         assertEquals(2, goals.size(), "List should contain 2 goals");
 
         // Get all goals between two dates and check if the list is equal to 2
-        goals = goalDAO.getGoals(startDate, endDate);
+        goals = goalDAO.getAllGoals(startDate, endDate);
         assertEquals(2, goals.size(), "List should contain 2 goals");
 
         // Get all goals and check if the list is equal to 3
-        goals = goalDAO.getGoals();
+        goals = goalDAO.getAllGoals();
         assertEquals(3, goals.size(), "List should contain 3 goals");
 
         // Delete the goals after testing
@@ -109,8 +110,10 @@ public class GoalDAOTest {
 
     @Test
     public void testAddInvalidGoal() {
+        // NEEDS TO HAVE MORE INVALID FOR EACH PARAMETER
         // Create an invalid goal and check if the goal ID is 0
-        Goal invalidGoal = new Goal("", ""); // Invalid goal with empty title and description
+        Goal invalidGoal = new Goal("","Test description", 120, 230, 0,
+                "Test emdDate", ""); // Invalid goal with empty title and description
         int goalId = goalDAO.addGoal(invalidGoal);
         assertEquals(0, goalId, "Adding an invalid goal should return 0");
 
@@ -128,7 +131,7 @@ public class GoalDAOTest {
         goalId = goalDAO.addGoal(createTestGoal());
         Goal goal = goalDAO.getGoalById(goalId);
         goal.setTitle(""); // Invalid title
-        boolean success = goalDAO.editGoal(goal);
+        boolean success = goalDAO.updateGoal(goal);
         assertFalse(success, "Updating an invalid goal should fail");
     }
 

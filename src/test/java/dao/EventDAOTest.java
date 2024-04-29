@@ -1,6 +1,5 @@
 package dao;
 
-import com.serenitask.model.Goal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -17,7 +16,8 @@ public class EventDAOTest {
     private Event createTestEvent() {
         // Generate a unique title or use other attributes to ensure uniqueness
         String uniqueTitle = "Test Event " + System.currentTimeMillis();
-        return new Event(uniqueTitle, "Test description"); // Fill in other event details
+        return new Event(uniqueTitle, "Test description", "Test location", "Test start_time",
+                500,false,false,"default","","");
     }
 
     @AfterEach
@@ -35,7 +35,7 @@ public class EventDAOTest {
 
         // Verify details of the created event
         Event createdEvent = eventDAO.getEventById(eventId);
-        assertNotNull(createdEvent.getId(), "Created event should not be null");
+        assertNotNull(createdEvent), "Created event should not be null");
         assertEquals(eventId, createdEvent.getId(), "Event ID should match");
         // ADD MORE HERE
     }
@@ -47,7 +47,7 @@ public class EventDAOTest {
 
         // Get an event by ID and check if it is not null
         Event event = eventDAO.getEventById(eventId);
-        assertNotNull(event.getId(), "Event should not be null");
+        assertNotNull(event, "Event should not be null");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class EventDAOTest {
 
         // Check if the event is deleted
         Event event = eventDAO.getEventById(eventId);
-        assertNull(event.getId(), "Event should not exist");
+        assertNull(event, "Event should not exist");
     }
 
     @Test
@@ -110,10 +110,13 @@ public class EventDAOTest {
 
     @Test
     public void testAddInvalidEvent() {
+        // NEEDS TO HAVE MORE INVALID FOR EACH PARAMETER
         // Create an invalid event and check if the goal ID is 0
-        Event invalidEvent = new Event("", "Test description");
-        boolean success = eventDAO.addEvent(invalidEvent);
-        assertFalse(success, "Event creation should fail with invalid title");
+        Event invalidEvent = new Event("", "Test description", "Test location",
+                "Test start_time", 500,false,false,"default",
+                "","");
+        int success = eventDAO.addEvent(invalidEvent);
+        assertNotEquals(1, success, "Event creation should fail with invalid title");
 
         // Create two identical events and check if the event IDs are different
         Event event1 = createTestEvent();
