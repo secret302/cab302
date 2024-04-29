@@ -19,6 +19,7 @@ public class GoalDAO {
         // addSampleEntries();
     }
 
+// Adding sample entries
     private void addSampleEntries() {
         try {
             // Clear before inserting
@@ -26,6 +27,8 @@ public class GoalDAO {
             String clearQuery = "DELETE FROM goals";
             clearStatement.execute(clearQuery);
             Statement insertStatement = connection.createStatement();
+
+            // Sample Insert Query
             String insertQuery =
                     "INSERT INTO goals (title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules) VALUES "
                             + "('Goal 1', 'description of goal 1', 900,7200, 'weekly', 'placeholder for DATETIME', 'recurr rule'),"
@@ -37,6 +40,7 @@ public class GoalDAO {
         }
     }
 
+// Creating table if it doesn't exist
     private void createTable() {
         try {
             String query = "CREATE TABLE IF NOT EXIST goals ("
@@ -56,6 +60,7 @@ public class GoalDAO {
         }
     }
 
+// Adding a goal
     public int addGoal(Goal goal) {
         try {
             // Create insert query
@@ -139,12 +144,15 @@ public class GoalDAO {
     }
      */
 
-
+// Get goal by ID
     public Goal getGoalById(int id) {
         try {
+            // Selecting goals
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM goals WHERE id = ?");
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
+
+            // Create variables for results
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
@@ -164,9 +172,11 @@ public class GoalDAO {
         return null;
     }
 
+// Getting all goals
     public List<Goal> getAllGoals() {
         List<Goal> goals = new ArrayList<>();
         try {
+            // Select Query
             Statement statement = connection.createStatement();
             String query = "SELECT * FROM goals";
 
