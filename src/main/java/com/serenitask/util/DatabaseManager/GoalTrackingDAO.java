@@ -43,6 +43,7 @@ public class GoalTrackingDAO {
 
     private void createTable() {
         try {
+            // Create table if it doesn't exist
             String query = "CREATE TABLE IF NOT EXIST goal_tracking ("
                     + "goal_id INTEGER  REFERENCES goals (id) NOT NULL,"
                     + "goal_date DATE NOT NULL,"
@@ -128,8 +129,10 @@ public class GoalTrackingDAO {
     }
      */
 
+    // Goal Track
     public GoalTracking getSingleTrackedGoal(int id, String date) {
         try {
+            // Select the goal tracking
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM goal_tracking WHERE id = ? AND goal_date =?");
             statement.setInt(1, id);
             statement.setString(2, date);
@@ -214,6 +217,7 @@ public class GoalTrackingDAO {
         return goals;
     }
 
+    // Create a list of all goal tracking by Date
     public List<GoalTracking> getTrackedGoalByDate(String date) {
         List<GoalTracking> goals = new ArrayList<>();
         try {
@@ -236,6 +240,7 @@ public class GoalTrackingDAO {
         return goals;
     }
 
+    // Create list of all tracked goals
     public List<List<GoalTracking>> getAllTrackedGoals() {
         List<List<GoalTracking>> AllGoals = new ArrayList<>();
         List<GoalTracking> unsorted = new ArrayList<>();

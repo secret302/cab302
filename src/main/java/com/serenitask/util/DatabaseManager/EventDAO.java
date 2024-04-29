@@ -38,8 +38,10 @@ public class EventDAO {
         }
     }
 
+// Creating Table if doesn't exist
     private void createTable() {
         try {
+            // All table requirements / Create Query
             String query = "CREATE TABLE IF NOT EXIST events ("
                     + "id INTEGER  PRIMARY KEY AUTOINCREMENT,"
                     + "title TEXT NOT NULL,"
@@ -60,6 +62,7 @@ public class EventDAO {
         }
     }
 
+// Adding event if doesn't exist
     public int addEvent(Event event) {
         try {
             // Create insert query
@@ -152,12 +155,15 @@ public class EventDAO {
         return false;
     }
      */
-
+// Getting the event via ID
     public Event getEventById(int id) {
         try {
+            // Search Query
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM events WHERE id = ?");
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
+
+            // If Found, collect results
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
@@ -170,6 +176,7 @@ public class EventDAO {
                 String recurrenceRules = resultSet.getString("recurrence_rules");
                 String recurrenceEnd = resultSet.getString("recurrence_end");
 
+                // Create new event
                 Event event = new Event(title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 event.setId(id);
                 return event;
@@ -180,17 +187,16 @@ public class EventDAO {
         return null;
     }
 
-    // Needed: Require the method getAllEvents to have two different parameter inputs. Dates are passed as Java dates.
-    // getAllEvents(date) - To get all events associated with that day/date (Note that the date provided may be in DateTime format
-    // getAllEvents(startDate, endDate) - Get all events between two dates
-
+    // List all events
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        try {
+        try { // Collect all events
             Statement statement = connection.createStatement();
             String query = "SELECT * FROM events";
 
             ResultSet resultSet = statement.executeQuery(query);
+
+            // Create variables for all results
             while (resultSet.next()) {
                 // Retrieve data from the result set
                 int id = resultSet.getInt("id");
