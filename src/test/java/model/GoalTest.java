@@ -14,7 +14,7 @@ public class GoalTest {
                 120,
                 230,
                 0,
-                "Test endDate",
+                "Test endDate", // Still saved as String - to be updated
                 ""
         );
         // Goals will be cleaned up by the garbage collector
