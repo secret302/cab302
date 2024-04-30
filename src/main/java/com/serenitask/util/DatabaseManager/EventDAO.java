@@ -2,10 +2,9 @@ package com.serenitask.util.DatabaseManager;
 
 import com.serenitask.model.Event;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,30 +27,34 @@ public class EventDAO {
             clearStatement.execute(clearQuery);
             Statement insertStatement = connection.createStatement();
             String insertQuery =
-                    "INSERT INTO events (title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES "
-                    + "('Event 1', 'description of event 1', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('Event 2', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('Event 3', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end')";
+                    "INSERT INTO events (id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES "
+                    + "('sha256', 'Event 1', 'description of event 1', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
+                    + "('sha256', 'Event 2', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
+                    + "('sha256', 'Event 3', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end')";
             insertStatement.execute(insertQuery);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+// Creating Table if doesn't exist
     private void createTable() {
         try {
-            String query = "CREATE TABLE IF NOT EXIST events ("
-                    + "id INTEGER  PRIMARY KEY AUTOINCREMENT,"
+            // All table requirements / Create Query
+            String query = "CREATE TABLE IF NOT EXISTS events ("
+                    + "id TEXT  PRIMARY KEY,"
                     + "title TEXT NOT NULL,"
                     + "description TEXT,"
                     + "location TEXT,"
-                    + "start_time TEXT NOT NULL,"
+                    + "start_time TIMESTAMP,"
+                    + "start_date DATE,"
+                    + "end_date DATE,"
                     + "duration INTEGER NOT NULL,"
                     + "full_day BOOLEAN NOT NULL DEFAULT (false),"
                     + "static_pos BOOLEAN NOT NULL DEFAULT (false),"
                     + "calendar TEXT NOT NULL DEFAULT 'default',"
                     + "recurrence_rules TEXT,"
-                    + "recurrence_end DATETIME"
+                    + "recurrence_end TEXT"
                     + ");";
             Statement statement = connection.createStatement();
             statement.execute(query);
@@ -60,34 +63,37 @@ public class EventDAO {
         }
     }
 
-    public int addEvent(Event event) {
+// Adding event if doesn't exist
+    public String addEvent(Event event) {
         try {
             // Create insert query
-            String query = "INSERT INTO events (title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES" +
-                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO events (id, title, description, location, start_time, start_date, end_date, duration, full_day, static_pos, calendar, recurrence_rules, recurrence_end) VALUES" +
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
-            // Update new row with values from contact
-            statement.setString(1, event.getTitle());
-            statement.setString(2, event.getDescription());
-            statement.setString(3, event.getLocation());
-            statement.setString(4, event.getStartTime());
-            statement.setInt(5, event.getDuration());
-            statement.setBoolean(6, event.getFullDay());
-            statement.setBoolean(7, event.getStaticPos());
-            statement.setString(8, event.getCalendar());
-            statement.setString(9, event.getRecurrenceRules());
-            statement.setString(10, event.getRecurrenceEnd());
+            // Update new row with values from event
+            statement.setString(1, event.getId());
+            statement.setString(2, event.getTitle());
+            statement.setString(3, event.getDescription());
+            statement.setString(4, event.getLocation());
+            statement.setTimestamp(5, Timestamp.valueOf(event.getStartTime()));
+            statement.setDate(6, java.sql.Date.valueOf(event.getStartDate()));
+            statement.setDate(7, java.sql.Date.valueOf(event.getEndDate()));
+            statement.setInt(8, event.getDuration());
+            statement.setBoolean(9, event.getFullDay());
+            statement.setBoolean(10, event.getStaticPos());
+            statement.setString(11, event.getCalendar());
+            statement.setString(12, event.getRecurrenceRules());
+            statement.setString(13, event.getRecurrenceEnd());
             // Execute update
             statement.executeUpdate();
-            // Set the id of the new contact
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                event.setId(generatedKeys.getInt(1));
-            }
+            // Set the id of the new event
+
             return event.getId();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        // return -1 if event wasn't created
+        return null;
     }
 
     public boolean updateEvent(Event event) {
@@ -97,27 +103,31 @@ public class EventDAO {
                     "title = ?," +
                     "description = ?," +
                     "location = ?," +
-                    "startTime = ?," +
+                    "start_time = ?," +
+                    "start_date = ?," +
+                    "end_date = ?," +
                     "duration = ?," +
-                    "fullDay = ?," +
-                    "staticPos = ?," +
+                    "full_day = ?," +
+                    "static_pos = ?," +
                     "calendar = ?," +
-                    "recurrenceRules = ?," +
-                    "recurrenceEnd = ?" +
+                    "recurrence_rules = ?," +
+                    "recurrence_end = ?" +
                     "WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
-            // Update row with values from contact
+            // Update row with values from event
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
-            statement.setString(4, event.getStartTime());
-            statement.setInt(5, event.getDuration());
-            statement.setBoolean(6, event.getFullDay());
-            statement.setBoolean(7, event.getStaticPos());
-            statement.setString(8, event.getCalendar());
-            statement.setString(9, event.getRecurrenceRules());
-            statement.setString(10, event.getRecurrenceEnd());
-            statement.setInt(11, event.getId());
+            statement.setTimestamp(4, Timestamp.valueOf(event.getStartTime()));
+            statement.setDate(5, java.sql.Date.valueOf(event.getStartDate()));
+            statement.setDate(6, java.sql.Date.valueOf(event.getEndDate()));
+            statement.setInt(7, event.getDuration());
+            statement.setBoolean(8, event.getFullDay());
+            statement.setBoolean(9, event.getStaticPos());
+            statement.setString(10, event.getCalendar());
+            statement.setString(11, event.getRecurrenceRules());
+            statement.setString(12, event.getRecurrenceEnd());
+            statement.setString(13, event.getId());
             // Execute update
             statement.executeUpdate();
 
@@ -126,31 +136,16 @@ public class EventDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    // To be brought pack as an optional.
-//    public void deleteEvent(Event event) {
-//        try {
-//            // Create delete query
-//            String query = "DELETE FROM events WHERE id = ?";
-//            PreparedStatement statement = connection.prepareStatement(query);
-//            // Delete row id
-//            statement.setInt(1, event.getId());
-//            // Execute update
-//            statement.executeUpdate();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    public boolean deleteEvent(int id) {
+    public boolean deleteEvent(String id) {
         try {
             // Create delete query
             String query = "DELETE FROM events WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             // Delete row id
-            statement.setInt(1, id);
+            statement.setString(1, id);
             // Execute update
             statement.executeUpdate();
 
@@ -163,16 +158,22 @@ public class EventDAO {
         return false;
     }
 
-    public Event getEventById(int id) {
+// Getting the event via ID
+    public Event getEventById(String id) {
         try {
+            // Search Query
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM events WHERE id = ?");
-            statement.setInt(1, id);
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
+
+            // If Found, collect results
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                String startTime = resultSet.getString("start_time");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
+                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
                 int duration = resultSet.getInt("duration");
                 Boolean fullDay = resultSet.getBoolean("full_day");
                 Boolean staticPos = resultSet.getBoolean("static_pos");
@@ -180,8 +181,8 @@ public class EventDAO {
                 String recurrenceRules = resultSet.getString("recurrence_rules");
                 String recurrenceEnd = resultSet.getString("recurrence_end");
 
-                Event event = new Event(title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
-                event.setId(id);
+                // Create new event
+                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 return event;
             }
         } catch (Exception e) {
@@ -190,29 +191,33 @@ public class EventDAO {
         return null;
     }
 
+    // List all events
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
-        try {
+        try { // Collect all events
             Statement statement = connection.createStatement();
             String query = "SELECT * FROM events";
 
             ResultSet resultSet = statement.executeQuery(query);
+
+            // Create variables for all results
             while (resultSet.next()) {
                 // Retrieve data from the result set
-                int id = resultSet.getInt("id");
+                String id = resultSet.getString("id");
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                String startTime = resultSet.getString("start_time");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
+                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
                 int duration = resultSet.getInt("duration");
                 Boolean fullDay = resultSet.getBoolean("full_day");
                 Boolean staticPos = resultSet.getBoolean("static_pos");
                 String calendar = resultSet.getString("calendar");
                 String recurrenceRules = resultSet.getString("recurrence_rules");
                 String recurrenceEnd = resultSet.getString("recurrence_end");
-                // Create a new Contact object
-                Event event = new Event(title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
-                event.setId(id);
+                // Create a new event object
+                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 events.add(event);
             }
         } catch (Exception e) {
