@@ -32,20 +32,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import java.time.format.DateTimeFormatter;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CalendarApp extends Application {
 
@@ -79,20 +78,37 @@ public class CalendarApp extends Application {
 
 
 
-        Rectangle switchViewBox = new Rectangle(100, 1000);
-        switchViewBox.setFill(Color.GREY);
-        Text switchViewText = new Text(">");
         StackPane switchViewButton = new StackPane();
-        switchViewButton.getChildren().addAll(switchViewBox, switchViewText);
-        
-        Text dateToday = new Text(LocalDate.now().toString());
-        StackPane dateTodayPanel = new StackPane();
-        dateTodayPanel.getChildren().addAll(dateToday);
+        Rectangle switchViewBox = new Rectangle(120, 50);
+        switchViewBox.setFill(Color.GREY);
+        switchViewBox.setArcWidth(10);
+        switchViewBox.setArcHeight(10);
+        Text dailyText = new Text("Daily");
+        Text weeklyText = new Text("Weekly");
+        dailyText.setFont(Font.font(30));
+        weeklyText.setFont(Font.font(30));
+        dailyText.setFill(Color.WHITE);
+        weeklyText.setFill(Color.WHITE);
+        AtomicBoolean isWeeklyView = new AtomicBoolean(false); // Initial state is Daily View
+        switchViewButton.getChildren().addAll(switchViewBox, isWeeklyView.get() ? weeklyText : dailyText);
+
+
+        Text dateToday = new Text(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy")));
+        dateToday.setFont(Font.font(40));
+
+        HBox dateTodayPanel = new HBox();
+        Region spacer = new Region();
+        dateTodayPanel.getChildren().addAll(dateToday, spacer, switchViewButton);
+        HBox.setHgrow(dateToday, Priority.ALWAYS);
+        StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
+        spacer.setMinWidth(1000);
+        StackPane.setAlignment(switchViewButton, Pos.CENTER_RIGHT);
+
 
 
         VBox leftPanel = new VBox();
         leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
-        VBox.setVgrow(calendarDayView, Priority.ALWAYS);
+        leftPanel.setMinHeight(700);
     
 
         AgendaView agenda = new AgendaView();
@@ -125,33 +141,41 @@ public class CalendarApp extends Application {
         heatmap.showUsageColorsProperty().set(true);
         VBox rightPanel = new VBox();
         rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
-        VBox.setVgrow(rightPanel, Priority.ALWAYS);
+        rightPanel.setMinHeight(700);
         rightPanel.setMaxWidth(800);
 
 
         HBox calendarDisplay = new HBox();
-        calendarDisplay.getChildren().addAll(leftPanel, switchViewButton, rightPanel);
-        calendarDisplay.setAlignment(Pos.CENTER_LEFT);
+
+        calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
+        calendarDisplay.setAlignment(Pos.CENTER);
+        calendarDisplay.setMaxHeight(700);
+        calendarDisplay.setPadding(new Insets(25,0,0,0));
 
         // Prevents Calendar from being squished by other HBox Components
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
-        leftPanel.setMaxWidth(1020);
+        leftPanel.setMaxWidth(1420);
+        calendarDayView.setMinHeight(900);
+        calendarDayView.setMaxHeight(900);
+        calendarDayView.setPadding(new Insets(62,0,0,0));
+
 
 
         switchViewButton.setOnMouseClicked(event -> {
-            if (leftPanel.getChildren().contains(calendarDayView)){
+            isWeeklyView.set(!isWeeklyView.get());
+            switchViewButton.getChildren().remove(isWeeklyView.get() ? dailyText : weeklyText);
+            switchViewButton.getChildren().add(isWeeklyView.get() ? weeklyText : dailyText);
+            if (isWeeklyView.get()) {
                 leftPanel.getChildren().remove(calendarDayView);
                 leftPanel.getChildren().add(1, calendarWeekView);
-                VBox.setVgrow(calendarWeekView, Priority.ALWAYS);
-                leftPanel.setMaxWidth(1420);
-                rightPanel.setMaxWidth(400);
-            }
-            else {
+                calendarWeekView.setMinHeight(900);
+                calendarWeekView.setMaxHeight(900);
+                calendarWeekView.setPadding(new Insets(40,0,0,0));
+            } else {
                 leftPanel.getChildren().remove(calendarWeekView);
                 leftPanel.getChildren().add(1, calendarDayView);
-                VBox.setVgrow(calendarDayView, Priority.ALWAYS);
-                leftPanel.setMaxWidth(1020);
-                rightPanel.setMaxWidth(800);
+                calendarDayView.setMinHeight(900);
+                calendarDayView.setMaxHeight(900);
             }
         });
 
