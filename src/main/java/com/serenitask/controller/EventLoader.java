@@ -15,6 +15,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.time.Duration;
 
@@ -47,18 +49,17 @@ public class EventLoader {
         }
     }
 
-    private Entry<?> convertEventToEntry(Event event){
+    private Entry<?> convertEventToEntry(Event event) {
+        Entry<?> newEntry = new Entry<>(event.getTitle(), event.getId());
 
-        // This needs to turn from an entry to an Event class and retreive ID if it is not stored;
-
-        Entry<?> newEntry = new Entry<>(event.getTitle(),event.getId());
-        Interval dummyInt = new Interval();
-
+        LocalDateTime startTime = event.getStartTime();
+        LocalDateTime endTime = startTime.plusSeconds(event.getDuration());
 
         newEntry.setLocation(event.getLocation());
-        newEntry.setInterval(dummyInt);
+        newEntry.setInterval(new Interval(event.getStartDate(), startTime.toLocalTime(), event.getEndDate(), endTime.toLocalTime()));
+
         newEntry.setFullDay(event.getFullDay());
-        newEntry.setRecurrenceRule(event.getRecurrenceRules());    
+        newEntry.setRecurrenceRule(event.getRecurrenceRules());
         return newEntry;
     }
     

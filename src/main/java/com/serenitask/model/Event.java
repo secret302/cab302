@@ -1,4 +1,7 @@
 package com.serenitask.model;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.sql.Date;
 
 public class Event {
 
@@ -6,7 +9,9 @@ public class Event {
     private String title;
     private String description;
     private String location;
-    private String start_time;
+    private LocalDateTime start_time;
+    private LocalDate start_date;
+    private LocalDate end_date;
     private int duration;
     private Boolean fullDay;
     private Boolean staticPos;
@@ -14,7 +19,7 @@ public class Event {
     private String recurrenceRules;
     private String recurrenceEnd;
 
-    public Event(String id, String title, String description, String location, String start_time, int duration, Boolean fullDay,
+    public Event(String id, String title, String description, String location, LocalDateTime start_time, LocalDate start_date, LocalDate end_date, int duration, Boolean fullDay,
                  Boolean staticPos, String calendar, String recurrenceRules, String recurrenceEnd)
     {
         this.id = id;
@@ -22,6 +27,8 @@ public class Event {
         this.description = description;
         this.location = location;
         this.start_time = start_time;
+        this.start_date = start_date;
+        this.end_date = end_date;
         this.duration = duration;
         this.fullDay = fullDay;
         this.staticPos = staticPos;
@@ -59,11 +66,26 @@ public class Event {
         this.location = location;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return start_time;
     }
+    public LocalDate getStartDate() {
+        return start_date;
+    }
 
-    public void setStartTime(String start_time) {
+    public void setStartDate(LocalDate start_date) {
+        this.start_date = start_date;
+    }
+
+    public LocalDate getEndDate() {
+        return end_date;
+    }
+
+    public void setEndDate(LocalDate end_date) {
+        this.end_date = end_date;
+    }
+
+    public void setStartTime(LocalDateTime start_time) {
         this.start_time = start_time;
     }
 
