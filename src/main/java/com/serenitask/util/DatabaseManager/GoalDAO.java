@@ -188,11 +188,11 @@ public class GoalDAO {
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
-                int minChunk = resultSet.getInt("minChunk");
-                int maxChunk = resultSet.getInt("maxChunk");
+                int minChunk = resultSet.getInt("min_chunk");
+                int maxChunk = resultSet.getInt("max_chunk");
                 int periodicity = resultSet.getInt("periodicity");
-                String endDate = resultSet.getString("endDate");
-                String recurrenceRules = resultSet.getString("recurrenceRules");
+                String endDate = resultSet.getString("end_date");
+                String recurrenceRules = resultSet.getString("recurrence_rules");
 
                 Goal goal = new Goal(title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules);
                 goal.setId(id);
@@ -218,11 +218,11 @@ public class GoalDAO {
                 int id = resultSet.getInt("id");
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
-                int minChunk = resultSet.getInt("minChunk");
-                int maxChunk = resultSet.getInt("maxChunk");
+                int minChunk = resultSet.getInt("min_chunk");
+                int maxChunk = resultSet.getInt("max_chunk");
                 int periodicity = resultSet.getInt("periodicity");
-                String endDate = resultSet.getString("endDate");
-                String recurrenceRules = resultSet.getString("recurrenceRules");
+                String endDate = resultSet.getString("end_date");
+                String recurrenceRules = resultSet.getString("recurrence_rules");
                 // Create a new goal object
                 Goal goal = new Goal(title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules);
                 goal.setId(id);
