@@ -44,7 +44,7 @@ public class GoalTrackingDAO {
     private void createTable() {
         try {
             // Create table if it doesn't exist
-            String query = "CREATE TABLE IF NOT EXIST goal_tracking ("
+            String query = "CREATE TABLE IF NOT EXISTS goal_tracking ("
                     + "goal_id INTEGER  REFERENCES goals (id) NOT NULL,"
                     + "goal_date DATE NOT NULL,"
                     + "completed BOOLEAN NOT NULL DEFAULT (false),"

@@ -46,7 +46,7 @@ public class GoalDAO {
 // Creating table if it doesn't exist
     private void createTable() {
         try {
-            String query = "CREATE TABLE IF NOT EXIST goals ("
+            String query = "CREATE TABLE IF NOT EXISTS goals ("
                     + "id INTEGER  PRIMARY KEY AUTOINCREMENT,"
                     + "title TEXT NOT NULL,"
                     + "description TEXT,"
@@ -63,25 +63,14 @@ public class GoalDAO {
         }
     }
 
-
-
-    
-
-// Adding a goal
-    public int addGoal(Goal goal) {
+    public int addGoalSimple(Goal goal) {
         try {
             // Create insert query
-            String query = "INSERT INTO goals (title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules) VALUES" +
-                    "(?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO goals (title, description, min_chunk, max_chunk, periodicity, end_date, recurrence_rules) VALUES" +
+                    "(?, null, null, null, null, null, null)";
             PreparedStatement statement = connection.prepareStatement(query);
             // Update new row with values from goal
             statement.setString(1, goal.getTitle());
-            statement.setString(2, goal.getDescription());
-            statement.setInt(3, goal.getMinChunk());
-            statement.setInt(4, goal.getMaxChunk());
-            statement.setInt(5, goal.getPeriodicity());
-            statement.setString(6, goal.getEndDate());
-            statement.setString(7, goal.getRecurrenceRules());
 
             // Execute update
             statement.executeUpdate();
@@ -98,6 +87,42 @@ public class GoalDAO {
         return -1;
     }
 
+    
+
+// Adding a goal
+    public int addGoal(Goal goal) {
+        if (!goal.isSimple()) {
+            try {
+                // Create insert query
+                String query = "INSERT INTO goals (title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules) VALUES" +
+                        "(?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                // Update new row with values from goal
+                statement.setString(1, goal.getTitle());
+                statement.setString(2, goal.getDescription());
+                statement.setInt(3, goal.getMinChunk());
+                statement.setInt(4, goal.getMaxChunk());
+                statement.setInt(5, goal.getPeriodicity());
+                statement.setString(6, goal.getEndDate());
+                statement.setString(7, goal.getRecurrenceRules());
+
+                // Execute update
+                statement.executeUpdate();
+                // Set the id of the new goal
+                ResultSet generatedKeys = statement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    goal.setId(generatedKeys.getInt(1));
+                }
+                return goal.getId();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // return -1 if goal wasn't created
+            return -1;
+        } else {
+            return addGoalSimple(goal);
+        }
+    }
     public boolean updateGoal(Goal goal) {
         try {
             // Create update query
@@ -134,7 +159,7 @@ public class GoalDAO {
     }
     // To be brought pack as an optional.
 
-    /*
+
     public void deleteGoal(Goal goal) {
         try {
             // Create delete query
@@ -149,7 +174,7 @@ public class GoalDAO {
             e.printStackTrace();
         }
     }
-     */
+
 
 // Get goal by ID
     public Goal getGoalById(int id) {

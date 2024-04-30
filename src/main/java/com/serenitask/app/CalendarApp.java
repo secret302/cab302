@@ -16,9 +16,6 @@
 
 package com.serenitask.app;
 
-
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
 import com.calendarfx.view.DetailedDayView;
@@ -54,44 +51,42 @@ public class CalendarApp extends Application {
     public void start(Stage primaryStage) {
 
 
-
+        // Create the base views for the calendar and set timeZone
         DetailedDayView calendarDayView = new DetailedDayView();
         DetailedWeekView calendarWeekView = new DetailedWeekView();
         calendarDayView.setEnableTimeZoneSupport(true);
         calendarWeekView.setEnableTimeZoneSupport(true);
 
-
-        // Users can categories events to seperate work from life
-        // This helps create work-life balance, thus mental wellbeing
-
         // Call to Database and check entries;
         // Run this block if there are no entries returned;
         EventLoader eventLoader = new EventLoader();
-
         CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
 
+        // populate Day and Week views based on CalendarSource
         calendarDayView.getCalendarSources().setAll(mainCalendarSource);
         calendarDayView.setRequestedTime(LocalTime.now());
         calendarWeekView.getCalendarSources().setAll(mainCalendarSource);
         calendarWeekView.setRequestedTime(LocalTime.now());
-        calendarWeekView.setMaxWidth(1600);
 
+        // Set appearence parameters and set style
+        calendarWeekView.setMaxWidth(1600);
         Rectangle switchViewBox = new Rectangle(100, 1000);
         switchViewBox.setFill(Color.GREY);
         Text switchViewText = new Text(">");
         StackPane switchViewButton = new StackPane();
         switchViewButton.getChildren().addAll(switchViewBox, switchViewText);
-        
+
+        // Set date
         Text dateToday = new Text(LocalDate.now().toString());
         StackPane dateTodayPanel = new StackPane();
         dateTodayPanel.getChildren().addAll(dateToday);
 
-
+        // set container for main calendar view
         VBox leftPanel = new VBox();
         leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
         VBox.setVgrow(calendarDayView, Priority.ALWAYS);
-    
 
+        // Setup agenda view and style
         AgendaView agenda = new AgendaView();
         agenda.setEnableTimeZoneSupport(true);
         agenda.getCalendarSources().setAll(mainCalendarSource);
@@ -99,14 +94,14 @@ public class CalendarApp extends Application {
         agenda.lookAheadPeriodInDaysProperty().set(3);
         agenda.setPadding(new Insets(10));
 
-
+        // Set container for goals view
         VBox dailygoals = new VBox();
         dailygoals.setSpacing(10);
         dailygoals.setPadding(new Insets(10));
-
         TextField goalTextField = new TextField();
         goalTextField.setPromptText("Enter your goal here");
 
+        // Create button for goals container
         Button createGoalButton = new Button("Create Goal");
         createGoalButton.setOnAction(event -> {
             String goal = goalTextField.getText().trim();
@@ -114,10 +109,17 @@ public class CalendarApp extends Application {
                 dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
                 goalTextField.clear();
             }
-
-
-            // Integrate SQL goal INSERT INTO statement here
+            // Commit goal to database
+            GoalController goalController = new GoalController();
+            goalController.controlSimpleGoal(goal);
         });
+
+        // Load in goals from database
+        GoalController goalController = new GoalController();
+        for(String title : goalController.loadSimpleGoal())
+        {
+            dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+        }
 
         dailygoals.getChildren().addAll(new javafx.scene.control.Label("I want to"), goalTextField, createGoalButton);
         YearMonthView heatmap = new YearMonthView();

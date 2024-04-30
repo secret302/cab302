@@ -12,6 +12,10 @@ public class Goal {
     private String recurrenceRules;
 
 
+
+    private Boolean Simple;
+
+
     public Goal(String title, String description, int minChunk, int maxChunk, int periodicity, String endDate,
                 String recurrenceRules)
     {
@@ -22,7 +26,21 @@ public class Goal {
         this.periodicity = periodicity;
         this.endDate = endDate;
         this.recurrenceRules = recurrenceRules;
+        Simple = false;
     }
+
+    public Goal(String title)
+    {
+        this.title = title;
+        this.description = "0";
+        this.minChunk = 0;
+        this.maxChunk = 0;
+        this.periodicity = 0;
+        this.endDate = "0";
+        this.recurrenceRules = "0";
+        Simple = true;
+    }
+    public Boolean isSimple() { return Simple; }
 
     public int getId() {
         return id;
