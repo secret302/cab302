@@ -114,13 +114,7 @@ public class CalendarApp extends Application {
             goalController.controlSimpleGoal(goal);
         });
 
-        // Load in goals from database
-        GoalController goalController = new GoalController();
-        for(String title : goalController.loadSimpleGoal())
-        {
-            dailygoals.getChildren().add(new javafx.scene.control.Label(title));
-        }
-
+        // Setup right hand side Vbox elements
         dailygoals.getChildren().addAll(new javafx.scene.control.Label("I want to"), goalTextField, createGoalButton);
         YearMonthView heatmap = new YearMonthView();
         heatmap.showUsageColorsProperty().set(true);
@@ -129,6 +123,12 @@ public class CalendarApp extends Application {
         VBox.setVgrow(rightPanel, Priority.ALWAYS);
         rightPanel.setMaxWidth(800);
 
+        // Load in goals from database
+        GoalController goalController = new GoalController();
+        for(String title : goalController.loadSimpleGoal())
+        {
+            dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+        }
 
         // Creates vertical box that can be clicked to change view
         HBox calendarDisplay = new HBox();
