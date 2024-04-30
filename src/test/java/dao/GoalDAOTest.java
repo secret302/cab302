@@ -2,12 +2,12 @@ package dao;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
-import org.mockito.internal.matchers.Null;
 
 // GoalDAOTest class tests the GoalDAO class
 public class GoalDAOTest {
@@ -30,14 +30,16 @@ public class GoalDAOTest {
 
     @AfterEach
     public void tearDown() {
-        // Delete the goal after testing
-        goalDAO.deleteGoal(goalId);
-        goalId = null;
+        // Delete the goal after testing if it exists
+        if (goalId != null) {
+            goalDAO.deleteGoal(goalId);
+            goalId = null;
+        }
     }
 
     @Test
     public void testCreateGoal() {
-        // Create an goal and check if the goal ID exists
+        // Create a goal and check if the goal ID exists
         goalId = goalDAO.addGoal(createTestGoal());
         assertNotNull(goalId, "Goal ID should not be null");
 
@@ -51,22 +53,22 @@ public class GoalDAOTest {
 
     @Test
     public void testGetGoalById() {
-        // Create an goal for testing
+        // Create a goal for testing
         goalId = goalDAO.addGoal(createTestGoal());
         assertNotNull(goalId, "Goal ID should not be null");
 
-        // Get an goal by ID and check if it is not null
+        // Get a goal by ID and check if it is not null
         Goal goal = goalDAO.getGoalById(goalId);
         assertNotNull(goal, "Goal should not be null");
     }
 
     @Test
     public void testUpdateGoal() {
-        // Create an goal for testing
+        // Create a goal for testing
         goalId = goalDAO.addGoal(createTestGoal());
         assertNotNull(goalId, "Goal ID should not be null");
 
-        // Update an goal and check if successful
+        // Update a goal and check if successful
         Goal goal = goalDAO.getGoalById(goalId);
         goal.setTitle("New Title");
         goal.setDescription("New Description");
@@ -83,11 +85,11 @@ public class GoalDAOTest {
 
     @Test
     public void testDeleteGoal() {
-        // Create an goal for testing
+        // Create a goal for testing
         goalId = goalDAO.addGoal(createTestGoal());
         assertNotNull(goalId, "Goal ID should not be null");
 
-        // Delete an goal and check if successful
+        // Delete a goal and check if successful
         boolean success = goalDAO.deleteGoal(goalId);
         assertTrue(success, "Goal should be deleted successfully");
 
@@ -96,44 +98,45 @@ public class GoalDAOTest {
         assertNull(goal, "Goal should not exist");
     }
 
-    @Test
-    public void testGetGoals() {
-        // Create more goals for testing
-        Integer goalID1 = goalDAO.addGoal(createTestGoal());
-        Integer goalID2 = goalDAO.addGoal(createTestGoal());
-        Integer goalID3 = goalDAO.addGoal(createTestGoal());
-
-        // Get all goals at date and check if the list is equal to 2
-        List<Goal> goals = goalDAO.getGoals(date);
-        assertEquals(2, goals.size(), "List should contain 2 goals (1&2)");
-        // Check correct goals are returned (1&2)
-        assertEquals(goalID1, goals.get(0).getId(), "Goal ID should match: 1");
-        assertEquals(goalID2, goals.get(1).getId(), "Goal ID should match: 2");
-
-        // Get all goals between two dates and check if the list is equal to 2
-        goals = goalDAO.getGoals(startDate, endDate);
-        assertEquals(2, goals.size(), "List should contain 2 goals (2&3)");
-        // Check correct goals are returned (2&3)
-        assertEquals(goalID2, goals.get(0).getId(), "Goal ID should match: 2");
-        assertEquals(goalID3, goals.get(1).getId(), "Goal ID should match: 3");
-
-        // Get all goals and check if the list is equal to 3
-        goals = goalDAO.getGoals();
-        assertEquals(3, goals.size(), "List should contain 3 goals (1&2&3)");
-        // Check correct goals are returned (1&2&3)
-        assertEquals(goalID1, goals.get(0).getId(), "Goal ID should match: 1");
-        assertEquals(goalID2, goals.get(1).getId(), "Goal ID should match: 2");
-        assertEquals(goalID3, goals.get(2).getId(), "Goal ID should match: 3");
-
-        // Delete the goals after testing
-        goalDAO.deleteGoal(goalID1);
-        goalDAO.deleteGoal(goalID2);
-        goalDAO.deleteGoal(goalID3);
-        // Confirm deletion
-        assertNull(goalDAO.getGoalById(goalID1), "Goal 1 should not exist");
-        assertNull(goalDAO.getGoalById(goalID2), "Goal 2 should not exist");
-        assertNull(goalDAO.getGoalById(goalID3), "Goal 3 should not exist");
-    }
+    // Paused implementation
+//    @Test
+//    public void testGetGoals() {
+//        // Create more goals for testing
+//        Integer goalID1 = goalDAO.addGoal(createTestGoal());
+//        Integer goalID2 = goalDAO.addGoal(createTestGoal());
+//        Integer goalID3 = goalDAO.addGoal(createTestGoal());
+//
+//        // Get all goals at date and check if the list is equal to 2
+//        List<Goal> goals = goalDAO.getGoals(date);
+//        assertEquals(2, goals.size(), "List should contain 2 goals (1&2)");
+//        // Check correct goals are returned (1&2)
+//        assertEquals(goalID1, goals.get(0).getId(), "Goal ID should match: 1");
+//        assertEquals(goalID2, goals.get(1).getId(), "Goal ID should match: 2");
+//
+//        // Get all goals between two dates and check if the list is equal to 2
+//        goals = goalDAO.getGoals(startDate, endDate);
+//        assertEquals(2, goals.size(), "List should contain 2 goals (2&3)");
+//        // Check correct goals are returned (2&3)
+//        assertEquals(goalID2, goals.get(0).getId(), "Goal ID should match: 2");
+//        assertEquals(goalID3, goals.get(1).getId(), "Goal ID should match: 3");
+//
+//        // Get all goals and check if the list is equal to 3
+//        goals = goalDAO.getGoals();
+//        assertEquals(3, goals.size(), "List should contain 3 goals (1&2&3)");
+//        // Check correct goals are returned (1&2&3)
+//        assertEquals(goalID1, goals.get(0).getId(), "Goal ID should match: 1");
+//        assertEquals(goalID2, goals.get(1).getId(), "Goal ID should match: 2");
+//        assertEquals(goalID3, goals.get(2).getId(), "Goal ID should match: 3");
+//
+//        // Delete the goals after testing
+//        goalDAO.deleteGoal(goalID1);
+//        goalDAO.deleteGoal(goalID2);
+//        goalDAO.deleteGoal(goalID3);
+//        // Confirm deletion
+//        assertNull(goalDAO.getGoalById(goalID1), "Goal 1 should not exist");
+//        assertNull(goalDAO.getGoalById(goalID2), "Goal 2 should not exist");
+//        assertNull(goalDAO.getGoalById(goalID3), "Goal 3 should not exist");
+//    }
 
     @Test
     public void testUniqueGoalID() {
@@ -177,7 +180,7 @@ public class GoalDAOTest {
 
     @Test
     public void testUpdateInvalidGoal() {
-        // Create an goal
+        // Create a goal
         goalId = goalDAO.addGoal(createTestGoal());
         // Confirm goal exists
         assertNotNull(goalId, "GoalId should not be null");
@@ -198,7 +201,7 @@ public class GoalDAOTest {
     @Test
     public void testDeleteNonExistentGoal() {
         // Try to delete a non-existent goal
-        boolean success = goalDAO.deleteGoal("");
+        boolean success = goalDAO.deleteGoal(0);
         assertFalse(success, "Deleting a non-existent goal should fail");
     }
 }

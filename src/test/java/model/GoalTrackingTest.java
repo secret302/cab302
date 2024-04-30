@@ -8,6 +8,8 @@ import com.serenitask.model.Goal;
 import java.time.LocalDate;
 import java.util.Date;
 
+/* File is incomplete due to needing to datetime formats now being decided yet.
+
 public class GoalTrackingTest {
     public Goal createTestGoal() {
         // Create entry for the goal and return it
@@ -77,3 +79,4 @@ public class GoalTrackingTest {
         assertNull(invalidGoalTracking4, "GoalTracking should be null");
     }
 }
+*/

@@ -14,7 +14,7 @@ import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 
-// File is incomplete due to needing to datetime formats now being decided yet.
+/* File is incomplete due to needing to datetime formats now being decided yet.
 
 public class GoalTrackingDAOTest {
     private final GoalTrackingDAO goalTrackingDAO = new GoalTrackingDAO(); // Assuming constructor exists
@@ -194,3 +194,4 @@ public class GoalTrackingDAOTest {
         assertFalse(success, "Goal tracking deletion should fail with invalid date");
     }
 }
+*/

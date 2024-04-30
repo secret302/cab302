@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.serenitask.model.Event;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class EventTest {
     public Event createTestEvent() {
         // Create entry for the event and return it
@@ -13,7 +16,9 @@ public class EventTest {
                 "Test Event",
                 "Test description",
                 "Test location",
-                "Test start_time",
+                LocalDateTime.now(), // Start time
+                LocalDate.now(), // Start date
+                LocalDate.now(), // End date
                 500,
                 false,
                 false,
@@ -32,7 +37,9 @@ public class EventTest {
         assertEquals("Test Event", event.getTitle(), "Event title should match");
         assertEquals("Test description", event.getDescription(), "Event description should match");
         assertEquals("Test location", event.getLocation(), "Event location should match");
-        // assertEquals("Test start_time", event.getStart_time(), "Event start time should match"); // To be implemented
+        // Start time - To be implemented, requires saving dates
+        // Start date - To be implemented, requires saving dates
+        // End date - To be implemented, requires saving dates
         assertEquals(500, event.getDuration(), "Event duration should match");
         assertFalse(event.getFullDay(), "Event should not be full day");
         assertFalse(event.getStaticPos(), "Event should not have static position");
@@ -48,7 +55,9 @@ public class EventTest {
         event.setTitle("New Title");
         event.setDescription("New Description");
         event.setLocation("New Location");
-        // event.setStart_time("New start_time"); // To be implemented
+        // Start time - To be implemented, requires saving dates
+        // Start date - To be implemented, requires saving dates
+        // End date - To be implemented, requires saving dates
         event.setDuration(1000);
         event.setFullDay(true);
         event.setStaticPos(true);
@@ -60,7 +69,9 @@ public class EventTest {
         assertEquals("New Title", event.getTitle(), "Event title should match");
         assertEquals("New Description", event.getDescription(), "Event description should match");
         assertEquals("New Location", event.getLocation(), "Event location should match");
-        // assertEquals("New start_time", event.getStart_time(), "Event start time should match"); // To be implemented
+        // Start time - To be implemented, requires saving dates
+        // Start date - To be implemented, requires saving dates
+        // End date - To be implemented, requires saving dates
         assertEquals(1000, event.getDuration(), "Event duration should match");
         assertTrue(event.getFullDay(), "Event should be full day");
         assertTrue(event.getStaticPos(), "Event should have static position");
