@@ -1,6 +1,6 @@
 package com.serenitask.util.DatabaseManager;
 
-import com.serenitask.model.Event;
+
 import com.serenitask.model.GoalTracking;
 
 import java.sql.Connection;

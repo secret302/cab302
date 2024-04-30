@@ -1,6 +1,5 @@
 package com.serenitask.controller;
 
-import com.serenitask.util.DatabaseManager.SqliteConnection;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 import com.serenitask.model.Goal;
 

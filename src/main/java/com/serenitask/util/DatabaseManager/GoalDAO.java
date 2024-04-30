@@ -13,8 +13,6 @@ import java.util.List;
 public class GoalDAO {
     private Connection connection;
 
-
-
     public GoalDAO() {
         connection = SqliteConnection.getConnection();
         createTable();

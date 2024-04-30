@@ -1,6 +1,5 @@
 package com.serenitask.model;
 
-import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 
 public class GoalTracking {
 
@@ -8,7 +7,7 @@ public class GoalTracking {
     private String goal_date;
     private Boolean completed;
 
-    public GoalTracking(int id, String goalDate, Boolean acheived)
+    public GoalTracking(int id, String goalDate, Boolean completed)
     {
         this.goal_id = id;
         this.goal_date = goalDate;

@@ -10,15 +10,8 @@ import com.serenitask.util.DatabaseManager.*;
 
 import com.serenitask.model.Event;
 
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.time.Duration;
 
 public class EventLoader {
 

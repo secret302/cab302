@@ -61,13 +61,8 @@
          calendarWeekView.setEnableTimeZoneSupport(true);
          // Users can categories events to seperate work from life
          // This helps create work-life balance, thus mental wellbeing
-         Calendar personal = new Calendar("Personal Events");
-         Calendar study = new Calendar("Study");
-         Calendar work = new Calendar("Work");
-         personal.setShortName("P");
-         study.setShortName("S");
-         work.setShortName("W");
- 
+
+
          // Call to Database and check entries;
          // Run this block if there are no entries returned;
          EventLoader eventLoader = new EventLoader();
@@ -81,9 +76,6 @@
  
          // Set appearence parameters and set style
          calendarWeekView.setMaxWidth(1600);
- 
- 
- 
          StackPane switchViewButton = new StackPane();
          Rectangle switchViewBox = new Rectangle(120, 50);
          switchViewBox.setFill(Color.GREY);
@@ -101,7 +93,8 @@
          // Set date
          Text dateToday = new Text(LocalDate.now().toString());
          dateToday.setFont(Font.font(40));
- 
+
+         // Setup Right container
          HBox dateTodayPanel = new HBox();
          Region spacer = new Region();
          dateTodayPanel.getChildren().addAll(dateToday, spacer, switchViewButton);
@@ -127,7 +120,6 @@
          VBox dailygoals = new VBox();
          dailygoals.setSpacing(10);
          dailygoals.setPadding(new Insets(10));
- 
          TextField goalTextField = new TextField();
          goalTextField.setPromptText("Enter your goal here");
  
@@ -162,7 +154,7 @@
  
          // Creates vertical box that can be clicked to change view
          HBox calendarDisplay = new HBox();
- 
+
          calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
          calendarDisplay.setAlignment(Pos.CENTER);
          calendarDisplay.setMaxHeight(700);
@@ -195,7 +187,8 @@
              }
          });
  
- 
+
+         // Update Clock
          Thread updateTimeThread = new Thread("Calendar: Update Time Thread") {
              @Override
              public void run() {

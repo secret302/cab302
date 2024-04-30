@@ -11,8 +11,6 @@ import javafx.event.EventHandler;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-
 
 public class EventListener {
 
