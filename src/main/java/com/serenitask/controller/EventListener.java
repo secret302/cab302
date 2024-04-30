@@ -78,9 +78,10 @@ public class EventListener {
         String description = "Doesnt exist yet";
         String location = entry.getLocation();
         LocalDateTime startTime = entry.getStartAsLocalDateTime();
+
         LocalDate startDate = entry.getStartDate();
         LocalDate endDate = entry.getEndDate();
-        int duration = entry.getDuration().toSecondsPart();
+        int duration = (int) entry.getDuration().toSeconds();
         Boolean fullDay = entry.isFullDay();
         Boolean staticPos = false;
         String calendar = entry.getCalendar().getName();

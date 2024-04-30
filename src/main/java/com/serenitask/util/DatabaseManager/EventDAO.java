@@ -119,8 +119,8 @@ public class EventDAO {
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
             statement.setTimestamp(4, Timestamp.valueOf(event.getStartTime()));
-            statement.setDate(6, java.sql.Date.valueOf(event.getStartDate()));
-            statement.setDate(7, java.sql.Date.valueOf(event.getEndDate()));
+            statement.setDate(5, java.sql.Date.valueOf(event.getStartDate()));
+            statement.setDate(6, java.sql.Date.valueOf(event.getEndDate()));
             statement.setInt(7, event.getDuration());
             statement.setBoolean(8, event.getFullDay());
             statement.setBoolean(9, event.getStaticPos());
