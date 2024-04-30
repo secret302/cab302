@@ -33,7 +33,7 @@ public class GoalDAO {
 
             // Sample Insert Query
             String insertQuery =
-                    "INSERT INTO goals (title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules) VALUES "
+                    "INSERT INTO goals (title, description, min_chunk, max_chunk, periodicity, end_date, recurrence_rules) VALUES "
                             + "('Goal 1', 'description of goal 1', 900,7200, 'weekly', 'placeholder for DATETIME', 'recurr rule'),"
                             + "('Goal 2', 'description of goal 2', 900,7200, 'daily', 'placeholder for DATETIME', 'recurr rule'),"
                             + "('Goal 3', 'description of goal 2', 900,7200, 'bi weekly', 'placeholder for DATETIME', 'recurr rule')";
@@ -94,7 +94,7 @@ public class GoalDAO {
         if (!goal.isSimple()) {
             try {
                 // Create insert query
-                String query = "INSERT INTO goals (title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules) VALUES" +
+                String query = "INSERT INTO goals (title, description, min_chunk, max_chunk, periodicity, end_date, recurrence_rules) VALUES" +
                         "(?, ?, ?, ?, ?, ?, ?)";
                 PreparedStatement statement = connection.prepareStatement(query);
                 // Update new row with values from goal
@@ -129,11 +129,11 @@ public class GoalDAO {
             String query = "UPDATE goals SET " +
                     "title = ?," +
                     "description = ?," +
-                    "minChunk = ?," +
-                    "maxChunk = ?," +
+                    "min_chunk = ?," +
+                    "max_chunk = ?," +
                     "periodicity = ?," +
-                    "endDate = ?," +
-                    "recurrenceRules = ?" +
+                    "end_date = ?," +
+                    "recurrence_rules = ?" +
                     "WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
 
