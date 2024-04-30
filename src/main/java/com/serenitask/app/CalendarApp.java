@@ -16,6 +16,7 @@
 
 package com.serenitask.app;
 
+
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Calendar.Style;
 import com.calendarfx.model.CalendarSource;
@@ -24,7 +25,6 @@ import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.calendarfx.view.YearMonthView;
 
-import com.serenitask.model.Event;
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -47,51 +47,34 @@ import java.time.LocalTime;
 
 import com.serenitask.controller.*;
 
-import com.serenitask.controller.GoalController;
-
-import com.serenitask.controller.EventLoader;
 
 public class CalendarApp extends Application {
 
-    EventLoader eventLoader = new EventLoader();
-
     @Override
     public void start(Stage primaryStage) {
+
+
 
         DetailedDayView calendarDayView = new DetailedDayView();
         DetailedWeekView calendarWeekView = new DetailedWeekView();
         calendarDayView.setEnableTimeZoneSupport(true);
         calendarWeekView.setEnableTimeZoneSupport(true);
+
+
         // Users can categories events to seperate work from life
         // This helps create work-life balance, thus mental wellbeing
-        eventLoader.loadEventsFromDatabase();
-        Calendar personal = new Calendar("Personal Events");
-        Calendar study = new Calendar("Study");
-        Calendar work = new Calendar("Work");
-        
-        personal.setShortName("P");
-        study.setShortName("S");
-        work.setShortName("W");
 
-        EventListener setEventListener = new EventListener();
-        setEventListener.setupListeners(personal);
-        setEventListener.setupListeners(study);
-        setEventListener.setupListeners(work);
+        // Call to Database and check entries;
+        // Run this block if there are no entries returned;
+        EventLoader eventLoader = new EventLoader();
 
-        // Colours can be specified to meet colour blind needs
-        personal.setStyle(Style.STYLE5);
-        study.setStyle(Style.STYLE7);
-        work.setStyle(Style.STYLE6);
+        CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
 
-        CalendarSource mainCalendarSource = new CalendarSource("Main");
-        mainCalendarSource.getCalendars().addAll(personal, study, work);
         calendarDayView.getCalendarSources().setAll(mainCalendarSource);
         calendarDayView.setRequestedTime(LocalTime.now());
         calendarWeekView.getCalendarSources().setAll(mainCalendarSource);
         calendarWeekView.setRequestedTime(LocalTime.now());
         calendarWeekView.setMaxWidth(1600);
-
-
 
         Rectangle switchViewBox = new Rectangle(100, 1000);
         switchViewBox.setFill(Color.GREY);
@@ -131,9 +114,7 @@ public class CalendarApp extends Application {
                 dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
                 goalTextField.clear();
             }
-            // Create a component that does the
-            GoalController goalController = new GoalController();
-            goalController.controlSimpleGoal0(goal);
+
 
             // Integrate SQL goal INSERT INTO statement here
         });

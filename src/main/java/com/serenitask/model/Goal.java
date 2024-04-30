@@ -1,5 +1,4 @@
 package com.serenitask.model;
-import com.serenitask.util.DatabaseManager.EventDAO;
 
 public class Goal {
 
@@ -24,18 +23,6 @@ public class Goal {
         this.endDate = endDate;
         this.recurrenceRules = recurrenceRules;
     }
-
-    public Goal(String title)
-    {
-        this.title = title;
-        this.description = "0";
-        this.minChunk = 0;
-        this.maxChunk = 0;
-        this.periodicity = 0;
-        this.endDate = "0";
-        this.recurrenceRules = "0";
-    }
-
 
     public int getId() {
         return id;

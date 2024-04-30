@@ -35,7 +35,7 @@ public class EventDAOTest {
 
         // Verify details of the created event
         Event createdEvent = eventDAO.getEventById(eventId);
-        assertNotNull(createdEvent, "Created event should not be null");
+        assertNotNull(createdEvent), "Created event should not be null");
         assertEquals(eventId, createdEvent.getId(), "Event ID should match");
         // ADD MORE HERE
     }
