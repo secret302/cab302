@@ -24,6 +24,7 @@ import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.calendarfx.view.YearMonthView;
 
+import com.serenitask.model.Event;
 import fr.brouillard.oss.cssfx.CSSFX;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -48,7 +49,11 @@ import com.serenitask.controller.*;
 
 import com.serenitask.controller.GoalController;
 
+import com.serenitask.controller.EventLoader;
+
 public class CalendarApp extends Application {
+
+    EventLoader eventLoader = new EventLoader();
 
     @Override
     public void start(Stage primaryStage) {
@@ -59,6 +64,7 @@ public class CalendarApp extends Application {
         calendarWeekView.setEnableTimeZoneSupport(true);
         // Users can categories events to seperate work from life
         // This helps create work-life balance, thus mental wellbeing
+        eventLoader.loadEventsFromDatabase();
         Calendar personal = new Calendar("Personal Events");
         Calendar study = new Calendar("Study");
         Calendar work = new Calendar("Work");
