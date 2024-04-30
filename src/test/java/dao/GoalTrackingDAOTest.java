@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,22 +13,16 @@ import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 
-// File is incomplete due to needing to datetime formats now being decided yet.
-
 public class GoalTrackingDAOTest {
     private GoalTrackingDAO goalTrackingDAO = new GoalTrackingDAO(); // Assuming constructor exists
     private GoalDAO goalDAO = new GoalDAO(); // Assuming constructor exists
-    private int goalId;
-    private Date goalDate;
-
     private Goal exampleGoal = new Goal("Test Goal", "Test description", 120, 230,
             0, "Test emdDate", "");
+    private LocalDate goalDate;
 
     private GoalTracking createTestGoalTracking(boolean completed) {
         // Create a goal and get its ID
-        goalId = goalDAO.addGoal(exampleGoal);
-        goalDate = new Date();
-        //
+        int goalId = goalDAO.addGoal(exampleGoal);
         // Generate a unique goal ID if needed (e.g., using a counter or timestamp)
         return new GoalTracking(goalId, LocalDate.now().toString(), completed);
     }
@@ -51,7 +44,7 @@ public class GoalTrackingDAOTest {
 
         // Retrieve the created entry and verify its details
         GoalTracking retrievedTracking = goalTrackingDAO.getGoalTracking(goalId, goalDate);
-        assertNotNull(retrievedTracking, "Retrieved tracking should not be null");
+        assertNotNull(retrievedTracking.getID(), "Retrieved tracking should not be null");
         assertEquals(newTracking.getGoalId(), retrievedTracking.getGoalId(), "Goal ID should match");
         assertEquals(newTracking.getGoalDate(), retrievedTracking.getGoalDate(), "Goal date should match"); // Format needed? To be decided later
         assertEquals(newTracking.isCompleted(), retrievedTracking.isCompleted(), "Completed status should match");
@@ -91,33 +84,33 @@ public class GoalTrackingDAOTest {
     @Test
     public void testGetGoalTrackings() {
         // Get today at 6am
-        Date localDate = new Date(); // Assuming Date is imported
-        localDate.setHours(6);
-        localDate.setMinutes(0);
-        localDate.setSeconds(0);
-
+        Date localDate = new Date( // Assuming Date is imported
+            LocalDate.now().getYear(),
+            LocalDate.now().getMonthValue(),
+            LocalDate.now().getDayOfMonth(),
+            6,
+            0);
         // Create goal
-        Goal goal = new Goal("Test Goal", "Test description", 120, 230,
-                0, "Test emdDate", "");
+        Goal goal = new Goal("Test Goal", "Test description");
         int goalId = goalDAO.addGoal(goal);
         // Create goal tracking entries
-        GoalTracking tracking1 = new GoalTracking(goalId, new Date(localDate.getTime() + 7 * 3600 * 1000).toString(), true);
-        GoalTracking tracking2 = new GoalTracking(goalId, new Date(localDate.getTime() + 8 * 3600 * 1000).toString(), false);
-        GoalTracking tracking3 = new GoalTracking(goalId, new Date(localDate.getTime() + 24 * 3600 * 1000).toString(), true);
+        GoalTracking tracking1 = new GoalTracking(goalId, localDate.setHours(7), true);
+        GoalTracking tracking2 = new GoalTracking(goalId, localDate.setHours(8), false);
+        GoalTracking tracking3 = new GoalTracking(goalId, new Date(localDate.getTime()+24*60*60*1000), true);
         // Add goal tracking entries
         goalTrackingDAO.addGoalTracking(tracking1);
         goalTrackingDAO.addGoalTracking(tracking2);
         goalTrackingDAO.addGoalTracking(tracking3);
 
         // Get goal tracking entries
-        List<GoalTracking> trackings = goalTrackingDAO.getGoalTrackings(LocalDate.now()); // Pass it day to get all trackings for that day
+        List<GoalTracking> trackings = goalTrackingDAO.getGoalTrackings(localDate.now()); // Pass it day to get all trackings for that day
         assertEquals(2, trackings.size(), "Number of trackings should be 2");
     }
-
+    
     @Test
     public void testAddInvalidGoalTracking() {
         // Create a goal tracking entry with an invalid goal ID
-        GoalTracking invalidTracking = new GoalTracking(-1, LocalDate.now().toString(), false);
+        GoalTracking invalidTracking = new GoalTracking(-1, LocalDate.now(), false);
         boolean success = goalTrackingDAO.addGoalTracking(invalidTracking);
         assertFalse(success, "Goal tracking creation should fail with invalid goal ID");
         // Create a goal tracking entry with an invalid date
@@ -125,7 +118,7 @@ public class GoalTrackingDAOTest {
         success = goalTrackingDAO.addGoalTracking(invalidTracking2);
         assertFalse(success, "Goal tracking creation should fail with invalid date");
         // Create a goal tracking entry with a long-past date
-        GoalTracking invalidTracking3 = new GoalTracking(1, LocalDate.of(1987, 1, 1).toString(), false);
+        GoalTracking invalidTracking3 = new GoalTracking(1, LocalDate.of(1987, 1, 1), false);
         success = goalTrackingDAO.addGoalTracking(invalidTracking3);
         assertFalse(success, "Goal tracking creation should fail with long-past date / old date");
     }
