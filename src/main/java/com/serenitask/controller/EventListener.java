@@ -9,7 +9,9 @@ import com.calendarfx.model.Entry;
 
 import javafx.event.EventHandler;
 
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 public class EventListener {
@@ -75,7 +77,9 @@ public class EventListener {
         String title = entry.getTitle();
         String description = "Doesnt exist yet";
         String location = entry.getLocation();
-        String startTime = "Start time value"; // Doesnt work yet
+        LocalDateTime startTime = entry.getStartAsLocalDateTime();
+        LocalDate startDate = entry.getStartDate();
+        LocalDate endDate = entry.getEndDate();
         int duration = entry.getDuration().toSecondsPart();
         Boolean fullDay = entry.isFullDay();
         Boolean staticPos = false;
@@ -84,7 +88,7 @@ public class EventListener {
         String recurrenceEnd = null; // Date objects break
         
 
-        Event event = new Event(id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
+        Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
         return event;
     }
    

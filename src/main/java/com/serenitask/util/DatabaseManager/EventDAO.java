@@ -2,10 +2,9 @@ package com.serenitask.util.DatabaseManager;
 
 import com.serenitask.model.Event;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +46,9 @@ public class EventDAO {
                     + "title TEXT NOT NULL,"
                     + "description TEXT,"
                     + "location TEXT,"
-                    + "start_time TEXT NOT NULL,"
+                    + "start_time TIMESTAMP,"
+                    + "start_date DATE,"
+                    + "end_date DATE,"
                     + "duration INTEGER NOT NULL,"
                     + "full_day BOOLEAN NOT NULL DEFAULT (false),"
                     + "static_pos BOOLEAN NOT NULL DEFAULT (false),"
@@ -66,21 +67,23 @@ public class EventDAO {
     public String addEvent(Event event) {
         try {
             // Create insert query
-            String query = "INSERT INTO events (id, title, description, location, start_time, duration, full_day, static_pos, calendar, recurrence_rules, recurrence_end) VALUES" +
-                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO events (id, title, description, location, start_time, start_date, end_date, duration, full_day, static_pos, calendar, recurrence_rules, recurrence_end) VALUES" +
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
             // Update new row with values from event
             statement.setString(1, event.getId());
             statement.setString(2, event.getTitle());
             statement.setString(3, event.getDescription());
             statement.setString(4, event.getLocation());
-            statement.setString(5, event.getStartTime());
-            statement.setInt(6, event.getDuration());
-            statement.setBoolean(7, event.getFullDay());
-            statement.setBoolean(8, event.getStaticPos());
-            statement.setString(9, event.getCalendar());
-            statement.setString(10, event.getRecurrenceRules());
-            statement.setString(11, event.getRecurrenceEnd());
+            statement.setTimestamp(5, Timestamp.valueOf(event.getStartTime()));
+            statement.setDate(6, java.sql.Date.valueOf(event.getStartDate()));
+            statement.setDate(7, java.sql.Date.valueOf(event.getEndDate()));
+            statement.setInt(8, event.getDuration());
+            statement.setBoolean(9, event.getFullDay());
+            statement.setBoolean(10, event.getStaticPos());
+            statement.setString(11, event.getCalendar());
+            statement.setString(12, event.getRecurrenceRules());
+            statement.setString(13, event.getRecurrenceEnd());
             // Execute update
             statement.executeUpdate();
             // Set the id of the new event
@@ -101,6 +104,8 @@ public class EventDAO {
                     "description = ?," +
                     "location = ?," +
                     "start_time = ?," +
+                    "start_date = ?," +
+                    "end_date = ?," +
                     "duration = ?," +
                     "full_day = ?," +
                     "static_pos = ?," +
@@ -113,14 +118,16 @@ public class EventDAO {
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
-            statement.setString(4, event.getStartTime());
-            statement.setInt(5, event.getDuration());
-            statement.setBoolean(6, event.getFullDay());
-            statement.setBoolean(7, event.getStaticPos());
-            statement.setString(8, event.getCalendar());
-            statement.setString(9, event.getRecurrenceRules());
-            statement.setString(10, event.getRecurrenceEnd());
-            statement.setString(11, event.getId());
+            statement.setTimestamp(4, Timestamp.valueOf(event.getStartTime()));
+            statement.setDate(6, java.sql.Date.valueOf(event.getStartDate()));
+            statement.setDate(7, java.sql.Date.valueOf(event.getEndDate()));
+            statement.setInt(7, event.getDuration());
+            statement.setBoolean(8, event.getFullDay());
+            statement.setBoolean(9, event.getStaticPos());
+            statement.setString(10, event.getCalendar());
+            statement.setString(11, event.getRecurrenceRules());
+            statement.setString(12, event.getRecurrenceEnd());
+            statement.setString(13, event.getId());
             // Execute update
             statement.executeUpdate();
 
@@ -164,7 +171,9 @@ public class EventDAO {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                String startTime = resultSet.getString("start_time");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
+                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
                 int duration = resultSet.getInt("duration");
                 Boolean fullDay = resultSet.getBoolean("full_day");
                 Boolean staticPos = resultSet.getBoolean("static_pos");
@@ -173,7 +182,7 @@ public class EventDAO {
                 String recurrenceEnd = resultSet.getString("recurrence_end");
 
                 // Create new event
-                Event event = new Event(id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
+                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 return event;
             }
         } catch (Exception e) {
@@ -198,7 +207,9 @@ public class EventDAO {
                 String title = resultSet.getString("title");
                 String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                String startTime = resultSet.getString("start_time");
+                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
+                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
+                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
                 int duration = resultSet.getInt("duration");
                 Boolean fullDay = resultSet.getBoolean("full_day");
                 Boolean staticPos = resultSet.getBoolean("static_pos");
@@ -206,7 +217,7 @@ public class EventDAO {
                 String recurrenceRules = resultSet.getString("recurrence_rules");
                 String recurrenceEnd = resultSet.getString("recurrence_end");
                 // Create a new event object
-                Event event = new Event(id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
+                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
                 events.add(event);
             }
         } catch (Exception e) {
