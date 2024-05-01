@@ -158,19 +158,22 @@ public class GoalDAO {
     // To be brought pack as an optional.
 
 
-    public void deleteGoal(Goal goal) {
+    public Boolean deleteGoal(int id) {
         try {
             // Create delete query
             String query = "DELETE FROM goals WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             // Delete row id
-            statement.setInt(1, goal.getId());
+            statement.setInt(1, id);
             // Execute update
             statement.executeUpdate();
+
+            return true;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
 
