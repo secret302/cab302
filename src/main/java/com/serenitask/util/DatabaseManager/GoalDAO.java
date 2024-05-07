@@ -235,5 +235,32 @@ public class GoalDAO {
         return goals;
     }
 
+    // Delete goal by ID
+    public Goal deleteGoalById(int id) {
+        try {
+            // Selecting goals
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM goals WHERE id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Create variables for results
+            if (resultSet.next()) {
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                int minChunk = resultSet.getInt("min_chunk");
+                int maxChunk = resultSet.getInt("max_chunk");
+                int periodicity = resultSet.getInt("periodicity");
+                String endDate = resultSet.getString("end_date");
+                String recurrenceRules = resultSet.getString("recurrence_rules");
+
+                Goal goal = new Goal(title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules);
+                goal.setId(id);
+                return goal;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

@@ -191,39 +191,6 @@
          Text goalText = new Text("Have you completed X goal?");
          goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
-         HBox buttonBox = new HBox();
-         buttonBox.setSpacing(20);
-         buttonBox.setPadding(new Insets(100, 20, 20, 20)); // Padding for buttons
-
-         // Buttons
-         Button noButton = new Button("No");
-         noButton.setPrefWidth(80);
-         Button yesButton = new Button("Yes");
-         yesButton.setPrefWidth(80);
-
-         // Adding buttons to the HBox
-         buttonBox.getChildren().addAll(noButton, yesButton);
-
-         buttonBox.setAlignment(Pos.CENTER);
-
-
-         // Adding elements to the VBox
-         contentVBox.getChildren().addAll(goalText, buttonBox);
-
-         contentVBox.setAlignment(Pos.CENTER);
-
-         // Center the VBox inside the rectangle
-         StackPane.setAlignment(contentVBox, javafx.geometry.Pos.CENTER);
-
-         // Adding the VBox to the rectangle
-         StackPane taskPopup = new StackPane();
-         taskPopup.getChildren().addAll(taskPopupPanel, contentVBox);
-
-
-
-         calendarDisplay2.getChildren().addAll(calendarDisplay);
-
- 
          // Switches betwenn Day view and Week View
          switchViewButton.setOnMouseClicked(event -> {
              isWeeklyView.set(!isWeeklyView.get());
@@ -242,6 +209,54 @@
                  calendarDayView.setMaxHeight(900);
              }
          });
+
+         HBox buttonBox = new HBox();
+         buttonBox.setSpacing(20);
+         buttonBox.setPadding(new Insets(100, 20, 20, 20)); // Padding for buttons
+
+         // Adding the VBox to the rectangle
+         StackPane taskPopup = new StackPane();
+         taskPopup.getChildren().addAll(taskPopupPanel, contentVBox);
+
+
+
+         // Buttons
+         Button noButton = new Button("No");
+         noButton.setPrefWidth(80);
+         noButton.setOnAction(e ->
+         {
+             goalController.empty();
+             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+         });
+
+         Button yesButton = new Button("Yes");
+         yesButton.setPrefWidth(80);
+         yesButton.setOnAction(e ->
+         {
+             goalController.empty();
+             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+         });
+
+         // Adding buttons to the HBox
+         buttonBox.getChildren().addAll(noButton, yesButton);
+
+         buttonBox.setAlignment(Pos.CENTER);
+
+
+         // Adding elements to the VBox
+         contentVBox.getChildren().addAll(goalText, buttonBox);
+
+         contentVBox.setAlignment(Pos.CENTER);
+
+         // Center the VBox inside the rectangle
+         StackPane.setAlignment(contentVBox, javafx.geometry.Pos.CENTER);
+
+
+
+         calendarDisplay2.getChildren().addAll(calendarDisplay);
+
+ 
+
  
 
          // Update Clock
@@ -252,12 +267,16 @@
                      Platform.runLater(() -> {
                          calendarDayView.setToday(LocalDate.now());
                          calendarDayView.setTime(LocalTime.now());
-                         LocalTime startTime = LocalTime.of(20, 0);
+                         LocalTime startTime = LocalTime.of(19, 0);
                          LocalTime endTime = LocalTime.of(23, 59, 59);
 
                          if (LocalTime.now().isAfter(startTime) && LocalTime.now().isBefore(endTime)) {
                              if (!calendarDisplay2.getChildren().contains(shadowPanel)) {
-                                 calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
+                                 // check if goals are completed
+                                 if (!goalController.checkIfEmpty()){
+
+                                     calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
+                                 }
                              }
                          } else {
                              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
