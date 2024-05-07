@@ -73,7 +73,7 @@
          calendarDayView.setRequestedTime(LocalTime.now());
          calendarWeekView.getCalendarSources().setAll(mainCalendarSource);
          calendarWeekView.setRequestedTime(LocalTime.now());
- 
+
          // Set appearence parameters and set style
          calendarWeekView.setMaxWidth(1600);
          StackPane switchViewButton = new StackPane();
@@ -156,9 +156,9 @@
          HBox calendarDisplay = new HBox();
 
          calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
-         calendarDisplay.setAlignment(Pos.CENTER);
-         calendarDisplay.setMaxHeight(700);
-         calendarDisplay.setPadding(new Insets(25,0,0,0));
+         //calendarDisplay.setAlignment(Pos.CENTER);
+         //calendarDisplay.setMaxHeight(700);
+         //calendarDisplay.setPadding(new Insets(25,0,0,0));
  
          // Prevents Calendar from being squished by other HBox Components
          HBox.setHgrow(leftPanel, Priority.ALWAYS);
@@ -166,7 +166,63 @@
          calendarDayView.setMinHeight(900);
          calendarDayView.setMaxHeight(900);
          calendarDayView.setPadding(new Insets(62,0,0,0));
- 
+
+
+         StackPane calendarDisplay2 = new StackPane();
+
+         Rectangle shadowPanel = new Rectangle();
+         shadowPanel.setWidth(1920);
+         shadowPanel.setHeight(1080);
+         shadowPanel.setOpacity(0.8);
+
+         Rectangle taskPopupPanel = new Rectangle();
+         taskPopupPanel.setWidth(400);
+         taskPopupPanel.setHeight(250);
+         taskPopupPanel.setArcWidth(20);
+         taskPopupPanel.setArcHeight(20);
+         taskPopupPanel.setFill(Color.WHITE);
+
+         // Create VBox for content
+         VBox contentVBox = new VBox();
+         contentVBox.setPadding(new Insets(20));
+         contentVBox.setSpacing(20);
+
+         // Text for the goal completion question
+         Text goalText = new Text("Have you completed X goal?");
+         goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+         HBox buttonBox = new HBox();
+         buttonBox.setSpacing(20);
+         buttonBox.setPadding(new Insets(100, 20, 20, 20)); // Padding for buttons
+
+         // Buttons
+         Button noButton = new Button("No");
+         noButton.setPrefWidth(80);
+         Button yesButton = new Button("Yes");
+         yesButton.setPrefWidth(80);
+
+         // Adding buttons to the HBox
+         buttonBox.getChildren().addAll(noButton, yesButton);
+
+         buttonBox.setAlignment(Pos.CENTER);
+
+
+         // Adding elements to the VBox
+         contentVBox.getChildren().addAll(goalText, buttonBox);
+
+         contentVBox.setAlignment(Pos.CENTER);
+
+         // Center the VBox inside the rectangle
+         StackPane.setAlignment(contentVBox, javafx.geometry.Pos.CENTER);
+
+         // Adding the VBox to the rectangle
+         StackPane taskPopup = new StackPane();
+         taskPopup.getChildren().addAll(taskPopupPanel, contentVBox);
+
+
+
+         calendarDisplay2.getChildren().addAll(calendarDisplay);
+
  
          // Switches betwenn Day view and Week View
          switchViewButton.setOnMouseClicked(event -> {
@@ -196,6 +252,16 @@
                      Platform.runLater(() -> {
                          calendarDayView.setToday(LocalDate.now());
                          calendarDayView.setTime(LocalTime.now());
+                         LocalTime startTime = LocalTime.of(20, 0);
+                         LocalTime endTime = LocalTime.of(23, 59, 59);
+
+                         if (LocalTime.now().isAfter(startTime) && LocalTime.now().isBefore(endTime)) {
+                             if (!calendarDisplay2.getChildren().contains(shadowPanel)) {
+                                 calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
+                             }
+                         } else {
+                             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+                         }
                      });
  
                      try {
@@ -213,11 +279,24 @@
          updateTimeThread.setDaemon(true);
          updateTimeThread.start();
  
-         Scene scene = new Scene(calendarDisplay);
+            /// delete //////////////////////////////
+
+//         calendarDisplay2.setMinWidth(1920);
+//         calendarDisplay2.setMinHeight(1080);
+//
+//         //calendarDisplay.setMaxHeight(700);
+//         calendarDisplay2.setPadding(new Insets(25,0,0,0));
+            ///////////////////
+
+         //center and add margins
+
+            
+         Scene scene = new Scene(calendarDisplay2);
          scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
          CSSFX.start(scene);
- 
+
          primaryStage.setTitle("SereniTask");
+         primaryStage.setResizable(false);
          primaryStage.setScene(scene);
          primaryStage.setWidth(1920);
          primaryStage.setHeight(1080);
