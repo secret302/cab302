@@ -36,11 +36,21 @@ public class GoalController {
         return goalList.isEmpty();
     }
 
-    public void empty()
+    public Goal returnFirstGoal()
     {
         GoalDAO goalDAO = new GoalDAO();
         List<Goal> goalList= goalDAO.getAllGoals();
-        goalList.clear();
+        if (!goalList.isEmpty()) {
+            return goalList.get(0); // Access first element
+        }
+        else {
+            return null;
+        }
+    }
+    public void deleteGoal(int id)
+    {
+        GoalDAO goalDAO = new GoalDAO();
+        goalDAO.deleteGoalById(id);
     }
 
 }

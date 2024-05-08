@@ -188,7 +188,9 @@
          contentVBox.setSpacing(20);
 
          // Text for the goal completion question
-         Text goalText = new Text("Have you completed X goal?");
+         Text goalText = new Text("Have you completed " +
+                 (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
+                 " goal?");
          goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
          // Switches betwenn Day view and Week View
@@ -225,7 +227,7 @@
          noButton.setPrefWidth(80);
          noButton.setOnAction(e ->
          {
-             goalController.empty();
+             goalController.deleteGoal(goalController.returnFirstGoal().getId());
              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
@@ -233,7 +235,7 @@
          yesButton.setPrefWidth(80);
          yesButton.setOnAction(e ->
          {
-             goalController.empty();
+             goalController.deleteGoal(goalController.returnFirstGoal().getId());
              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
@@ -267,18 +269,20 @@
                      Platform.runLater(() -> {
                          calendarDayView.setToday(LocalDate.now());
                          calendarDayView.setTime(LocalTime.now());
-                         LocalTime startTime = LocalTime.of(19, 0);
+                         LocalTime startTime = LocalTime.of(16, 0);
                          LocalTime endTime = LocalTime.of(23, 59, 59);
 
                          if (LocalTime.now().isAfter(startTime) && LocalTime.now().isBefore(endTime)) {
-                             if (!calendarDisplay2.getChildren().contains(shadowPanel)) {
-                                 // check if goals are completed
-                                 if (!goalController.checkIfEmpty()){
-
+                             if (!goalController.checkIfEmpty())
+                             {
+                                 if (!calendarDisplay2.getChildren().contains(shadowPanel))
+                                 {
                                      calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
                                  }
                              }
-                         } else {
+                         }
+
+                         else {
                              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
                          }
                      });
@@ -297,18 +301,6 @@
          updateTimeThread.setPriority(Thread.MIN_PRIORITY);
          updateTimeThread.setDaemon(true);
          updateTimeThread.start();
- 
-            /// delete //////////////////////////////
-
-//         calendarDisplay2.setMinWidth(1920);
-//         calendarDisplay2.setMinHeight(1080);
-//
-//         //calendarDisplay.setMaxHeight(700);
-//         calendarDisplay2.setPadding(new Insets(25,0,0,0));
-            ///////////////////
-
-         //center and add margins
-
             
          Scene scene = new Scene(calendarDisplay2);
          scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
