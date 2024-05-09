@@ -53,15 +53,12 @@
      @Override
      public void start(Stage primaryStage) {
  
- 
+        
          // Create the base views for the calendar and set timeZone
          DetailedDayView calendarDayView = new DetailedDayView();
          DetailedWeekView calendarWeekView = new DetailedWeekView();
          calendarDayView.setEnableTimeZoneSupport(true);
          calendarWeekView.setEnableTimeZoneSupport(true);
-         // Users can categories events to seperate work from life
-         // This helps create work-life balance, thus mental wellbeing
-
 
          // Call to Database and check entries;
          // Run this block if there are no entries returned;
@@ -76,6 +73,8 @@
 
          // Set appearence parameters and set style
          calendarWeekView.setMaxWidth(1600);
+
+         
          StackPane switchViewButton = new StackPane();
          Rectangle switchViewBox = new Rectangle(120, 50);
          switchViewBox.setFill(Color.GREY);
@@ -228,6 +227,7 @@
          noButton.setOnAction(e ->
          {
              goalController.deleteGoal(goalController.returnFirstGoal().getId());
+             dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
@@ -236,6 +236,7 @@
          yesButton.setOnAction(e ->
          {
              goalController.deleteGoal(goalController.returnFirstGoal().getId());
+             dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
              calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
@@ -277,6 +278,7 @@
                              {
                                  if (!calendarDisplay2.getChildren().contains(shadowPanel))
                                  {
+                                     goalController.loadSimpleGoal();
                                      calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
                                  }
                              }
