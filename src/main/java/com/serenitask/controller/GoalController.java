@@ -29,5 +29,28 @@ public class GoalController {
         goalDAO.addGoal(goal);
     }
 
+    public boolean checkIfEmpty()
+    {
+        GoalDAO goalDAO = new GoalDAO();
+        List<Goal> goalList= goalDAO.getAllGoals();
+        return goalList.isEmpty();
+    }
+
+    public Goal returnFirstGoal()
+    {
+        GoalDAO goalDAO = new GoalDAO();
+        List<Goal> goalList= goalDAO.getAllGoals();
+        if (!goalList.isEmpty()) {
+            return goalList.get(0); // Access first element
+        }
+        else {
+            return null;
+        }
+    }
+    public void deleteGoal(int id)
+    {
+        GoalDAO goalDAO = new GoalDAO();
+        goalDAO.deleteGoalById(id);
+    }
 
 }

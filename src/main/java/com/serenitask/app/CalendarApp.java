@@ -53,15 +53,12 @@
      @Override
      public void start(Stage primaryStage) {
  
- 
+        
          // Create the base views for the calendar and set timeZone
          DetailedDayView calendarDayView = new DetailedDayView();
          DetailedWeekView calendarWeekView = new DetailedWeekView();
          calendarDayView.setEnableTimeZoneSupport(true);
          calendarWeekView.setEnableTimeZoneSupport(true);
-         // Users can categories events to seperate work from life
-         // This helps create work-life balance, thus mental wellbeing
-
 
          // Call to Database and check entries;
          // Run this block if there are no entries returned;
@@ -73,9 +70,11 @@
          calendarDayView.setRequestedTime(LocalTime.now());
          calendarWeekView.getCalendarSources().setAll(mainCalendarSource);
          calendarWeekView.setRequestedTime(LocalTime.now());
- 
+
          // Set appearence parameters and set style
          calendarWeekView.setMaxWidth(1600);
+
+         
          StackPane switchViewButton = new StackPane();
          Rectangle switchViewBox = new Rectangle(120, 50);
          switchViewBox.setFill(Color.GREY);
@@ -156,9 +155,9 @@
          HBox calendarDisplay = new HBox();
 
          calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
-         calendarDisplay.setAlignment(Pos.CENTER);
-         calendarDisplay.setMaxHeight(700);
-         calendarDisplay.setPadding(new Insets(25,0,0,0));
+         //calendarDisplay.setAlignment(Pos.CENTER);
+         //calendarDisplay.setMaxHeight(700);
+         //calendarDisplay.setPadding(new Insets(25,0,0,0));
  
          // Prevents Calendar from being squished by other HBox Components
          HBox.setHgrow(leftPanel, Priority.ALWAYS);
@@ -166,8 +165,33 @@
          calendarDayView.setMinHeight(900);
          calendarDayView.setMaxHeight(900);
          calendarDayView.setPadding(new Insets(62,0,0,0));
- 
- 
+
+
+         StackPane calendar = new StackPane();
+
+         Rectangle shadowPanel = new Rectangle();
+         shadowPanel.setWidth(1920);
+         shadowPanel.setHeight(1080);
+         shadowPanel.setOpacity(0.8);
+
+         Rectangle taskPopupPanel = new Rectangle();
+         taskPopupPanel.setWidth(400);
+         taskPopupPanel.setHeight(250);
+         taskPopupPanel.setArcWidth(20);
+         taskPopupPanel.setArcHeight(20);
+         taskPopupPanel.setFill(Color.WHITE);
+
+         // Create VBox for content
+         VBox contentVBox = new VBox();
+         contentVBox.setPadding(new Insets(20));
+         contentVBox.setSpacing(20);
+
+         // Text for the goal completion question
+         Text goalText = new Text("Have you completed " +
+                 (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
+                 " goal?");
+         goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
          // Switches betwenn Day view and Week View
          switchViewButton.setOnMouseClicked(event -> {
              isWeeklyView.set(!isWeeklyView.get());
@@ -186,6 +210,56 @@
                  calendarDayView.setMaxHeight(900);
              }
          });
+
+         HBox buttonBox = new HBox();
+         buttonBox.setSpacing(20);
+         buttonBox.setPadding(new Insets(100, 20, 20, 20)); // Padding for buttons
+
+         // Adding the VBox to the rectangle
+         StackPane taskPopup = new StackPane();
+         taskPopup.getChildren().addAll(taskPopupPanel, contentVBox);
+
+
+
+         // Buttons
+         Button noButton = new Button("No");
+         noButton.setPrefWidth(80);
+         noButton.setOnAction(e ->
+         {
+             goalController.deleteGoal(goalController.returnFirstGoal().getId());
+             dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
+             calendar.getChildren().removeAll(shadowPanel, taskPopup);
+         });
+
+         Button yesButton = new Button("Yes");
+         yesButton.setPrefWidth(80);
+         yesButton.setOnAction(e ->
+         {
+             goalController.deleteGoal(goalController.returnFirstGoal().getId());
+             dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
+             calendar.getChildren().removeAll(shadowPanel, taskPopup);
+         });
+
+         // Adding buttons to the HBox
+         buttonBox.getChildren().addAll(noButton, yesButton);
+
+         buttonBox.setAlignment(Pos.CENTER);
+
+
+         // Adding elements to the VBox
+         contentVBox.getChildren().addAll(goalText, buttonBox);
+
+         contentVBox.setAlignment(Pos.CENTER);
+
+         // Center the VBox inside the rectangle
+         StackPane.setAlignment(contentVBox, javafx.geometry.Pos.CENTER);
+
+
+
+         calendar.getChildren().addAll(calendarDisplay);
+
+ 
+
  
 
          // Update Clock
@@ -196,6 +270,23 @@
                      Platform.runLater(() -> {
                          calendarDayView.setToday(LocalDate.now());
                          calendarDayView.setTime(LocalTime.now());
+                         LocalTime startTime = LocalTime.of(16, 0);
+                         LocalTime endTime = LocalTime.of(23, 59, 59);
+
+                         if (LocalTime.now().isAfter(startTime) && LocalTime.now().isBefore(endTime)) {
+                             if (!goalController.checkIfEmpty())
+                             {
+                                 if (!calendar.getChildren().contains(shadowPanel))
+                                 {
+                                     goalController.loadSimpleGoal();
+                                     calendar.getChildren().addAll(shadowPanel, taskPopup);
+                                 }
+                             }
+                         }
+
+                         else {
+                             calendar.getChildren().removeAll(shadowPanel, taskPopup);
+                         }
                      });
  
                      try {
@@ -212,12 +303,13 @@
          updateTimeThread.setPriority(Thread.MIN_PRIORITY);
          updateTimeThread.setDaemon(true);
          updateTimeThread.start();
- 
-         Scene scene = new Scene(calendarDisplay);
+            
+         Scene scene = new Scene(calendar);
          scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
          CSSFX.start(scene);
- 
+
          primaryStage.setTitle("SereniTask");
+         primaryStage.setResizable(false);
          primaryStage.setScene(scene);
          primaryStage.setWidth(1920);
          primaryStage.setHeight(1080);

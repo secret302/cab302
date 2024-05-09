@@ -235,5 +235,21 @@ public class GoalDAO {
         return goals;
     }
 
+    // Delete goal by ID
+    public void deleteGoalById(int id) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM goals WHERE id = ?");
+            statement.setInt(1, id);
+            int rowsDeleted = statement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Goal deleted successfully!");
+            } else {
+                System.out.println("No goal found with ID " + id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
