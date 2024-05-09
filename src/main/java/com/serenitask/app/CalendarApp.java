@@ -167,7 +167,7 @@
          calendarDayView.setPadding(new Insets(62,0,0,0));
 
 
-         StackPane calendarDisplay2 = new StackPane();
+         StackPane calendar = new StackPane();
 
          Rectangle shadowPanel = new Rectangle();
          shadowPanel.setWidth(1920);
@@ -228,7 +228,7 @@
          {
              goalController.deleteGoal(goalController.returnFirstGoal().getId());
              dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
-             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+             calendar.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
          Button yesButton = new Button("Yes");
@@ -237,7 +237,7 @@
          {
              goalController.deleteGoal(goalController.returnFirstGoal().getId());
              dailygoals.getChildren().remove(dailygoals.getChildren().get(3));
-             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+             calendar.getChildren().removeAll(shadowPanel, taskPopup);
          });
 
          // Adding buttons to the HBox
@@ -256,7 +256,7 @@
 
 
 
-         calendarDisplay2.getChildren().addAll(calendarDisplay);
+         calendar.getChildren().addAll(calendarDisplay);
 
  
 
@@ -276,16 +276,16 @@
                          if (LocalTime.now().isAfter(startTime) && LocalTime.now().isBefore(endTime)) {
                              if (!goalController.checkIfEmpty())
                              {
-                                 if (!calendarDisplay2.getChildren().contains(shadowPanel))
+                                 if (!calendar.getChildren().contains(shadowPanel))
                                  {
                                      goalController.loadSimpleGoal();
-                                     calendarDisplay2.getChildren().addAll(shadowPanel, taskPopup);
+                                     calendar.getChildren().addAll(shadowPanel, taskPopup);
                                  }
                              }
                          }
 
                          else {
-                             calendarDisplay2.getChildren().removeAll(shadowPanel, taskPopup);
+                             calendar.getChildren().removeAll(shadowPanel, taskPopup);
                          }
                      });
  
@@ -304,7 +304,7 @@
          updateTimeThread.setDaemon(true);
          updateTimeThread.start();
             
-         Scene scene = new Scene(calendarDisplay2);
+         Scene scene = new Scene(calendar);
          scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
          CSSFX.start(scene);
 
