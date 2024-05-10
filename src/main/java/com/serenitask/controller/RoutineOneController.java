@@ -13,6 +13,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing Routine 1 of the Optimizer pipeline.
+ * This routine handles the allocation of goals that require x time per repeating period y.
+ */
 public class RoutineOneController {
 
     // Dummy value of 7, will be replaced with 28 for 1 month or ~4 weeks
