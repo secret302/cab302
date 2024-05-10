@@ -19,11 +19,11 @@ public class RoutineOneController {
 
     // Dummy value of 7, will be replaced with 28 for 1 month or ~4 weeks
     private int allocationThreshold = 7;
+    private int blockSize = 7;
     private LocalDate today = LocalDate.now();
     private LocalTime DayStart = LocalTime.of(8, 0, 0);
     private LocalTime DayEnd = LocalTime.of(18, 0, 0);
 
-    private int stdBlock = 7;
     // Dummy variables setup
 
     // dummy goals
@@ -84,6 +84,7 @@ public class RoutineOneController {
     // allocate time based goals to fill windows
 
     private void allocateGoal(DummyGoal goal, List<Event> eventList) {
+
         //LocalDate allocationStart = goal.getAllocatedUpTo().plusDays(1);
 
         // Get the events list, Create a new list for each block,
@@ -93,28 +94,27 @@ public class RoutineOneController {
 
         int firstBlock = getDifferenceSunday(goal.getAllocatedUpTo());
 
-        if (firstBlock != 7) {
+        // This works, but now the entries returned via allocateBlock must be attached to calendar.
 
-            allocatePartialWeek(firstBlock, goal, eventList);
+        if (firstBlock != blockSize) {
+            int blockTarget = (int) Math.floor(goal.getGoalTargetAmount() * ((double) firstBlock / blockSize));
+            allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(firstBlock);
         }
 
-        while (goal.getDaysOutstanding() > 7) {
-            allocateWeek(goal);
+        while (goal.getDaysOutstanding() > blockSize) {
+            int blockTarget = goal.getGoalTargetAmount();
+            allocateBlock(blockTarget, goal, eventList);
+            goal.subtractDaysOutstanding(blockSize);
         }
 
     }
 
-    private List<Entry<?>> allocatePartialWeek(int days, DummyGoal goal, List<Event> eventList) {
-
+    private List<Entry<?>> allocateBlock(int blockTarget, DummyGoal goal, List<Event> eventList) {
         int buffer = 5;
-        int blockTarget = (int) Math.floor(goal.getGoalTargetAmount() * ((double) days / 7));
         LocalDate allocationStart = goal.getAllocatedUpTo().plusDays(1);
         LocalDate allocationEnd = getNextSunday(allocationStart);
-
         List<List<Event>> rawDaysLists = splitDays(allocationStart, allocationEnd, eventList);
-
-        // Days are in order of their priority
         List<Day> prioritizedDays = getDaysList(rawDaysLists);
         List<Entry<?>> entriesToAdd = new ArrayList<>();
 
@@ -151,8 +151,9 @@ public class RoutineOneController {
         }
 
         return entriesToAdd;
-    }
 
+
+    }
 
     private List<Day> getDaysList(List<List<Event>> rawDaysLists) {
         List<Day> daysList = new ArrayList<>();
@@ -244,16 +245,6 @@ public class RoutineOneController {
         }
 
         return dayLists;
-    }
-
-    private void allocateWeek(DummyGoal goal) {
-
-        goal.subtractDaysOutstanding(stdBlock);
-
-
-        // load in a list of lists
-
-
     }
 
     // Helpers
