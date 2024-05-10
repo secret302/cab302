@@ -1,6 +1,7 @@
 package com.serenitask.model;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -13,6 +14,14 @@ public class Day {
 
     private int priority;
     private int freeTime;
+
+
+    private boolean dateSet = false;
+
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
 
     List<TimeWindow> timeWindows;
 
@@ -43,8 +52,32 @@ public class Day {
         this.freeTime = freeTime;
     }
 
+    public boolean isDateSet() {
+        return dateSet;
+    }
+
+    public void setDateSet(boolean dateSet) {
+        this.dateSet = dateSet;
+    }
+
     public TimeWindow getBiggestWindow() {
         return findBiggestWindow();
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     private TimeWindow findBiggestWindow() {

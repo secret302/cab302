@@ -1,6 +1,8 @@
 package com.serenitask.controller;
 
 
+import com.calendarfx.model.Entry;
+import com.calendarfx.model.Interval;
 import com.serenitask.model.*;
 import com.serenitask.util.DatabaseManager.EventDAO;
 import com.serenitask.util.DatabaseManager.GoalDAO;
@@ -103,7 +105,9 @@ public class RoutineOneController {
 
     }
 
-    private void allocatePartialWeek(int days, DummyGoal goal, List<Event> eventList) {
+    private List<Entry<?>> allocatePartialWeek(int days, DummyGoal goal, List<Event> eventList) {
+
+        int buffer = 5;
         int blockTarget = (int) Math.floor(goal.getGoalTargetAmount() * ((double) days / 7));
         LocalDate allocationStart = goal.getAllocatedUpTo().plusDays(1);
         LocalDate allocationEnd = getNextSunday(allocationStart);
@@ -112,8 +116,9 @@ public class RoutineOneController {
 
         // Days are in order of their priority
         List<Day> prioritizedDays = getDaysList(rawDaysLists);
+        List<Entry<?>> entriesToAdd = new ArrayList<>();
 
-        while (blockTarget > 0) {
+        while (blockTarget > buffer) {
             for (Day day : prioritizedDays) {
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
@@ -124,22 +129,28 @@ public class RoutineOneController {
                         int middlePoint = (int) (duration.getSeconds() / 2);
                         LocalTime middleTime = window.getWindowOpen().plusSeconds(middlePoint);
                         LocalTime startTime = middleTime.minusMinutes(60);
-                        LocalTime EndTime = middleTime.plusMinutes(60);
+                        LocalTime endTime = middleTime.plusMinutes(60);
 
-                        // Create new event with times above
-                        // get all details from goal class
-                        // remove allocated time (120) here from blockTarget
+                        Entry<?> newEntry = new Entry<>(goal.getTitle());
+                        newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                        newEntry.setFullDay(false);
+                        entriesToAdd.add(newEntry);
+                        blockTarget -= goal.getMaxChunk();
+                    } else {
+                        Entry<?> newEntry = new Entry<>(goal.getTitle());
+                        newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
+                        newEntry.setFullDay(false);
+                        entriesToAdd.add(newEntry);
+                        blockTarget -= windowMins;
                     }
-
-
                 }
-
-
+                if (blockTarget <= buffer) {
+                    break;
+                }
             }
         }
 
-        // pull Database from allocationStart to allocationStart.plusdays(days);
-        // load in a list of lists
+        return entriesToAdd;
     }
 
 
@@ -152,12 +163,18 @@ public class RoutineOneController {
             LocalTime windowStart = DayStart;
 
             for (Event event : sortedList) {
+
                 if (windowStart.isBefore(DayEnd)) {
                     if (windowStart.compareTo(event.getStartTime().toLocalTime()) > 0) {
                         newDay.addWindow(windowStart, event.getStartTime().toLocalTime());
                     } else {
                         windowStart = event.getStartTime().toLocalTime().plusSeconds(event.getDuration());
                     }
+                }
+                if (!newDay.isDateSet()) {
+                    newDay.setStartDate(event.getStartDate());
+                    newDay.setEndDate(event.getEndDate());
+                    newDay.setDateSet(true);
                 }
             }
             daysList.add(newDay);
@@ -252,10 +269,8 @@ public class RoutineOneController {
         while (sunday.getDayOfWeek().getValue() != 7) {
             sunday = sunday.plusDays(1);
         }
-
         return sunday;
     }
-
 
     private int getDifferenceSunday(LocalDate date) {
         LocalDate targetDate = date;
@@ -264,8 +279,7 @@ public class RoutineOneController {
             targetDate = targetDate.plusDays(1);
         }
 
-        int difference = targetDate.compareTo(date);
-        return difference;
+        return targetDate.compareTo(date);
     }
 
 
