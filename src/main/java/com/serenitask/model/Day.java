@@ -9,6 +9,10 @@ import java.util.List;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 
+/**
+ * Class representing a single day as an object. A day has a date, and a series of time windows of available time
+ * for event allocation.
+ */
 public class Day {
 
     // Private parameters
