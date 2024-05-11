@@ -50,7 +50,7 @@ public class GoalController {
     public void deleteGoal(int id)
     {
         GoalDAO goalDAO = new GoalDAO();
-        goalDAO.deleteGoalById(id);
+        goalDAO.deleteGoal(id);
     }
 
 }
