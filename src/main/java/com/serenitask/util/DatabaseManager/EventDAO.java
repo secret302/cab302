@@ -26,26 +26,32 @@ public class EventDAO {
         // addSampleEntries();
     }
 
-    // DEBUGGING
+    // Private
+    /**
+     * Add sample entries to the database
+     */
     private void addSampleEntries() {
         try {
-            // Clear before inserting
+            // Create and execute clear statement
             Statement clearStatement = connection.createStatement();
             String clearQuery = "DELETE FROM events";
             clearStatement.execute(clearQuery);
+            // Create and execute insert statement
             Statement insertStatement = connection.createStatement();
-            String insertQuery =
-                    "INSERT INTO events (id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES "
-                    + "('sha256', 'Event 1', 'description of event 1', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('sha256', 'Event 2', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('sha256', 'Event 3', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end')";
+            String insertQuery = "INSERT INTO events "
+                    + "(id, title, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
+                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
             insertStatement.execute(insertQuery);
         } catch (Exception e) {
+            // Print error if sample entries fail
             e.printStackTrace();
         }
     }
 
 
+    // Private
     /**
      * Create SQLite table if it doesn't exist
      */
