@@ -11,8 +11,8 @@ public class Event {
     private String id; // Event ID
     private String title; // Title of the event
     private String location; // Location of the event
-    private LocalDateTime start_time; // Start time of the event
-    private Integer duration; // Duration of the event
+    private LocalDateTime startTime; // Start time of the event
+    private int duration; // Duration of the event
     private Boolean fullDay; // If the event is full day
     private Boolean staticPos; // If the event is static
     private String calendar; // Calendar the event belongs to
@@ -31,7 +31,7 @@ public class Event {
      * @param id - Event ID
      * @param title - Title of the event
      * @param location - Location of the event
-     * @param start_time - Start time of the event
+     * @param startTime - Start time of the event
      * @param duration - Duration of the event
      * @param fullDay - Boolean value to check if the event is full day
      * @param staticPos - Boolean value to check if the event is static
@@ -43,8 +43,8 @@ public class Event {
             String id,
             String title,
             String location,
-            LocalDateTime start_time,
-            Integer duration,
+            LocalDateTime startTime,
+            int duration,
             Boolean fullDay,
             Boolean staticPos,
             String calendar,
@@ -53,13 +53,13 @@ public class Event {
     ) {
         // Validate values
         if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
-        if (start_time == null) throw new IllegalArgumentException("Start time cannot be null");
+        if (startTime == null) throw new IllegalArgumentException("Start time cannot be null");
         if (duration < 0) throw new IllegalArgumentException("Duration cannot be negative");
         // Set values
         this.id = id;
         this.title = title;
         this.location = location;
-        this.start_time = start_time;
+        this.startTime = startTime;
         this.duration = duration;
         this.fullDay = fullDay;
         this.staticPos = staticPos;
@@ -125,17 +125,17 @@ public class Event {
      * @return - Event start time
      */
     public LocalDateTime getStartTime() {
-        return start_time;
+        return startTime;
     }
 
     /**
      * Sets the start time of the event
-     * @param start_time - Event start time
+     * @param startTime - Event start time
      */
-    public void setStartTime(LocalDateTime start_time) {
+    public void setStartTime(LocalDateTime startTime) {
         // Validate start time
-        if (start_time == null) throw new IllegalArgumentException("Start time cannot be null");
-        this.start_time = start_time;
+        if (startTime == null) throw new IllegalArgumentException("Start time cannot be null");
+        this.startTime = startTime;
     }
 
     /**
