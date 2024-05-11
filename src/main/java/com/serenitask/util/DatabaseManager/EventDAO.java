@@ -1,228 +1,291 @@
 package com.serenitask.util.DatabaseManager;
-
+import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * EventDAO class is used to interact with the database for events
+ */
 public class EventDAO {
-
+    // Connection to the database
     private Connection connection;
 
+    /**
+     * EventDAO constructor
+     * @constructor
+     */
     public EventDAO() {
+        // Get connection to the database
         connection = SqliteConnection.getConnection();
+        // Create table if it doesn't exist
         createTable();
         // Used for debugging
         // addSampleEntries();
     }
 
+    // Private
+    /**
+     * Add sample entries to the database
+     */
     private void addSampleEntries() {
         try {
-            // Clear before inserting
+            // Create and execute clear statement
             Statement clearStatement = connection.createStatement();
             String clearQuery = "DELETE FROM events";
             clearStatement.execute(clearQuery);
+            // Create and execute insert statement
             Statement insertStatement = connection.createStatement();
-            String insertQuery =
-                    "INSERT INTO events (id, title, description, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd) VALUES "
-                    + "('sha256', 'Event 1', 'description of event 1', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('sha256', 'Event 2', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end'),"
-                    + "('sha256', 'Event 3', 'description of event 2', 'Australia','placeholder for DATETIME', '2 hours', FALSE, TRUE, 'main cal','recurr string', 'recurr end')";
+            String insertQuery = "INSERT INTO events "
+                    + "(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
+                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(1)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(2)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(3)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
             insertStatement.execute(insertQuery);
         } catch (Exception e) {
+            // Print error if sample entries fail
             e.printStackTrace();
         }
     }
 
-// Creating Table if doesn't exist
+    // Private (Maybe to be moved to a utility class)
+    /**
+     * Re-loads an interval saved as a string back to an Interval object
+     * @param intervalString Interval saved as a string
+     * @return Interval object
+     */
+    private static Interval reloadInterval(String intervalString) {
+        String[] parts = intervalString.replace("Interval [", "").replace("]", "").split(", ");
+        LocalDate startDate = LocalDate.parse(parts[0].split("=")[1]);
+        LocalDate endDate = LocalDate.parse(parts[1].split("=")[1]);
+        LocalTime startTime = LocalTime.parse(parts[2].split("=")[1]);
+        LocalTime endTime = LocalTime.parse(parts[3].split("=")[1]);
+        ZoneId zoneId = ZoneId.of(parts[4].split("=")[1]);
+        return new Interval(startDate, startTime, endDate, endTime, zoneId);
+    }
+
+    // Private
+    /**
+     * Create Events SQLite table if it doesn't exist
+     */
     private void createTable() {
         try {
-            // All table requirements / Create Query
+            // Table Create Query
             String query = "CREATE TABLE IF NOT EXISTS events ("
-                    + "id TEXT  PRIMARY KEY,"
-                    + "title TEXT NOT NULL,"
-                    + "description TEXT,"
-                    + "location TEXT,"
-                    + "start_time TIMESTAMP,"
-                    + "start_date DATE,"
-                    + "end_date DATE,"
-                    + "duration INTEGER NOT NULL,"
-                    + "full_day BOOLEAN NOT NULL DEFAULT (false),"
-                    + "static_pos BOOLEAN NOT NULL DEFAULT (false),"
-                    + "calendar TEXT NOT NULL DEFAULT 'default',"
-                    + "recurrence_rules TEXT,"
-                    + "recurrence_end TEXT"
-                    + ");";
+                    + "id               TEXT        PRIMARY KEY,"
+                    + "title            TEXT        NOT NULL,"
+                    + "location         TEXT,       "
+                    + "interval         STRING,     "
+                    + "fullDay          BOOLEAN     NOT NULL DEFAULT (false),"
+                    + "staticPos        BOOLEAN     NOT NULL DEFAULT (false),"
+                    + "calendar         TEXT        NOT NULL DEFAULT 'default',"
+                    + "recurrenceRules  TEXT,       "
+                    + "allocatedUntil   DATE        );";
+            // Create and execute statement
             Statement statement = connection.createStatement();
             statement.execute(query);
         } catch (Exception e) {
+            // Print error if table creation fails
             e.printStackTrace();
         }
     }
 
-// Adding event if doesn't exist
+    /**
+     * Add event to the database
+     * @param event Event to add
+     * @return Event ID, null if failed
+     */
     public String addEvent(Event event) {
         try {
             // Create insert query
-            String query = "INSERT INTO events (id, title, description, location, start_time, start_date, end_date, duration, full_day, static_pos, calendar, recurrence_rules, recurrence_end) VALUES" +
-                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO events ("
+                    + "id,"
+                    + "title,"
+                    + "location,"
+                    + "interval,"
+                    + "fullDay,"
+                    + "staticPos,"
+                    + "calendar,"
+                    + "recurrenceRules,"
+                    + "allocatedUntil)"
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
-            // Update new row with values from event
+            // Insert values from event
             statement.setString(1, event.getId());
             statement.setString(2, event.getTitle());
-            statement.setString(3, event.getDescription());
-            statement.setString(4, event.getLocation());
-            statement.setTimestamp(5, Timestamp.valueOf(event.getStartTime()));
-            statement.setDate(6, java.sql.Date.valueOf(event.getStartDate()));
-            statement.setDate(7, java.sql.Date.valueOf(event.getEndDate()));
-            statement.setInt(8, event.getDuration());
-            statement.setBoolean(9, event.getFullDay());
-            statement.setBoolean(10, event.getStaticPos());
-            statement.setString(11, event.getCalendar());
-            statement.setString(12, event.getRecurrenceRules());
-            statement.setString(13, event.getRecurrenceEnd());
+            statement.setString(3, event.getLocation());
+            statement.setString(4, event.getInterval().toString());
+            statement.setBoolean(5, event.getFullDay());
+            statement.setBoolean(6, event.getStaticPos());
+            statement.setString(7, event.getCalendar());
+            statement.setString(8, event.getRecurrenceRules());
+            statement.setDate(9, java.sql.Date.valueOf(event.getAllocatedUntil()));
             // Execute update
             statement.executeUpdate();
-            // Set the id of the new event
 
+            // Return the ID of the event if successful
             return event.getId();
         } catch (Exception e) {
+            // Print error if event creation fails
             e.printStackTrace();
         }
-        // return -1 if event wasn't created
+        // return null if event wasn't created
         return null;
     }
 
+    /**
+     * Update event in the database
+     * @param event Event to update
+     * @return True if successful, false otherwise
+     */
     public boolean updateEvent(Event event) {
         try {
             // Create update query
-            String query = "UPDATE events SET " +
-                    "title = ?," +
-                    "description = ?," +
-                    "location = ?," +
-                    "start_time = ?," +
-                    "start_date = ?," +
-                    "end_date = ?," +
-                    "duration = ?," +
-                    "full_day = ?," +
-                    "static_pos = ?," +
-                    "calendar = ?," +
-                    "recurrence_rules = ?," +
-                    "recurrence_end = ?" +
-                    "WHERE id = ?";
+            String query = "UPDATE events SET "
+                    + "title              = ?,"
+                    + "location           = ?,"
+                    + "interval           = ?,"
+                    + "fullDay            = ?,"
+                    + "staticPos          = ?,"
+                    + "calendar           = ?,"
+                    + "recurrenceRules    = ?,"
+                    + "allocatedUntil     = ? "
+                    + "WHERE id           = ?";
+            // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
             // Update row with values from event
             statement.setString(1, event.getTitle());
-            statement.setString(2, event.getDescription());
-            statement.setString(3, event.getLocation());
-            statement.setTimestamp(4, Timestamp.valueOf(event.getStartTime()));
-            statement.setDate(5, java.sql.Date.valueOf(event.getStartDate()));
-            statement.setDate(6, java.sql.Date.valueOf(event.getEndDate()));
-            statement.setInt(7, event.getDuration());
-            statement.setBoolean(8, event.getFullDay());
-            statement.setBoolean(9, event.getStaticPos());
-            statement.setString(10, event.getCalendar());
-            statement.setString(11, event.getRecurrenceRules());
-            statement.setString(12, event.getRecurrenceEnd());
-            statement.setString(13, event.getId());
+            statement.setString(2, event.getLocation());
+            statement.setString(3, event.getInterval().toString());
+            statement.setBoolean(4, event.getFullDay());
+            statement.setBoolean(5, event.getStaticPos());
+            statement.setString(6, event.getCalendar());
+            statement.setString(7, event.getRecurrenceRules());
+            statement.setDate(8, java.sql.Date.valueOf(event.getAllocatedUntil()));
+            statement.setString(9, event.getId());
             // Execute update
             statement.executeUpdate();
 
             // If success
             return true;
         } catch (Exception e) {
+            // Print error if event update fails
             e.printStackTrace();
         }
+        // return false if update fails
         return false;
     }
 
+    /**
+     * Delete event from the database
+     * @param id Event ID
+     * @return True if successful, false otherwise
+     */
     public boolean deleteEvent(String id) {
         try {
             // Create delete query
             String query = "DELETE FROM events WHERE id = ?";
+            // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
             // Delete row id
             statement.setString(1, id);
             // Execute update
-            statement.executeUpdate();
+            int rowsDeleted = statement.executeUpdate();
 
-            // If success
-            return true;
-
+            // Return if goal was deleted
+            return rowsDeleted > 0;
         } catch (Exception e) {
+            // Print error if event deletion fails
             e.printStackTrace();
         }
+        // return false if delete fails
         return false;
     }
 
-// Getting the event via ID
+
+    /**
+     * Retrieve event from the database by ID
+     * @param id Event ID
+     * @return Event object, null if not found
+     */
     public Event getEventById(String id) {
         try {
-            // Search Query
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM events WHERE id = ?");
+            // Create Query
+            String query = "SELECT * FROM events WHERE id = ?";
+            // Create Search Statement
+            PreparedStatement statement = connection.prepareStatement(query);
+            // Insert ID into statement
             statement.setString(1, id);
+            // Execute Query
             ResultSet resultSet = statement.executeQuery();
 
-            // If Found, collect results
+            // If found, return event
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
-                String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
-                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
-                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
-                int duration = resultSet.getInt("duration");
-                Boolean fullDay = resultSet.getBoolean("full_day");
-                Boolean staticPos = resultSet.getBoolean("static_pos");
+                Interval interval = reloadInterval(resultSet.getString("interval"));
+                Boolean fullDay = resultSet.getBoolean("fullDay");
+                Boolean staticPos = resultSet.getBoolean("staticPos");
                 String calendar = resultSet.getString("calendar");
-                String recurrenceRules = resultSet.getString("recurrence_rules");
-                String recurrenceEnd = resultSet.getString("recurrence_end");
+                String recurrenceRules = resultSet.getString("recurrenceRules");
+                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
 
-                // Create new event
-                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
-                return event;
+                // Return new event object
+                return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
             }
         } catch (Exception e) {
+            // Print error if event retrieval fails
             e.printStackTrace();
         }
+        // return null if event not found
         return null;
     }
 
-    // List all events
+    /**
+     * Retrieve all events from the database
+     * @return List of events
+     */
     public List<Event> getAllEvents() {
+        // Create empty list of events to return
         List<Event> events = new ArrayList<>();
-        try { // Collect all events
-            Statement statement = connection.createStatement();
-            String query = "SELECT * FROM events";
 
+        try {
+            // Create statement
+            Statement statement = connection.createStatement();
+            // Create get all query
+            String query = "SELECT * FROM events";
+            // Execute query
             ResultSet resultSet = statement.executeQuery(query);
 
-            // Create variables for all results
+            // For each event in the result set
             while (resultSet.next()) {
                 // Retrieve data from the result set
                 String id = resultSet.getString("id");
                 String title = resultSet.getString("title");
-                String description = resultSet.getString("description");
                 String location = resultSet.getString("location");
-                LocalDateTime startTime = resultSet.getTimestamp("start_time").toLocalDateTime();
-                LocalDate startDate = resultSet.getDate("start_date").toLocalDate();
-                LocalDate endDate = resultSet.getDate("end_date").toLocalDate();
-                int duration = resultSet.getInt("duration");
-                Boolean fullDay = resultSet.getBoolean("full_day");
-                Boolean staticPos = resultSet.getBoolean("static_pos");
+                Interval interval = reloadInterval(resultSet.getString("interval"));
+                Boolean fullDay = resultSet.getBoolean("fullDay");
+                Boolean staticPos = resultSet.getBoolean("staticPos");
                 String calendar = resultSet.getString("calendar");
-                String recurrenceRules = resultSet.getString("recurrence_rules");
-                String recurrenceEnd = resultSet.getString("recurrence_end");
+                String recurrenceRules = resultSet.getString("recurrenceRules");
+                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
+
                 // Create a new event object
-                Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
+                Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+                // Add event to list
                 events.add(event);
             }
         } catch (Exception e) {
+            // Print error if event retrieval fails
             e.printStackTrace();
         }
+        // return list of events (regardless of none found)
         return events;
     }
 }

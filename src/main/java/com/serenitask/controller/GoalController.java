@@ -24,7 +24,7 @@ public class GoalController {
 
     public void controlSimpleGoal(String title) {
 
-        Goal goal = new Goal(title);
+        Goal goal = new Goal(title, 15, 60);
         GoalDAO goalDAO = new GoalDAO();
         goalDAO.addGoal(goal);
     }
@@ -50,7 +50,7 @@ public class GoalController {
     public void deleteGoal(int id)
     {
         GoalDAO goalDAO = new GoalDAO();
-        goalDAO.deleteGoalById(id);
+        goalDAO.deleteGoal(id);
     }
 
 }

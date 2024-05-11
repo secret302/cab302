@@ -1,5 +1,6 @@
 package com.serenitask.controller;
 
+import com.calendarfx.model.Interval;
 import com.serenitask.util.DatabaseManager.EventDAO;
 import com.serenitask.model.Event;
 
@@ -73,21 +74,16 @@ public class EventListener {
 
         String id = entry.getId();
         String title = entry.getTitle();
-        String description = "Doesnt exist yet";
         String location = entry.getLocation();
-        LocalDateTime startTime = entry.getStartAsLocalDateTime();
-
-        LocalDate startDate = entry.getStartDate();
-        LocalDate endDate = entry.getEndDate();
-        int duration = (int) entry.getDuration().toSeconds();
+        Interval interval = entry.getInterval();
         Boolean fullDay = entry.isFullDay();
         Boolean staticPos = false;
         String calendar = entry.getCalendar().getName();
         String recurrenceRules = entry.getRecurrenceRule();
-        String recurrenceEnd = null; // Date objects break
+        LocalDate allocatedUntil = LocalDate.now().plusDays(7); // entry.getRecurrenceRule(); This is a temporary solution until recurrence end can be grabbed from the String saved recurrence rules
         
 
-        Event event = new Event(id, title, description, location, startTime, startDate, endDate, duration, fullDay, staticPos, calendar, recurrenceRules, recurrenceEnd);
+        Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
         return event;
     }
    

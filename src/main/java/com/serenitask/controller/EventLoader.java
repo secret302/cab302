@@ -42,11 +42,11 @@ public class EventLoader {
     private Entry<?> convertEventToEntry(Event event) {
         Entry<?> newEntry = new Entry<>(event.getTitle(), event.getId());
 
-        LocalDateTime startTime = event.getStartTime();
-        LocalDateTime endTime = startTime.plusSeconds(event.getDuration());
+        Interval interval = event.getInterval();
 
         newEntry.setLocation(event.getLocation());
-        newEntry.setInterval(new Interval(event.getStartDate(), startTime.toLocalTime(), event.getEndDate(), endTime.toLocalTime()));
+        newEntry.setInterval(interval);
+        //newEntry.setInterval(new Interval(event.getStartDate(), startTime.toLocalTime(), event.getEndDate(), endTime.toLocalTime()));
 
         newEntry.setFullDay(event.getFullDay());
         newEntry.setRecurrenceRule(event.getRecurrenceRules());
