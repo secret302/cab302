@@ -56,7 +56,7 @@ public class EventDAO {
     // Private (Maybe to be moved to a utility class)
     /**
      * Re-loads an interval saved as a string back to an Interval object
-     * @param intervalString - Interval saved as a string
+     * @param intervalString Interval saved as a string
      * @return Interval object
      */
     private static Interval reloadInterval(String intervalString) {
@@ -97,8 +97,8 @@ public class EventDAO {
 
     /**
      * Add event to the database
-     * @param event - Event to add
-     * @return - Event ID, null if failed
+     * @param event Event to add
+     * @return Event ID, null if failed
      */
     public String addEvent(Event event) {
         try {
@@ -141,8 +141,8 @@ public class EventDAO {
 
     /**
      * Update event in the database
-     * @param event - Event to update
-     * @return - True if successful, false otherwise
+     * @param event Event to update
+     * @return True if successful, false otherwise
      */
     public boolean updateEvent(Event event) {
         try {
@@ -184,8 +184,8 @@ public class EventDAO {
 
     /**
      * Delete event from the database
-     * @param id - Event ID
-     * @return - True if successful, false otherwise
+     * @param id Event ID
+     * @return True if successful, false otherwise
      */
     public boolean deleteEvent(String id) {
         try {
@@ -212,8 +212,8 @@ public class EventDAO {
 
     /**
      * Retrieve event from the database by ID
-     * @param id - Event ID
-     * @return - Event object, null if not found
+     * @param id Event ID
+     * @return Event object, null if not found
      */
     public Event getEventById(String id) {
         try {
@@ -250,7 +250,7 @@ public class EventDAO {
 
     /**
      * Retrieve all events from the database
-     * @return - List of events
+     * @return List of events
      */
     public List<Event> getAllEvents() {
         // Create empty list of events to return

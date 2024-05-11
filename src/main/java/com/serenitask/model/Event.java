@@ -29,15 +29,15 @@ public class Event {
     /**
      * Main Event constructor
      * @constructor
-     * @param id - Event ID
-     * @param title - Title of the event
-     * @param location - Location of the event
-     * @param interval - Interval of the event
-     * @param fullDay - Boolean value to check if the event is full day
-     * @param staticPos - Boolean value to check if the event is static
-     * @param calendar - Calendar the event belongs to
-     * @param recurrenceRules - Recurrence rules for the event
-     * @param allocatedUntil - Date until the events recurrence ends
+     * @param id Event ID
+     * @param title Title of the event
+     * @param location Location of the event
+     * @param interval Interval of the event
+     * @param fullDay Boolean value to check if the event is full day
+     * @param staticPos Boolean value to check if the event is static
+     * @param calendar Calendar the event belongs to
+     * @param recurrenceRules Recurrence rules for the event
+     * @param allocatedUntil Date until the events recurrence ends
      */
     public Event(
             String id,
@@ -66,7 +66,7 @@ public class Event {
 
     /**
      * Retrieves the event ID
-     * @return - Event ID
+     * @return Event ID
      */
     public String getId() {
         return id;
@@ -74,7 +74,7 @@ public class Event {
 
     /**
      * Sets the event ID
-     * @param id - Event ID
+     * @param id Event ID
      */
     public void setId(String id) {
         // Validate ID
@@ -84,7 +84,7 @@ public class Event {
 
     /**
      * Retrieves the event title
-     * @return - Event title
+     * @return Event title
      */
     public String getTitle() {
         return title;
@@ -92,7 +92,7 @@ public class Event {
 
     /**
      * Sets the event title
-     * @param title - Event title
+     * @param title Event title
      */
     public void setTitle(String title) {
         // Validate title
@@ -102,7 +102,7 @@ public class Event {
 
     /**
      * Retrieves the event location
-     * @return - Event location
+     * @return Event location
      */
     public String getLocation() {
         return location;
@@ -110,7 +110,7 @@ public class Event {
 
     /**
      * Sets the event location
-     * @param location - Event location
+     * @param location Event location
      */
     public void setLocation(String location) {
         this.location = location;
@@ -118,7 +118,7 @@ public class Event {
 
     /**
      * Retrieves the event interval
-     * @return - Event interval
+     * @return Event interval
      */
     public Interval getInterval() {
         return interval;
@@ -126,7 +126,7 @@ public class Event {
 
     /**
      * Sets the event interval
-     * @param interval - Event interval
+     * @param interval Event interval
      */
     public void setInterval(Interval interval) {
         this.interval = interval;
@@ -134,7 +134,7 @@ public class Event {
 
     /**
      * Retrieves the full day status of the event
-     * @return - Event full day status
+     * @return Event full day status
      */
     public Boolean getFullDay() {
         return fullDay;
@@ -142,7 +142,7 @@ public class Event {
 
     /**
      * Sets the full day status of the event
-     * @param fullDay - Event full day status
+     * @param fullDay Event full day status
      */
     public void setFullDay(Boolean fullDay) {
         this.fullDay = fullDay;
@@ -150,7 +150,7 @@ public class Event {
 
     /**
      * Retrieves the static position status of the event
-     * @return - Event static position status
+     * @return Event static position status
      */
     public Boolean getStaticPos() {
         return staticPos;
@@ -158,7 +158,7 @@ public class Event {
 
     /**
      * Sets the static position status of the event
-     * @param staticPos - Event static position status
+     * @param staticPos Event static position status
      */
     public void setStaticPos(Boolean staticPos) {
         this.staticPos = staticPos;
@@ -166,7 +166,7 @@ public class Event {
 
     /**
      * Retrieves the calendar the event belongs to
-     * @return - Event calendar
+     * @return Event calendar
      */
     public String getCalendar() {
         return calendar;
@@ -174,7 +174,7 @@ public class Event {
 
     /**
      * Sets the calendar the event belongs to
-     * @param calendar - Event calendar
+     * @param calendar Event calendar
      */
     public void setCalendar(String calendar) {
         this.calendar = calendar;
@@ -182,7 +182,7 @@ public class Event {
 
     /**
      * Retrieves the recurrence rules for the event
-     * @return - Event recurrence rules
+     * @return Event recurrence rules
      */
     public String getRecurrenceRules() {
         return recurrenceRules;
@@ -190,7 +190,7 @@ public class Event {
 
     /**
      * Sets the recurrence rules for the event
-     * @param recurrenceRules - Event recurrence rules
+     * @param recurrenceRules Event recurrence rules
      */
     public void setRecurrenceRules(String recurrenceRules) {
         // Validate recurrence rules. To be implemented
@@ -199,7 +199,7 @@ public class Event {
 
     /**
      * Retrieves the date until the events recurrence ends
-     * @return - Event allocated until date
+     * @return Event allocated until date
      */
     public LocalDate getAllocatedUntil() {
         return allocatedUntil;
@@ -207,7 +207,7 @@ public class Event {
 
     /**
      * Sets the date until the events recurrence ends
-     * @param allocatedUntil - Event allocated until date
+     * @param allocatedUntil Event allocated until date
      */
     public void setAllocatedUntil(LocalDate allocatedUntil) {
         // Validate allocated until. To be implemented

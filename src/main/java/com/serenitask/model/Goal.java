@@ -25,12 +25,12 @@ public class Goal {
     /**
      * Goal constructor for an empty goal
      * @constructor
-     * @param title - Title of the goal
-     * @param goalTargetAmount - Target amount of the goal
-     * @param minChunk - Minimum amount of time to allocate
-     * @param maxChunk - Maximum amount of time to allocate
-     * @param allocatedUntil - Date until the goal is allocated
-     * @param daysOutstanding - Days outstanding for the goal
+     * @param title Title of the goal
+     * @param goalTargetAmount Target amount of the goal
+     * @param minChunk Minimum amount of time to allocate
+     * @param maxChunk Maximum amount of time to allocate
+     * @param allocatedUntil Date until the goal is allocated
+     * @param daysOutstanding Days outstanding for the goal
      */
     public Goal(
             String title,
@@ -58,9 +58,9 @@ public class Goal {
     /**
      * Goal constructor for an simple goal
      * @constructor
-     * @param title - Title of the goal
-     * @param minChunk - Minimum amount of time to allocate
-     * @param maxChunk - Maximum amount of time to allocate
+     * @param title Title of the goal
+     * @param minChunk Minimum amount of time to allocate
+     * @param maxChunk Maximum amount of time to allocate
      */
     public Goal(String title, int minChunk, int maxChunk)
     {
@@ -82,7 +82,7 @@ public class Goal {
 
     /**
      * Retrieves the goal ID
-     * @return - Goal ID
+     * @return Goal ID
      */
     public int getId() {
         return id;
@@ -90,7 +90,7 @@ public class Goal {
 
     /**
      * Sets the goal ID
-     * @param id - Goal ID
+     * @param id Goal ID
      */
     public void setId(int id) {
         this.id = id;
@@ -98,7 +98,7 @@ public class Goal {
 
     /**
      * Retrieves the goal title
-     * @return - Goal title
+     * @return Goal title
      */
     public String getTitle() {
         return title;
@@ -106,7 +106,7 @@ public class Goal {
 
     /**
      * Sets the goal title
-     * @param title - Goal title
+     * @param title Goal title
      */
     public void setTitle(String title) {
         this.title = title;
@@ -114,7 +114,7 @@ public class Goal {
 
     /**
      * Retrieves the goal target amount
-     * @return - Goal target amount
+     * @return Goal target amount
      */
     public int getGoalTargetAmount() {
         return goalTargetAmount;
@@ -122,7 +122,7 @@ public class Goal {
 
     /**
      * Sets the goal target amount
-     * @param goalTargetAmount - Goal target amount
+     * @param goalTargetAmount Goal target amount
      */
     public void setGoalTargetAmount(int goalTargetAmount) {
         if (goalTargetAmount < 0) throw new IllegalArgumentException("Goal target amount cannot be negative");
@@ -131,7 +131,7 @@ public class Goal {
 
     /**
      * Retrieves the minimum chunk
-     * @return - Minimum chunk
+     * @return Minimum chunk
      */
     public int getMinChunk() {
         return minChunk;
@@ -139,7 +139,7 @@ public class Goal {
 
     /**
      * Sets the minimum chunk
-     * @param minChunk - Minimum chunk
+     * @param minChunk Minimum chunk
      */
     public void setMinChunk(int minChunk) {
         if (minChunk < 15) throw new IllegalArgumentException("Minimum chunk cannot be below 15 minutes");
@@ -148,7 +148,7 @@ public class Goal {
 
     /**
      * Retrieves the maximum chunk
-     * @return - Maximum chunk
+     * @return Maximum chunk
      */
     public int getMaxChunk() {
         return maxChunk;
@@ -156,7 +156,7 @@ public class Goal {
 
     /**
      * Sets the maximum chunk
-     * @param maxChunk - Maximum chunk
+     * @param maxChunk Maximum chunk
      */
     public void setMaxChunk(int maxChunk) {
         if (maxChunk < 15) throw new IllegalArgumentException("Maximum chunk cannot be below 15 minutes");
@@ -165,7 +165,7 @@ public class Goal {
 
     /**
      * Retrieves the allocated until date
-     * @return - Allocated until date
+     * @return Allocated until date
      */
     public LocalDate getAllocatedUntil() {
         return allocatedUntil;
@@ -173,7 +173,7 @@ public class Goal {
 
     /**
      * Sets the allocated until date
-     * @param allocatedUntil - Allocated until date
+     * @param allocatedUntil Allocated until date
      */
     public void setAllocatedUntil(LocalDate allocatedUntil) {
         this.allocatedUntil = allocatedUntil;
@@ -181,7 +181,7 @@ public class Goal {
 
     /**
      * Retrieves the days outstanding
-     * @return - Days outstanding
+     * @return Days outstanding
      */
     public int getDaysOutstanding() {
         return daysOutstanding;
@@ -189,7 +189,7 @@ public class Goal {
 
     /**
      * Sets the days outstanding
-     * @param daysOutstanding - Days outstanding
+     * @param daysOutstanding Days outstanding
      */
     public void setDaysOutstanding(int daysOutstanding) {
         this.daysOutstanding = daysOutstanding;
@@ -197,7 +197,7 @@ public class Goal {
 
     /**
      * Subtracts days from the days outstanding
-     * @param days - Days to subtract
+     * @param days Days to subtract
      */
     public void subtractDaysOutstanding(int days) {
         this.daysOutstanding -= days;

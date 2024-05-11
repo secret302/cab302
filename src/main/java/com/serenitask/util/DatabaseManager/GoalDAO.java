@@ -83,8 +83,8 @@ public class GoalDAO {
 
     /**
      * Add a goal to the database
-     * @param goal - Goal to add
-     * @return - ID of the new goal, -1 if failed
+     * @param goal Goal to add
+     * @return ID of the new goal, -1 if failed
      */
     public int addGoal(Goal goal) {
         try {
@@ -127,8 +127,8 @@ public class GoalDAO {
 
     /**
      * Update a goal in the database
-     * @param goal - Goal to update
-     * @return - True if successful, false otherwise
+     * @param goal Goal to update
+     * @return True if successful, false otherwise
      */
     public boolean updateGoal(Goal goal) {
         try {
@@ -166,8 +166,8 @@ public class GoalDAO {
 
     /**
      * Delete a goal from the database
-     * @param id - ID of the goal to delete
-     * @return - True if successful, false otherwise
+     * @param id ID of the goal to delete
+     * @return True if successful, false otherwise
      */
     public Boolean deleteGoal(int id) {
         try {
@@ -194,8 +194,8 @@ public class GoalDAO {
 
     /**
      * Get a goal from the database by ID
-     * @param id - ID of the goal to get
-     * @return - Goal object, null if not found
+     * @param id ID of the goal to get
+     * @return Goal object, null if not found
      */
     public Goal getGoalById(int id) {
         try {
@@ -230,7 +230,7 @@ public class GoalDAO {
 
     /**
      * Get all goals from the database
-     * @return - List of all goals
+     * @return List of all goals
      */
     public List<Goal> getAllGoals() {
         // Create empty list of events to return
