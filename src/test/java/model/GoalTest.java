@@ -8,7 +8,7 @@ import com.serenitask.model.Goal;
 import java.time.LocalDateTime;
 
 public class GoalTest {
-    public Goal createTestGoal(LocalDateTime startTime) {
+    private Goal createTestGoal(LocalDateTime startTime) {
         // Create entry for the goal and return it
         return new Goal(
                 "Test Goal",
