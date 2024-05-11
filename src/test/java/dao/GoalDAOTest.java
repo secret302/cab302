@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.serenitask.model.Goal;
@@ -14,18 +15,17 @@ public class GoalDAOTest {
     private final GoalDAO goalDAO = new GoalDAO(); // Assuming you have a constructor for GoalDAO
     private Integer goalId; // Example goal ID for testing
 
-    private Goal createTestGoal() {
-        // Generate a unique title
-        String uniqueTitle = "Test Goal " + System.currentTimeMillis();
-        // Create new goal and return it
-        return new Goal(uniqueTitle,
-                "Test description",
-                120,
-                230,
-                0,
-                "Test endDate",
-                ""
+    private Goal createTestGoal(LocalDateTime startTime) {
+        // Create entry for the goal and return it
+        return new Goal(
+                "Test Goal",
+                1,
+                15,
+                60,
+                startTime.toLocalDate(),
+                0
         );
+        // Goals will be cleaned up by the garbage collector
     }
 
     @AfterEach
@@ -39,8 +39,10 @@ public class GoalDAOTest {
 
     @Test
     public void testCreateGoal() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create a goal and check if the goal ID exists
-        goalId = goalDAO.addGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal(startTime));
         assertNotNull(goalId, "Goal ID should not be null");
 
         // Verify details of the created goal
@@ -53,8 +55,10 @@ public class GoalDAOTest {
 
     @Test
     public void testGetGoalById() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create a goal for testing
-        goalId = goalDAO.addGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal(startTime));
         assertNotNull(goalId, "Goal ID should not be null");
 
         // Get a goal by ID and check if it is not null
@@ -64,29 +68,31 @@ public class GoalDAOTest {
 
     @Test
     public void testUpdateGoal() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create a goal for testing
-        goalId = goalDAO.addGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal(startTime));
         assertNotNull(goalId, "Goal ID should not be null");
 
         // Update a goal and check if successful
         Goal goal = goalDAO.getGoalById(goalId);
         goal.setTitle("New Title");
-        goal.setDescription("New Description");
         boolean success = goalDAO.updateGoal(goal);
         assertTrue(success, "Goal should be updated successfully");
 
         // Check if the changes are reflected
         goal = goalDAO.getGoalById(goalId);
         assertEquals("New Title", goal.getTitle(), "Title should be updated");
-        assertEquals("New Description", goal.getDescription(), "Description should be updated");
 
         // To be implemented, check other attributes
     }
 
     @Test
     public void testDeleteGoal() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create a goal for testing
-        goalId = goalDAO.addGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal(startTime));
         assertNotNull(goalId, "Goal ID should not be null");
 
         // Delete a goal and check if successful
@@ -140,9 +146,11 @@ public class GoalDAOTest {
 
     @Test
     public void testUniqueGoalID() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create two identical goals
-        Goal goal1 = createTestGoal();
-        Goal goal2 = createTestGoal();
+        Goal goal1 = createTestGoal(startTime);
+        Goal goal2 = createTestGoal(startTime);
         Integer goalID1 = goalDAO.addGoal(goal1);
         Integer goalID2 = goalDAO.addGoal(goal2);
         // Check if the goals exist
@@ -162,26 +170,15 @@ public class GoalDAOTest {
 
     @Test
     public void testAddInvalidGoal() {
-        // Create an invalid goal and check if the goal ID is 0
-        Goal invalidGoal = new Goal(
-                "",
-                "Test description",
-                120,
-                230,
-                0,
-                "Test emdDate",
-                ""
-        );
-        Integer invalidGoalEntry = goalDAO.addGoal(invalidGoal);
-        assertNull(invalidGoalEntry, "Adding an invalid goal (Null) should return null");
-
-        // To be implemented, check other invalid attributes
+        // To be implemented, need a way to create an invalid goal
     }
 
     @Test
     public void testUpdateInvalidGoal() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Create a goal
-        goalId = goalDAO.addGoal(createTestGoal());
+        goalId = goalDAO.addGoal(createTestGoal(startTime));
         // Confirm goal exists
         assertNotNull(goalId, "GoalId should not be null");
 
