@@ -145,7 +145,7 @@ public class RoutineOneController {
 
         System.out.println("Partial Block Start ");
         if (firstBlock != blockSize) {
-            int blockTarget = (int) Math.floor(goal.getGoalTargetAmount() * ((double) firstBlock / blockSize));
+            int blockTarget = (int) Math.floor(goal.getTargetAmount() * ((double) firstBlock / blockSize));
             System.out.println("Partial Block target: " + blockTarget);
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(firstBlock);
@@ -155,7 +155,7 @@ public class RoutineOneController {
         System.out.println("Partial Block Complete \n");
         System.out.println("Full Block Complete ");
         while (goal.getDaysOutstanding() > blockSize) {
-            int blockTarget = goal.getGoalTargetAmount();
+            int blockTarget = goal.getTargetAmount();
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(blockSize);
             commitEntries(entries, goalCalendar);

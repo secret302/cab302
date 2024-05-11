@@ -1,7 +1,5 @@
 package com.serenitask.util.DatabaseManager;
 
-import com.calendarfx.model.Interval;
-import com.serenitask.model.Event;
 import com.serenitask.model.Goal;
 
 import java.sql.Connection;
@@ -101,7 +99,7 @@ public class GoalDAO {
             PreparedStatement statement = connection.prepareStatement(query);
             // Insert values from event
             statement.setString(1, goal.getTitle());
-            statement.setInt(2, goal.getGoalTargetAmount());
+            statement.setInt(2, goal.getTargetAmount());
             statement.setInt(3, goal.getMinChunk());
             statement.setInt(4, goal.getMaxChunk());
             statement.setDate(5, java.sql.Date.valueOf(goal.getAllocatedUntil()));
@@ -145,7 +143,7 @@ public class GoalDAO {
             PreparedStatement statement = connection.prepareStatement(query);
             // Update row with values from goal
             statement.setString(1, goal.getTitle());
-            statement.setInt(2, goal.getGoalTargetAmount());
+            statement.setInt(2, goal.getTargetAmount());
             statement.setInt(3, goal.getMinChunk());
             statement.setInt(4, goal.getMaxChunk());
             statement.setDate(5, java.sql.Date.valueOf(goal.getAllocatedUntil()));

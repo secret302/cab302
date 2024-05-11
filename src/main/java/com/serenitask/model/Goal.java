@@ -9,7 +9,7 @@ public class Goal {
     // Private goal attributes
     private int id;
     private String title;
-    private int goalTargetAmount;
+    private int targetAmount;
     private int minChunk;
     private int maxChunk;
     private LocalDate allocatedUntil;
@@ -26,7 +26,7 @@ public class Goal {
      * Goal constructor for an empty goal
      * @constructor
      * @param title Title of the goal
-     * @param goalTargetAmount Target amount of the goal
+     * @param targetAmount Target amount of the goal
      * @param minChunk Minimum amount of time to allocate
      * @param maxChunk Maximum amount of time to allocate
      * @param allocatedUntil Date until the goal is allocated
@@ -34,7 +34,7 @@ public class Goal {
      */
     public Goal(
             String title,
-            int goalTargetAmount,
+            int targetAmount,
             int minChunk,
             int maxChunk,
             LocalDate allocatedUntil,
@@ -42,13 +42,13 @@ public class Goal {
     ) {
         // Validate values
         if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
-        if (goalTargetAmount < 0) throw new IllegalArgumentException("Goal target amount cannot be negative");
+        if (targetAmount < 0) throw new IllegalArgumentException("Goal target amount cannot be negative");
         if (minChunk < 15) throw new IllegalArgumentException("Minimum chunk cannot be below 15 minutes");
         if (maxChunk < 15) throw new IllegalArgumentException("Maximum chunk cannot be below 15 minutes");
         if (minChunk > maxChunk) throw new IllegalArgumentException("Minimum chunk cannot be greater than maximum chunk");
         // Set values
         this.title = title;
-        this.goalTargetAmount = goalTargetAmount;
+        this.targetAmount = targetAmount;
         this.minChunk = minChunk;
         this.maxChunk = maxChunk;
         this.allocatedUntil = allocatedUntil;
@@ -71,7 +71,7 @@ public class Goal {
         if (minChunk > maxChunk) throw new IllegalArgumentException("Minimum chunk cannot be greater than maximum chunk");
         // Set values
         this.title = title;
-        this.goalTargetAmount = 1;
+        this.targetAmount = 1;
         this.minChunk = minChunk;
         this.maxChunk = maxChunk;
         this.allocatedUntil = LocalDate.now(); // Requires further implementation (simple?)
@@ -116,17 +116,17 @@ public class Goal {
      * Retrieves the goal target amount
      * @return Goal target amount
      */
-    public int getGoalTargetAmount() {
-        return goalTargetAmount;
+    public int getTargetAmount() {
+        return targetAmount;
     }
 
     /**
      * Sets the goal target amount
-     * @param goalTargetAmount Goal target amount
+     * @param targetAmount Goal target amount
      */
-    public void setGoalTargetAmount(int goalTargetAmount) {
-        if (goalTargetAmount < 0) throw new IllegalArgumentException("Goal target amount cannot be negative");
-        this.goalTargetAmount = goalTargetAmount;
+    public void setTargetAmount(int targetAmount) {
+        if (targetAmount < 0) throw new IllegalArgumentException("Goal target amount cannot be negative");
+        this.targetAmount = targetAmount;
     }
 
     /**
