@@ -15,27 +15,24 @@ import java.util.*;
 
 public class EventLoader {
 
-    private List<String> defaultCalendars =  new ArrayList<>();
+    private List<String> defaultCalendars = new ArrayList<>();
 
-    public EventLoader()
-    {
+    public EventLoader() {
         defaultCalendars.add("Personal Events");
-        defaultCalendars.add("Study");
-        defaultCalendars.add("Work");
+        defaultCalendars.add("Goals");
+        defaultCalendars.add("Block");
     }
 
-    private Calendar setColor(Calendar calendar)
-    {
-        switch(calendar.getName())
-        {
+    private Calendar setColor(Calendar calendar) {
+        switch (calendar.getName()) {
             case "Personal Events":
-                calendar.setStyle(Style.STYLE5);
+                calendar.setStyle(Style.STYLE1);
                 return calendar;
-            case "Study":
-                calendar.setStyle(Style.STYLE6);
+            case "Goals":
+                calendar.setStyle(Style.STYLE2);
                 return calendar;
-            case "Work":
-                calendar.setStyle(Style.STYLE7);
+            case "Blocks":
+                calendar.setStyle(Style.STYLE3);
                 return calendar;
             default:
                 return calendar;
@@ -55,58 +52,51 @@ public class EventLoader {
         newEntry.setRecurrenceRule(event.getRecurrenceRules());
         return newEntry;
     }
-    
 
-    private CalendarSource createNew()
-    {
+
+    private CalendarSource createNew() {
         Calendar personal = new Calendar("Personal Events");
-        Calendar study = new Calendar("Study");
-        Calendar work = new Calendar("Work");
-        
+        Calendar goals = new Calendar("Goals");
+        Calendar blocks = new Calendar("Blocks");
+
         personal.setShortName("P");
-        study.setShortName("S");
-        work.setShortName("W");
+        goals.setShortName("G");
+        blocks.setShortName("B");
 
         EventListener setEventListener = new EventListener();
         setEventListener.setupListeners(personal);
-        setEventListener.setupListeners(study);
-        setEventListener.setupListeners(work);
+        setEventListener.setupListeners(goals);
+        setEventListener.setupListeners(blocks);
 
         // Colours can be specified to meet colour blind needs
-        personal.setStyle(Style.STYLE5);
-        study.setStyle(Style.STYLE7);
-        work.setStyle(Style.STYLE6);
+        personal.setStyle(Style.STYLE1);
+        goals.setStyle(Style.STYLE2);
+        blocks.setStyle(Style.STYLE3);
 
         CalendarSource mainCalendarSource = new CalendarSource("Main");
-        mainCalendarSource.getCalendars().addAll(personal, study, work);
+        mainCalendarSource.getCalendars().addAll(personal, goals, blocks);
 
         return mainCalendarSource;
     }
 
 
     public CalendarSource loadEventsFromDatabase() {
-        
+
         EventDAO eventDAO = new EventDAO();
         List<Event> unsortedEvents = eventDAO.getAllEvents();
 
-        if (unsortedEvents.size() == 0)
-        {
+        if (unsortedEvents.size() == 0) {
             return createNew();
-        }
-        else
-        {
+        } else {
 
             List<String> uniqueCalendars = new ArrayList<>();
 
-            for (String name : defaultCalendars)
-            {
+            for (String name : defaultCalendars) {
                 uniqueCalendars.add(name);
             }
 
-            for(Event event : unsortedEvents)
-            {
-                if (!uniqueCalendars.contains((event.getCalendar())))
-                {
+            for (Event event : unsortedEvents) {
+                if (!uniqueCalendars.contains((event.getCalendar()))) {
                     uniqueCalendars.add(event.getCalendar());
                 }
             }
@@ -114,8 +104,7 @@ public class EventLoader {
             List<Calendar> calendars = new ArrayList<>();
             EventListener eventListener = new EventListener();
 
-            for(String calendarName : uniqueCalendars)
-            {
+            for (String calendarName : uniqueCalendars) {
 
                 Calendar newCalendar = new Calendar<>(calendarName);
 
@@ -123,12 +112,9 @@ public class EventLoader {
                 calendars.add(newCalendar);
             }
 
-            for(Event event : unsortedEvents)
-            {
-                for(Calendar calendar : calendars)
-                {
-                    if (Objects.equals(event.getCalendar(), calendar.getName()))
-                    {
+            for (Event event : unsortedEvents) {
+                for (Calendar calendar : calendars) {
+                    if (Objects.equals(event.getCalendar(), calendar.getName())) {
                         Entry<?> entry = convertEventToEntry(event);
                         entry.setCalendar(calendar);
                         calendar.addEntry(entry);
@@ -137,14 +123,13 @@ public class EventLoader {
             }
 
             CalendarSource loadedCalendar = new CalendarSource();
-            for(Calendar calendar : calendars)
-            {
+            for (Calendar calendar : calendars) {
                 calendar = eventListener.setupListeners(calendar);
                 loadedCalendar.getCalendars().add(calendar);
             }
 
             return loadedCalendar;
-        
-    }
+
+        }
     }
 }
