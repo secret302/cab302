@@ -1,8 +1,11 @@
 package com.serenitask.util.DatabaseManager;
+import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +42,10 @@ public class EventDAO {
             // Create and execute insert statement
             Statement insertStatement = connection.createStatement();
             String insertQuery = "INSERT INTO events "
-                    + "(id, title, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
-                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Timestamp(System.currentTimeMillis()) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
+                    + "(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
+                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(1)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(2)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
+                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(3)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
             insertStatement.execute(insertQuery);
         } catch (Exception e) {
             // Print error if sample entries fail
@@ -50,6 +53,21 @@ public class EventDAO {
         }
     }
 
+    // Private (Maybe to be moved to a utility class)
+    /**
+     * Re-loads an interval saved as a string back to an Interval object
+     * @param intervalString - Interval saved as a string
+     * @return Interval object
+     */
+    private static Interval reloadInterval(String intervalString) {
+        String[] parts = intervalString.replace("Interval [", "").replace("]", "").split(", ");
+        LocalDate startDate = LocalDate.parse(parts[0].split("=")[1]);
+        LocalDate endDate = LocalDate.parse(parts[1].split("=")[1]);
+        LocalTime startTime = LocalTime.parse(parts[2].split("=")[1]);
+        LocalTime endTime = LocalTime.parse(parts[3].split("=")[1]);
+        ZoneId zoneId = ZoneId.of(parts[4].split("=")[1]);
+        return new Interval(startDate, startTime, endDate, endTime, zoneId);
+    }
 
     // Private
     /**
@@ -62,8 +80,7 @@ public class EventDAO {
                     + "id               TEXT        PRIMARY KEY,"
                     + "title            TEXT        NOT NULL,"
                     + "location         TEXT,       "
-                    + "startTime        TIMESTAMP,  "
-                    + "duration         INTEGER     NOT NULL,"
+                    + "interval         STRING,     "
                     + "fullDay          BOOLEAN     NOT NULL DEFAULT (false),"
                     + "staticPos        BOOLEAN     NOT NULL DEFAULT (false),"
                     + "calendar         TEXT        NOT NULL DEFAULT 'default',"
@@ -90,8 +107,7 @@ public class EventDAO {
                     + "id,"
                     + "title,"
                     + "location,"
-                    + "startTime,"
-                    + "duration,"
+                    + "interval,"
                     + "fullDay,"
                     + "staticPos,"
                     + "calendar,"
@@ -104,13 +120,12 @@ public class EventDAO {
             statement.setString(1, event.getId());
             statement.setString(2, event.getTitle());
             statement.setString(3, event.getLocation());
-            statement.setTimestamp(4, Timestamp.valueOf(event.getStartTime()));
-            statement.setInt(5, event.getDuration());
-            statement.setBoolean(6, event.getFullDay());
-            statement.setBoolean(7, event.getStaticPos());
-            statement.setString(8, event.getCalendar());
-            statement.setString(9, event.getRecurrenceRules());
-            statement.setDate(10, java.sql.Date.valueOf(event.getAllocatedUntil()));
+            statement.setString(4, event.getInterval().toString());
+            statement.setBoolean(5, event.getFullDay());
+            statement.setBoolean(6, event.getStaticPos());
+            statement.setString(7, event.getCalendar());
+            statement.setString(8, event.getRecurrenceRules());
+            statement.setDate(9, java.sql.Date.valueOf(event.getAllocatedUntil()));
             // Execute update
             statement.executeUpdate();
 
@@ -135,8 +150,7 @@ public class EventDAO {
             String query = "UPDATE events SET "
                     + "title              = ?,"
                     + "location           = ?,"
-                    + "startTime          = ?,"
-                    + "duration           = ?,"
+                    + "interval           = ?,"
                     + "fullDay            = ?,"
                     + "staticPos          = ?,"
                     + "calendar           = ?,"
@@ -148,8 +162,7 @@ public class EventDAO {
             // Update row with values from event
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getLocation());
-            statement.setTimestamp(3, Timestamp.valueOf(event.getStartTime()));
-            statement.setInt(4, event.getDuration());
+            statement.setString(3, event.getInterval().toString());
             statement.setBoolean(4, event.getFullDay());
             statement.setBoolean(5, event.getStaticPos());
             statement.setString(6, event.getCalendar());
@@ -217,8 +230,7 @@ public class EventDAO {
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String location = resultSet.getString("location");
-                LocalDateTime startTime = resultSet.getTimestamp("startTime").toLocalDateTime();
-                int duration = resultSet.getInt("duration");
+                Interval interval = reloadInterval(resultSet.getString("interval"));
                 Boolean fullDay = resultSet.getBoolean("fullDay");
                 Boolean staticPos = resultSet.getBoolean("staticPos");
                 String calendar = resultSet.getString("calendar");
@@ -226,7 +238,7 @@ public class EventDAO {
                 LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
 
                 // Return new event object
-                return new Event(id, title, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+                return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
             }
         } catch (Exception e) {
             // Print error if event retrieval fails
@@ -258,8 +270,7 @@ public class EventDAO {
                 String id = resultSet.getString("id");
                 String title = resultSet.getString("title");
                 String location = resultSet.getString("location");
-                LocalDateTime startTime = resultSet.getTimestamp("startTime").toLocalDateTime();
-                int duration = resultSet.getInt("duration");
+                Interval interval = reloadInterval(resultSet.getString("interval"));
                 Boolean fullDay = resultSet.getBoolean("fullDay");
                 Boolean staticPos = resultSet.getBoolean("staticPos");
                 String calendar = resultSet.getString("calendar");
@@ -267,7 +278,7 @@ public class EventDAO {
                 LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
 
                 // Create a new event object
-                Event event = new Event(id, title, location, startTime, duration, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+                Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
                 // Add event to list
                 events.add(event);
             }

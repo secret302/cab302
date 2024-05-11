@@ -1,4 +1,6 @@
 package com.serenitask.model;
+import com.calendarfx.model.Interval;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -11,8 +13,7 @@ public class Event {
     private String id; // Event ID
     private String title; // Title of the event
     private String location; // Location of the event
-    private LocalDateTime startTime; // Start time of the event
-    private int duration; // Duration of the event
+    private Interval interval; // Interval of the event (stores start and end date/time)
     private Boolean fullDay; // If the event is full day
     private Boolean staticPos; // If the event is static
     private String calendar; // Calendar the event belongs to
@@ -31,8 +32,7 @@ public class Event {
      * @param id - Event ID
      * @param title - Title of the event
      * @param location - Location of the event
-     * @param startTime - Start time of the event
-     * @param duration - Duration of the event
+     * @param interval - Interval of the event
      * @param fullDay - Boolean value to check if the event is full day
      * @param staticPos - Boolean value to check if the event is static
      * @param calendar - Calendar the event belongs to
@@ -43,8 +43,7 @@ public class Event {
             String id,
             String title,
             String location,
-            LocalDateTime startTime,
-            int duration,
+            Interval interval,
             Boolean fullDay,
             Boolean staticPos,
             String calendar,
@@ -53,14 +52,11 @@ public class Event {
     ) {
         // Validate values
         if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
-        if (startTime == null) throw new IllegalArgumentException("Start time cannot be null");
-        if (duration < 0) throw new IllegalArgumentException("Duration cannot be negative");
         // Set values
         this.id = id;
         this.title = title;
         this.location = location;
-        this.startTime = startTime;
-        this.duration = duration;
+        this.interval = interval;
         this.fullDay = fullDay;
         this.staticPos = staticPos;
         this.calendar = calendar;
@@ -121,39 +117,19 @@ public class Event {
     }
 
     /**
-     * Retrieves the start time of the event
-     * @return - Event start time
+     * Retrieves the event interval
+     * @return - Event interval
      */
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public Interval getInterval() {
+        return interval;
     }
 
     /**
-     * Sets the start time of the event
-     * @param startTime - Event start time
+     * Sets the event interval
+     * @param interval - Event interval
      */
-    public void setStartTime(LocalDateTime startTime) {
-        // Validate start time
-        if (startTime == null) throw new IllegalArgumentException("Start time cannot be null");
-        this.startTime = startTime;
-    }
-
-    /**
-     * Retrieves the duration of the event
-     * @return - Event duration
-     */
-    public int getDuration() {
-        return duration;
-    }
-
-    /**
-     * Sets the duration of the event
-     * @param duration - Event duration
-     */
-    public void setDuration(int duration) {
-        // Validate duration
-        if (duration < 0) throw new IllegalArgumentException("Duration cannot be negative");
-        this.duration = duration;
+    public void setInterval(Interval interval) {
+        this.interval = interval;
     }
 
     /**
