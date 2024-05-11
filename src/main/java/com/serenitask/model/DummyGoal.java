@@ -1,4 +1,5 @@
 package com.serenitask.model;
+
 import com.serenitask.model.Goal;
 
 import java.time.LocalDate;
@@ -11,24 +12,19 @@ public class DummyGoal extends Goal {
     private int daysOutstanding;
 
 
-
     public DummyGoal(String title, String description, int minChunk, int maxChunk, int periodicity, String endDate, String recurrenceRules) {
         super(title, description, minChunk, maxChunk, periodicity, endDate, recurrenceRules);
 
-        if(description == "null")
-        {
+        if (description == "null") {
             AllocatedUpTo = LocalDate.of(2024, Month.MAY, 6);
-        }
-        else
-        {
-            AllocatedUpTo = LocalDate.of(2024, Month.MAY, 19);
+        } else {
+            AllocatedUpTo = LocalDate.of(2024, Month.MAY, 6);
         }
 
         goalTargetAmount = 600;
     }
 
-    public void subtractDaysOutstanding(int days)
-    {
+    public void subtractDaysOutstanding(int days) {
         daysOutstanding -= days;
     }
 

@@ -1,17 +1,19 @@
 package com.serenitask.controller;
 
-
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.model.Interval;
 import com.serenitask.model.*;
 import com.serenitask.util.DatabaseManager.EventDAO;
 
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing Routine 1 of the Optimizer pipeline.
@@ -29,8 +31,7 @@ public class RoutineOneController {
 
     // dummy goals
     DummyGoal goalOne = new DummyGoal("Workout", "null", 30, 120, 0, "never", "weekly");
-    DummyGoal goalTwo = new DummyGoal("Study", "null", 30, 120, 0, "never", "weekly");
-    DummyGoal goalThree = new DummyGoal("Read", "null", 30, 60, 0, "never", "weekly");
+    DummyGoal goalThree = new DummyGoal("Read", "null", 15, 60, 0, "never", "weekly");
 
     /*
     This routine currently operates on dummy values;
@@ -43,19 +44,42 @@ public class RoutineOneController {
      * Simple execution function that executes routine 1 of the optimizer.
      * This routine handles the allocation of goals that require x time per repeating period y.
      */
-    public void runRoutine() {
+    public void runRoutine(CalendarSource mainSource) {
         EventDAO eventDAO = new EventDAO();
-        List<Event> eventList = eventDAO.getAllEvents();
+
 
         List<DummyGoal> goalList = getGoalList();
         List<DummyGoal> parsedList = parseGoalList(goalList);
 
+        Calendar goalCalendar = getGoalCalendar(mainSource.getCalendars());
+
         for (DummyGoal goal : parsedList) {
-            allocateGoal(goal, eventList);
+            List<Event> eventList = eventDAO.getAllEvents();
+            System.out.println("eventList size: " + eventList.size());
+            System.out.println("Starting goal " + goal.getTitle());
+            allocateGoal(goal, eventList, goalCalendar);
         }
+
     }
 
+    /**
+     * Takes in a list of calendars and returns the calendar with the name Goals
+     *
+     * @param calendars List of calendars in CalendarSource
+     * @return Calendar object representing Goals calendar
+     */
+    private Calendar getGoalCalendar(List<Calendar> calendars) {
+        for (Calendar calendar : calendars) {
+            if (Objects.equals(calendar.getName(), "Goals")) {
+                return calendar;
+            }
+        }
+        return null;
+    }
+
+
     // 1. Pull list of time base-based goals
+    // NOT IMPLEMENTED AS OF YET
 
     /**
      * Extracts all goals from the database and returns them as a list. Goals extracted are of the type:
@@ -66,7 +90,7 @@ public class RoutineOneController {
     private List<DummyGoal> getGoalList() {
         List<DummyGoal> goalList = new ArrayList<>();
         goalList.add(goalOne);
-        goalList.add(goalTwo);
+        goalList.add(goalThree);
 
         return goalList;
     }
@@ -85,6 +109,7 @@ public class RoutineOneController {
         LocalDate targetDate = getTargetDate();
         List<DummyGoal> parsedList = new ArrayList<>();
 
+
         // only add goals that need allocating, drop the rest
         for (DummyGoal goal : goalList) {
             // If difference between targetDate and allocated is positive
@@ -95,6 +120,7 @@ public class RoutineOneController {
                 goal.setDaysOutstanding(difference);
             }
         }
+        System.out.println("Goal List Parsed ");
         return parsedList;
     }
 
@@ -110,31 +136,39 @@ public class RoutineOneController {
      * @param goal      A goal object that requires calendar entry allocations
      * @param eventList A list containing all events draw from the database to be parsed.
      */
-    private void allocateGoal(DummyGoal goal, List<Event> eventList) {
+    private void allocateGoal(DummyGoal goal, List<Event> eventList, Calendar goalCalendar) {
+        System.out.println("\nStarting goal Allocation ");
 
         int firstBlock = getDifferenceSunday(goal.getAllocatedUpTo());
 
-        // TO DO !!!
-        // This works, but now the entries returned via allocateBlock must be attached to calendar.
-        // TO DO !!!!
+        List<Entry<?>> entries;
 
-        List<Entry<?>> entries = new ArrayList<>();
-
-
+        System.out.println("Partial Block Start ");
         if (firstBlock != blockSize) {
             int blockTarget = (int) Math.floor(goal.getGoalTargetAmount() * ((double) firstBlock / blockSize));
+            System.out.println("Partial Block target: " + blockTarget);
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(firstBlock);
-            // Commit entries here
+            System.out.println("Partial Entries: " + entries.size());
+            commitEntries(entries, goalCalendar);
         }
-
+        System.out.println("Partial Block Complete \n");
+        System.out.println("Full Block Complete ");
         while (goal.getDaysOutstanding() > blockSize) {
             int blockTarget = goal.getGoalTargetAmount();
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(blockSize);
-            // Commit entries here
+            commitEntries(entries, goalCalendar);
+            System.out.println("Full Entries: " + entries.size());
+            System.out.println("Full Block Lap Complete ");
         }
 
+    }
+
+    private void commitEntries(List<Entry<?>> entries, Calendar goalCalendar) {
+        for (Entry<?> entry : entries) {
+            goalCalendar.addEntry(entry);
+        }
     }
 
 
@@ -149,43 +183,74 @@ public class RoutineOneController {
      * @return returns a list of entries to be added to calendar
      */
     private List<Entry<?>> allocateBlock(int blockTarget, DummyGoal goal, List<Event> eventList) {
+        System.out.println("\nAllocate Block Start");
         int buffer = 5;
         LocalDate allocationStart = goal.getAllocatedUpTo().plusDays(1);
         LocalDate allocationEnd = getNextSunday(allocationStart);
+
+        System.out.println("Allocate Block date range: " + allocationStart + " to " + allocationEnd);
+
         List<List<Event>> rawDaysLists = splitDays(allocationStart, allocationEnd, eventList);
+
+        System.out.println("Raw Day List loaded");
+
         List<Day> prioritizedDays = getDaysList(rawDaysLists);
+
+        System.out.println("Days Validation Start\n");
+        for (Day day : prioritizedDays) {
+            day.validate();
+        }
+        System.out.println("Days Validation Start\n");
+
+        System.out.println("Days Prioritized\n");
+
         List<Entry<?>> entriesToAdd = new ArrayList<>();
 
         while (blockTarget > buffer) {
+            boolean hasWindows = false;
             for (Day day : prioritizedDays) {
+                System.out.println("BlockTarget Loop Start: Setup");
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
                 int windowMins = (int) (duration.getSeconds() / 60);
 
-                if (windowMins > goal.getMinChunk()) {
-                    if (windowMins > goal.getMaxChunk()) {
-                        int middlePoint = (int) (duration.getSeconds() / 2);
-                        LocalTime middleTime = window.getWindowOpen().plusSeconds(middlePoint);
-                        LocalTime startTime = middleTime.minusMinutes(60);
-                        LocalTime endTime = middleTime.plusMinutes(60);
+                if (windowMins > 0) {
+                    hasWindows = true;
+                }
+                System.out.println("BlockTarget Loop: Setup complete");
 
-                        Entry<?> newEntry = new Entry<>(goal.getTitle());
-                        newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
-                        newEntry.setFullDay(false);
-                        entriesToAdd.add(newEntry);
-                        blockTarget -= goal.getMaxChunk();
-                    } else {
-                        Entry<?> newEntry = new Entry<>(goal.getTitle());
-                        newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
-                        newEntry.setFullDay(false);
-                        entriesToAdd.add(newEntry);
-                        blockTarget -= windowMins;
+                if (hasWindows) {
+                    if (windowMins > goal.getMinChunk()) {
+                        if (windowMins > goal.getMaxChunk()) {
+                            int middlePoint = (int) (duration.getSeconds() / 2);
+                            LocalTime startTime = window.getWindowOpen();
+                            LocalTime endTime = window.getWindowOpen().plusMinutes(120);
+                            day.addWindow(endTime, window.getWindowClose());
+                            Entry<?> newEntry = new Entry<>(goal.getTitle());
+                            newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                            newEntry.setFullDay(false);
+                            entriesToAdd.add(newEntry);
+                            blockTarget -= goal.getMaxChunk();
+                        } else {
+                            Entry<?> newEntry = new Entry<>(goal.getTitle());
+                            newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
+                            newEntry.setFullDay(false);
+                            entriesToAdd.add(newEntry);
+                            blockTarget -= windowMins;
+                        }
+                    }
+                    if (blockTarget <= buffer) {
+                        break;
                     }
                 }
-                if (blockTarget <= buffer) {
-                    break;
-                }
             }
+
+            if (!hasWindows) {
+                System.out.println("out of windows");
+                break;
+            }
+
+
         }
 
         return entriesToAdd;
@@ -201,6 +266,7 @@ public class RoutineOneController {
      * @return List of Day objects
      */
     private List<Day> getDaysList(List<List<Event>> rawDaysLists) {
+        System.out.println("Days List Start");
         List<Day> daysList = new ArrayList<>();
         for (List<Event> list : rawDaysLists) {
             Day newDay = new Day();
@@ -208,14 +274,20 @@ public class RoutineOneController {
 
             LocalTime windowStart = DayStart;
 
+
             for (Event event : sortedList) {
 
+
                 if (windowStart.isBefore(DayEnd)) {
-                    if (windowStart.compareTo(event.getStartTime().toLocalTime()) > 0) {
+
+                    if (windowStart.compareTo(event.getStartTime().toLocalTime()) < 0) {
                         newDay.addWindow(windowStart, event.getStartTime().toLocalTime());
+                        windowStart = event.getStartTime().plusSeconds(event.getDuration()).toLocalTime();
                     } else {
                         windowStart = event.getStartTime().toLocalTime().plusSeconds(event.getDuration());
                     }
+                } else {
+                    windowStart = DayEnd;
                 }
                 if (!newDay.isDateSet()) {
                     newDay.setStartDate(event.getStartDate());
@@ -223,8 +295,14 @@ public class RoutineOneController {
                     newDay.setDateSet(true);
                 }
             }
+
+            if (windowStart.compareTo(DayEnd) < 0) {
+                newDay.addWindow(windowStart, DayEnd);
+            }
+
             daysList.add(newDay);
         }
+        System.out.println("Days List End");
         return prioritizeDays(daysList);
     }
 
@@ -238,19 +316,27 @@ public class RoutineOneController {
      */
     private List<Day> prioritizeDays(List<Day> rawDays) {
 
+        System.out.println("prioritizeDays Start");
         // sorting by free time;
         List<Day> sorted = new ArrayList<>();
         int highestPrio = rawDays.size();
 
+
+        System.out.println("count of days: " + rawDays.size());
+
         while (!rawDays.isEmpty()) {
             int freeMinutes = 0;
+            int index = 0;
+            int indexRemove = 0;
             Day newDay = new Day();
 
             for (Day day : rawDays) {
 
                 if (day.getFreeTime() > freeMinutes) {
                     newDay = day;
+                    indexRemove = index;
                 }
+                index++;
             }
 
             // set the priority for that day
@@ -259,7 +345,8 @@ public class RoutineOneController {
 
             // add to sorted and remove from unsortedlist
             sorted.add(newDay);
-            rawDays.remove(newDay);
+            rawDays.remove(indexRemove);
+
         }
         return sorted;
     }
@@ -271,21 +358,31 @@ public class RoutineOneController {
      * @return Chronologically sorted list of events
      */
     private List<Event> getSortedList(List<Event> unsortedlist) {
+        System.out.println("getSortedList Start");
         List<Event> sorted = new ArrayList<>();
 
+
         while (!unsortedlist.isEmpty()) {
+            int index = 0;
+            int indexRemove = 0;
             LocalTime minTime = LocalTime.of(23, 59);
             Event earliestEvent = new Event();
 
             for (Event event : unsortedlist) {
-                if (event.getStartTime().toLocalTime().compareTo(minTime) >= 0) {
+
+                if (event.getStartTime().toLocalTime().compareTo(minTime) < 0) {
+                    minTime = event.getStartTime().toLocalTime();
                     earliestEvent = event;
+                    indexRemove = index;
                 }
+                index++;
             }
             // add to sorted and remove from unsortedlist
             sorted.add(earliestEvent);
-            unsortedlist.remove(earliestEvent);
+            unsortedlist.remove(indexRemove);
         }
+        System.out.println("getSortedList End");
+
         return sorted;
     }
 
@@ -299,17 +396,22 @@ public class RoutineOneController {
      * @return List of Lists. Splits all events into lists of lists
      */
     private List<List<Event>> splitDays(LocalDate start, LocalDate end, List<Event> eventList) {
+        System.out.println("Split Days Start");
+
         List<List<Event>> dayLists = new ArrayList<>();
+
+
         while (end.compareTo(start) > 0) {
             List<Event> dayList = new ArrayList<>();
             for (Event event : eventList) {
                 // What if a day
-                if (event.getStartDate() == start || event.getEndDate() == start) {
+                if (event.getStartDate().isEqual(start) || event.getEndDate().isEqual(start)) {
                     dayList.add(event);
                 }
             }
-            start.plusDays(1);
+            start = start.plusDays(1);
             dayLists.add(dayList);
+
         }
 
         return dayLists;

@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.serenitask.model.TimeWindow;
 
+import static java.time.temporal.ChronoUnit.MINUTES;
+
 public class Day {
 
 
@@ -21,6 +23,7 @@ public class Day {
 
     private LocalDate startDate;
     private LocalDate endDate;
+    private TimeWindow biggestWindow;
 
 
     List<TimeWindow> timeWindows;
@@ -34,6 +37,16 @@ public class Day {
     public void addWindow(LocalTime open, LocalTime close) {
         TimeWindow newWindow = new TimeWindow(open, close);
         timeWindows.add(newWindow);
+        freeTime = calculateFreeTime();
+        System.out.println("new Freetime: " + freeTime);
+    }
+
+    private int calculateFreeTime() {
+        int sum = 0;
+        for (TimeWindow window : timeWindows) {
+            sum += MINUTES.between(window.getWindowOpen(), window.getWindowClose());
+        }
+        return sum;
     }
 
     public int getPriority() {
@@ -61,7 +74,8 @@ public class Day {
     }
 
     public TimeWindow getBiggestWindow() {
-        return findBiggestWindow();
+        biggestWindow = findBiggestWindow();
+        return biggestWindow;
     }
 
     public LocalDate getStartDate() {
@@ -81,18 +95,48 @@ public class Day {
     }
 
     private TimeWindow findBiggestWindow() {
+        System.out.println("Windows in day: " + timeWindows.size());
         int maxDiff = 0;
         TimeWindow maxWindow = null;
+        int index = 0;
+        int indexer = 0;
+
         for (TimeWindow window : timeWindows) {
             Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
+            System.out.println("window Duration: " + duration.getSeconds());
             int diff = (int) duration.getSeconds();
             if (diff > maxDiff) {
+                index = indexer;
                 maxDiff = diff;
                 maxWindow = window;
             }
+            indexer++;
+
+        }
+        if (!timeWindows.isEmpty()) {
+            timeWindows.remove(index);
+            return maxWindow;
+        } else {
+            return new TimeWindow(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0));
         }
 
-        return maxWindow;
     }
 
+
+    public void validate() {
+        System.out.println("Priority: " + priority);
+        System.out.println("Freetime: " + freeTime);
+        System.out.println("Date Start: " + startDate);
+        System.out.println("Date End: " + endDate);
+        System.out.println("Date Set: " + dateSet);
+
+        System.out.println("Biggest Window: " + biggestWindow);
+        System.out.println("Windows: ");
+        int index = 1;
+        for (TimeWindow window : timeWindows) {
+            System.out.println("Window " + index + " - start: " + window.getWindowOpen() + " - to close: " + window.getWindowClose());
+        }
+
+
+    }
 }
