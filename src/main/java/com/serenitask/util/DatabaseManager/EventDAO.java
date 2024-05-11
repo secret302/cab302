@@ -113,7 +113,7 @@ public class EventDAO {
                     + "calendar,"
                     + "recurrenceRules,"
                     + "allocatedUntil)"
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
             // Insert values from event
@@ -196,11 +196,10 @@ public class EventDAO {
             // Delete row id
             statement.setString(1, id);
             // Execute update
-            statement.executeUpdate();
+            int rowsDeleted = statement.executeUpdate();
 
-            // If success
-            return true;
-
+            // Return if goal was deleted
+            return rowsDeleted > 0;
         } catch (Exception e) {
             // Print error if event deletion fails
             e.printStackTrace();

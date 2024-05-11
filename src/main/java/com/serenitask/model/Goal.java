@@ -109,6 +109,7 @@ public class Goal {
      * @param title Goal title
      */
     public void setTitle(String title) {
+        if (title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty");
         this.title = title;
     }
 

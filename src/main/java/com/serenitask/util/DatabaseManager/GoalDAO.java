@@ -109,9 +109,10 @@ public class GoalDAO {
 
             // Retrieve the ID of the new goal
             ResultSet generatedKeys = statement.getGeneratedKeys();
-            // If the ID exists, return it
+            // If the ID exists,
             if (generatedKeys.next()) {
-                return generatedKeys.getInt(1);
+                goal.setId(generatedKeys.getInt(1));
+                return goal.getId();
             }
         } catch (Exception e) {
             // Print error if goal creation fails
@@ -176,11 +177,10 @@ public class GoalDAO {
             // Delete row id
             statement.setInt(1, id);
             // Execute update
-            statement.executeUpdate();
+            int rowsDeleted = statement.executeUpdate();
 
-            // If success
-            return true;
-
+            // Return if goal was deleted
+            return rowsDeleted > 0;
         } catch (Exception e) {
             // Print error if delete fails
             e.printStackTrace();
@@ -208,6 +208,7 @@ public class GoalDAO {
 
             // If found, return goal
             if (resultSet.next()) {
+                int goalId = resultSet.getInt("id");
                 String title = resultSet.getString("title");
                 int goalTargetAmount = resultSet.getInt("goalTargetAmount");
                 int minChunk = resultSet.getInt("min_chunk");
@@ -215,8 +216,12 @@ public class GoalDAO {
                 LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
                 int daysOutstanding = resultSet.getInt("daysOutstanding");
 
-                // Return new Goal object
-                return new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
+                // Create new Goal object
+                Goal goal = new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
+                goal.setId(goalId);
+
+                // Return goal
+                return goal;
             }
         } catch (Exception e) {
             // Print error if goal not found
