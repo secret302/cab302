@@ -280,18 +280,18 @@ public class RoutineOneController {
 
                 if (windowStart.isBefore(DayEnd)) {
 
-                    if (windowStart.compareTo(event.getStartTime().toLocalTime()) < 0) {
-                        newDay.addWindow(windowStart, event.getStartTime().toLocalTime());
-                        windowStart = event.getStartTime().plusSeconds(event.getDuration()).toLocalTime();
+                    if (windowStart.compareTo(event.getInterval().getStartTime()) < 0) {
+                        newDay.addWindow(windowStart, event.getInterval().getStartTime());
+                        windowStart = event.getInterval().getEndTime();
                     } else {
-                        windowStart = event.getStartTime().toLocalTime().plusSeconds(event.getDuration());
+                        windowStart = event.getInterval().getEndTime();
                     }
                 } else {
                     windowStart = DayEnd;
                 }
                 if (!newDay.isDateSet()) {
-                    newDay.setStartDate(event.getStartDate());
-                    newDay.setEndDate(event.getEndDate());
+                    newDay.setStartDate(event.getInterval().getStartDate());
+                    newDay.setEndDate(event.getInterval().getEndDate());
                     newDay.setDateSet(true);
                 }
             }
@@ -370,8 +370,8 @@ public class RoutineOneController {
 
             for (Event event : unsortedlist) {
 
-                if (event.getStartTime().toLocalTime().compareTo(minTime) < 0) {
-                    minTime = event.getStartTime().toLocalTime();
+                if (event.getInterval().getStartTime().compareTo(minTime) < 0) {
+                    minTime = event.getInterval().getStartTime();
                     earliestEvent = event;
                     indexRemove = index;
                 }
@@ -405,7 +405,7 @@ public class RoutineOneController {
             List<Event> dayList = new ArrayList<>();
             for (Event event : eventList) {
                 // What if a day
-                if (event.getStartDate().isEqual(start) || event.getEndDate().isEqual(start)) {
+                if (event.getInterval().getStartDate().isEqual(start) || event.getInterval().getEndDate().isEqual(start)) {
                     dayList.add(event);
                 }
             }
