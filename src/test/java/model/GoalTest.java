@@ -5,60 +5,61 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.serenitask.model.Goal;
 
+import java.time.LocalDateTime;
+
 public class GoalTest {
-    public Goal createTestGoal() {
+    public Goal createTestGoal(LocalDateTime startTime) {
         // Create entry for the goal and return it
         return new Goal(
                 "Test Goal",
-                "Test description",
-                120,
-                230,
-                0,
-                "Test endDate", // Still saved as String - to be updated
-                ""
+                1,
+                15,
+                60,
+                startTime.toLocalDate(),
+                0
         );
         // Goals will be cleaned up by the garbage collector
     }
 
     @Test
     public void testGoalConstructor() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Test the constructor of the Goal class
-        Goal goal = createTestGoal();
+        Goal goal = createTestGoal(startTime);
         assertNotNull(goal, "Goal should not be null");
         assertEquals("Test Goal", goal.getTitle(), "Goal title should match");
-        assertEquals("Test description", goal.getDescription(), "Goal description should match");
-        assertEquals(120, goal.getMinChunk(), "Goal min chunk should match");
-        assertEquals(230, goal.getMaxChunk(), "Goal max chunk should match");
-        assertEquals(0, goal.getPeriodicity(), "Goal periodicity should match");
-        assertEquals("Test endDate", goal.getEndDate(), "Goal end date should match");
-        assertEquals("", goal.getRecurrenceRules(), "Goal recurrence rules should match");
+        assertEquals(1, goal.getTargetAmount());
+        assertEquals(15, goal.getMinChunk());
+        assertEquals(60, goal.getMaxChunk());
+        assertEquals(startTime.toLocalDate(), goal.getAllocatedUntil(), "Goal allocated until should match");
+        assertEquals(0, goal.getDaysOutstanding());
     }
 
     @Test
     public void testGoalSetters() {
+        // Set LocalDateTime
+        LocalDateTime startTime = LocalDateTime.now();
         // Test the setters of the Goal class
-        Goal goal = createTestGoal();
+        Goal goal = createTestGoal(startTime);
         goal.setTitle("New Title");
-        goal.setDescription("New Description");
-        goal.setMinChunk(100);
-        goal.setMaxChunk(200);
-        goal.setPeriodicity(1);
-        goal.setEndDate("New endDate");
-        goal.setRecurrenceRules("New Recurrence Rules");
+        goal.setTargetAmount(2);
+        goal.setMinChunk(30);
+        goal.setMaxChunk(90);
+        goal.setAllocatedUntil(startTime.toLocalDate().plusDays(1));
+        goal.setDaysOutstanding(1);
 
         // Verify the changes
         assertEquals("New Title", goal.getTitle(), "Goal title should match");
-        assertEquals("New Description", goal.getDescription(), "Goal description should match");
-        assertEquals(100, goal.getMinChunk(), "Goal min chunk should match");
-        assertEquals(200, goal.getMaxChunk(), "Goal max chunk should match");
-        assertEquals(1, goal.getPeriodicity(), "Goal periodicity should match");
-        assertEquals("New endDate", goal.getEndDate(), "Goal end date should match");
-        assertEquals("New Recurrence Rules", goal.getRecurrenceRules(), "Goal recurrence rules should match");
+        assertEquals(2, goal.getTargetAmount());
+        assertEquals(30, goal.getMinChunk());
+        assertEquals(90, goal.getMaxChunk());
+        assertEquals(startTime.toLocalDate().plusDays(1), goal.getAllocatedUntil(), "Goal allocated until should match");
+        assertEquals(1, goal.getDaysOutstanding());
     }
 
     @Test
     public void testInvalidGoalConstructor() {
-        // Test recurrence_rules and periodicity
         // To be implemented
     }
 }
