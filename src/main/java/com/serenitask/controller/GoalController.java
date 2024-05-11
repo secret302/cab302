@@ -24,7 +24,7 @@ public class GoalController {
 
     public void controlSimpleGoal(String title) {
 
-        Goal goal = new Goal(title);
+        Goal goal = new Goal(title, 15, 60);
         GoalDAO goalDAO = new GoalDAO();
         goalDAO.addGoal(goal);
     }
