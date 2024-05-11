@@ -71,11 +71,11 @@ public class EventDAO {
 
     // Private
     /**
-     * Create SQLite table if it doesn't exist
+     * Create Events SQLite table if it doesn't exist
      */
     private void createTable() {
         try {
-            // All table requirements / Create Query
+            // Table Create Query
             String query = "CREATE TABLE IF NOT EXISTS events ("
                     + "id               TEXT        PRIMARY KEY,"
                     + "title            TEXT        NOT NULL,"
@@ -98,7 +98,7 @@ public class EventDAO {
     /**
      * Add event to the database
      * @param event - Event to add
-     * @return - Event ID
+     * @return - Event ID, null if failed
      */
     public String addEvent(Event event) {
         try {
@@ -135,14 +135,14 @@ public class EventDAO {
             // Print error if event creation fails
             e.printStackTrace();
         }
-        // return -1 if event wasn't created
+        // return null if event wasn't created
         return null;
     }
 
     /**
      * Update event in the database
      * @param event - Event to update
-     * @return - Success boolean
+     * @return - True if successful, false otherwise
      */
     public boolean updateEvent(Event event) {
         try {
@@ -178,14 +178,14 @@ public class EventDAO {
             // Print error if event update fails
             e.printStackTrace();
         }
-        // return false if event wasn't updated
+        // return false if update fails
         return false;
     }
 
     /**
      * Delete event from the database
      * @param id - Event ID
-     * @return - Success boolean
+     * @return - True if successful, false otherwise
      */
     public boolean deleteEvent(String id) {
         try {
@@ -205,7 +205,7 @@ public class EventDAO {
             // Print error if event deletion fails
             e.printStackTrace();
         }
-        // return false if event wasn't deleted
+        // return false if delete fails
         return false;
     }
 
@@ -213,7 +213,7 @@ public class EventDAO {
     /**
      * Retrieve event from the database by ID
      * @param id - Event ID
-     * @return - Event
+     * @return - Event object, null if not found
      */
     public Event getEventById(String id) {
         try {
@@ -226,7 +226,7 @@ public class EventDAO {
             // Execute Query
             ResultSet resultSet = statement.executeQuery();
 
-            // If Found, collect results
+            // If found, return event
             if (resultSet.next()) {
                 String title = resultSet.getString("title");
                 String location = resultSet.getString("location");
@@ -244,7 +244,7 @@ public class EventDAO {
             // Print error if event retrieval fails
             e.printStackTrace();
         }
-        // return null if failed to retrieve event
+        // return null if event not found
         return null;
     }
 
