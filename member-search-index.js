@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"com.serenitask.app","c":"CalendarApp","l":"CalendarApp()","u":"%3Cinit%3E()"},{"p":"com.serenitask.app","c":"CalendarApp","l":"main(String[])","u":"main(java.lang.String[])"},{"p":"com.serenitask.app","c":"CalendarApp","l":"start(Stage)","u":"start(javafx.stage.Stage)"}];updateSearchResults();
