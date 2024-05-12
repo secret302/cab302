@@ -62,10 +62,19 @@ import fr.brouillard.oss.cssfx.CSSFX;
          Text weeklyText = new Text("Weekly");
          StackPane switchViewButton = new StackPane();
          Rectangle switchViewBox = new Rectangle(120, 50);
+
+         Text optimiseText = new Text("Optimise");
+         StackPane optimiseButton = new StackPane();
+         Rectangle optimiseViewBox = new Rectangle(120, 50);
+
+         Text addGoalText = new Text("Add Goal");
+         StackPane addGoalButton = new StackPane();
+         Rectangle addGoalViewBox = new Rectangle(120, 50);
+
          AtomicBoolean isWeeklyView = new AtomicBoolean(false);
          HBox dateTodayPanel = new HBox();
          Region spacer = new Region();
-         CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer);
+         CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox);
          
 
          VBox leftPanel = new VBox();

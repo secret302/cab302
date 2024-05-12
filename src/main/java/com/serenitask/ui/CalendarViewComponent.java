@@ -21,8 +21,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class CalendarViewComponent {
-    public static void calendarView(Text dailyText, Text weeklyText, Text dateToday, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, HBox dateTodayPanel, Region spacer)
+    public static void calendarView(Text dailyText, Text weeklyText, Text dateToday, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, HBox dateTodayPanel, Region spacer, 
+    StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox)
     {
+        switchViewBox.setWidth(170.0);
         switchViewBox.setFill(Color.GREY);
          switchViewBox.setArcWidth(10);
          switchViewBox.setArcHeight(10);
@@ -31,11 +33,30 @@ public class CalendarViewComponent {
          dailyText.setFill(Color.WHITE);
          weeklyText.setFill(Color.WHITE);
          dateToday.setFont(Font.font(40));
+
+         optimiseViewBox.setWidth(170.0);
+         optimiseViewBox.setFill(Color.GREY);
+         optimiseViewBox.setArcWidth(10);
+         optimiseViewBox.setArcHeight(10);
+         optimiseText.setFont(Font.font(30));
+         optimiseText.setFill(Color.WHITE);
+
+         addGoalViewBox.setWidth(170.0);
+         addGoalViewBox.setFill(Color.GREY);
+         addGoalViewBox.setArcWidth(10);
+         addGoalViewBox.setArcHeight(10);
+         addGoalText.setFont(Font.font(30));
+         addGoalText.setFill(Color.WHITE);
+         addGoalButton.setPadding(new Insets(0,20,0,20));
+
          switchViewButton.getChildren().addAll(switchViewBox, isWeeklyView.get() ? weeklyText : dailyText);
-         dateTodayPanel.getChildren().addAll(dateToday, spacer, switchViewButton);
+         optimiseButton.getChildren().addAll(optimiseViewBox, optimiseText);
+         addGoalButton.getChildren().addAll(addGoalViewBox, addGoalText);
+
+         dateTodayPanel.getChildren().addAll(dateToday, spacer, optimiseButton, addGoalButton , switchViewButton);
          HBox.setHgrow(dateToday, Priority.ALWAYS);
          StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
-         spacer.setMinWidth(1000);
+         spacer.setMinWidth(700);
          StackPane.setAlignment(switchViewButton, Pos.CENTER_RIGHT);
     }
 
