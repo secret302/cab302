@@ -6,4 +6,8 @@ module com.calendarfx.app {
     requires java.sql;
 
     exports com.serenitask.app;
+    exports com.serenitask.controller;
+    exports com.serenitask.model;
+    exports com.serenitask.ui;
+    exports com.serenitask.util.DatabaseManager;
 }
