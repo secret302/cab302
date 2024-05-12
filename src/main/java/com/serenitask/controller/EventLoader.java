@@ -57,24 +57,24 @@ public class EventLoader {
     private CalendarSource createNew() {
         Calendar personal = new Calendar("Personal Events");
         Calendar goals = new Calendar("Goals");
-        Calendar blocks = new Calendar("Blocks");
+        Calendar health = new Calendar("Health");
 
         personal.setShortName("P");
         goals.setShortName("G");
-        blocks.setShortName("B");
+        health.setShortName("H");
 
         EventListener setEventListener = new EventListener();
         setEventListener.setupListeners(personal);
         setEventListener.setupListeners(goals);
-        setEventListener.setupListeners(blocks);
+        setEventListener.setupListeners(health);
 
         // Colours can be specified to meet colour blind needs
         personal.setStyle(Style.STYLE1);
         goals.setStyle(Style.STYLE2);
-        blocks.setStyle(Style.STYLE3);
+        health.setStyle(Style.STYLE3);
 
         CalendarSource mainCalendarSource = new CalendarSource("Main");
-        mainCalendarSource.getCalendars().addAll(personal, goals, blocks);
+        mainCalendarSource.getCalendars().addAll(personal, goals, health);
 
         return mainCalendarSource;
     }
