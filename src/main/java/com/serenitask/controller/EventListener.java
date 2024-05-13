@@ -47,29 +47,33 @@ public class EventListener {
      */
     private Calendar setUpEventListeners() {
         EventHandler<CalendarEvent> addHandler = new EventHandler<CalendarEvent>() {
-
             public void handle(CalendarEvent incomingEvent) {
-                if (incomingEvent.isEntryAdded()) {
-                    Entry<?> newEntry = incomingEvent.getEntry();
-                    // Convert CalendarFX Entry to your Event model and save to database
-                    Event event = convertToEventModel(newEntry);
-                    System.out.println("New Event: " + event.getId());
+                try {
+                    if (incomingEvent.isEntryAdded()) {
+                        Entry<?> newEntry = incomingEvent.getEntry();
+                        // Convert CalendarFX Entry to your Event model and save to database
+                        Event event = convertToEventModel(newEntry);
+                        System.out.println("New Event: " + event.getId());
 
-                    eventDao.addEvent(event);
-                } else if (incomingEvent.isEntryRemoved()) {
-                    Entry<?> newEntry = incomingEvent.getEntry();
-                    // Convert CalendarFX Entry to your Event model and save to database
-                    System.out.println("Removed Event: " + newEntry.getId());
+                        eventDao.addEvent(event);
+                    } else if (incomingEvent.isEntryRemoved()) {
+                        Entry<?> newEntry = incomingEvent.getEntry();
+                        // Convert CalendarFX Entry to your Event model and save to database
+                        System.out.println("Removed Event: " + newEntry.getId());
 
-                    eventDao.deleteEvent(newEntry.getId());
-                } else {
-                    Entry<?> newEntry = incomingEvent.getEntry();
-                    // Convert CalendarFX Entry to your Event model and save to database
-                    Event event = convertToEventModel(newEntry);
-                    System.out.println("Updating Event: " + event.getId());
+                        eventDao.deleteEvent(newEntry.getId());
+                    } else {
+                        Entry<?> newEntry = incomingEvent.getEntry();
+                        // Convert CalendarFX Entry to your Event model and save to database
+                        Event event = convertToEventModel(newEntry);
+                        System.out.println("Updating Event: " + event.getId());
 
-                    eventDao.updateEvent(event);
+                        eventDao.updateEvent(event);
 
+                    }
+                } catch(Exception e) {
+                    System.err.println("An Error has Occured:" + e.getMessage());
+                    e.printStackTrace();
                 }
             }
         };
