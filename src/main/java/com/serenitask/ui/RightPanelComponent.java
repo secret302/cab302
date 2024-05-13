@@ -24,7 +24,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class RightPanelComponent {
-    public static void actionsComponent(VBox rightPanelObjects, Text dailyText, Text weeklyText, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, VBox actionsPanel, StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox){
+    public static void actionsComponent(VBox rightPanelObjects, Text dailyText, Text weeklyText, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, VBox actionsPanel, StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox
+    , StackPane addEventButton, Text addEventText, Rectangle addEventViewBox){
         switchViewBox.setWidth(170.0);
         switchViewBox.setFill(Color.GREY);
          switchViewBox.setArcWidth(10);
@@ -50,19 +51,25 @@ public class RightPanelComponent {
          addGoalText.setFill(Color.WHITE);
          addGoalButton.setPadding(new Insets(0,20,0,20));
 
+         addEventViewBox.setWidth(170.0);
+         addEventViewBox.setFill(Color.GREY);
+         addEventViewBox.setArcWidth(10);
+         addEventViewBox.setArcHeight(10);
+         addEventText.setFont(Font.font(30));
+         addEventText.setFill(Color.WHITE);
+         addEventButton.setPadding(new Insets(0,20,0,20));
+
          switchViewButton.getChildren().addAll(switchViewBox, isWeeklyView.get() ? weeklyText : dailyText);
          optimiseButton.getChildren().addAll(optimiseViewBox, optimiseText);
          addGoalButton.getChildren().addAll(addGoalViewBox, addGoalText);
+         addEventButton.getChildren().addAll(addEventViewBox, addEventText);
 
-         rightPanelObjects.getChildren().addAll(switchViewButton, optimiseButton, addGoalButton);
+         rightPanelObjects.getChildren().addAll(switchViewButton, optimiseButton, addGoalButton, addEventButton);
     }
 
     public static void switchRightPanel(VBox rightPanelObjects,AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals){
         isActionsView.set(!isActionsView.get());
-             //switchViewButton.getChildren().remove(isActionsView.get() ? dailyText : weeklyText);
-             //switchViewButton.getChildren().add(isActionsView.get() ? weeklyText : dailyText);
-             
-             
+        
              if (isActionsView.get()) {
                  rightPanel.getChildren().remove(agenda);
                  rightPanel.getChildren().remove(dailyGoals);
@@ -73,5 +80,20 @@ public class RightPanelComponent {
                  rightPanel.getChildren().add(2, agenda);
                  rightPanel.getChildren().add(3, dailyGoals);
                 }
+    }
+
+    public static void addGoalClick() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addGoalClick'");
+    }
+
+    public static void addOptimiseClick() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
+    }
+
+    public static void addEventClick() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addEventClick'");
     }
 }

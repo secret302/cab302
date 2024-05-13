@@ -67,10 +67,23 @@ import javafx.scene.Scene;
          Text optimiseText = new Text("Optimise");
          StackPane optimiseButton = new StackPane();
          Rectangle optimiseViewBox = new Rectangle(120, 50);
+         optimiseButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addOptimiseClick();
+         });
 
          Text addGoalText = new Text("Add Goal");
          StackPane addGoalButton = new StackPane();
          Rectangle addGoalViewBox = new Rectangle(120, 50);
+         addGoalButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addGoalClick();
+         });
+
+         Text addEventText = new Text("Add Event");
+         StackPane addEventButton = new StackPane();
+         Rectangle addEventViewBox = new Rectangle(120, 50);
+         addEventButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addEventClick();
+         });
 
          AtomicBoolean isWeeklyView = new AtomicBoolean(false);
          HBox dateTodayPanel = new HBox();
@@ -102,13 +115,13 @@ import javafx.scene.Scene;
 
          VBox rightPanel = new VBox();//for end (sus)
          VBox rightPanelObjects = new VBox(); // new one good
-         rightPanelObjects.setPadding(new Insets(20));
+         rightPanelObjects.setPadding(new Insets(20,20,20,19));
          Button switchRightPanelButton = new Button("Goals / Actions");
          switchRightPanelButton.minWidth(100.0);
          switchRightPanelButton.setAlignment(Pos.CENTER);
 
          AtomicBoolean isActionsView = new AtomicBoolean(false);
-         RightPanelComponent.actionsComponent(rightPanelObjects, dailyText, weeklyText, switchViewBox, switchViewButton, isWeeklyView, actionsPanel, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox);
+         RightPanelComponent.actionsComponent(rightPanelObjects, dailyText, weeklyText, switchViewBox, switchViewButton, isWeeklyView, actionsPanel, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox, addEventButton, addEventText, addEventViewBox);
          
          rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
          rightPanel.setMinHeight(700);
