@@ -57,15 +57,15 @@ public class EventDAOTest {
 
         // Create new event and return it
         return new Event(
-            entryID,
-            "Test Event",
-            "Test location",
-            new Interval(startTime, startTime.plusHours(2)), // Will this cause issues near 11:59 PM?
-            false,
-            false,
-            "testing",
-            "",
-            startTime.toLocalDate()
+                entryID,
+                "Test Event",
+                "Test location",
+                new Interval(startTime, startTime.plusHours(2)),
+                false,
+                false,
+                "testing",
+                "",
+                startTime.toLocalDate()
         );
     }
 
