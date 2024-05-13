@@ -2,6 +2,7 @@ package dao;
 
 import com.calendarfx.model.Interval;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,11 +15,41 @@ import com.calendarfx.model.Entry;
 import com.serenitask.model.Event;
 import com.serenitask.util.DatabaseManager.EventDAO;
 
+/* Methods:
+    addSampleEntries() - PRIVATE
+    reloadInterval() - PRIVATE
+    createTable() - PRIVATE
+    addEvent(Event event)
+    updateEvent(Event event)
+    deleteEvent(String eventID)
+    getEventById(String eventID)
+    getAllEvents()
+    getEvents(LocalDate date) - NOT IMPLEMENTED
+    getEvents(LocalDate startDate, LocalDate endDate) - NOT IMPLEMENTED
+ */
+
+/* Test Cases:
+    testAddEvent()
+    testUpdateEvent()
+    testDeleteEvent()
+    testGetEventById()
+    testGetAllEvents()
+    testGetEventsSingleDate() - DISABLED UNTIL IMPLEMENTED
+    testGetEventsDateRange() - DISABLED UNTIL IMPLEMENTED
+ */
+
 // EventDAOTest class tests the EventDAO class
 public class EventDAOTest {
-    private final EventDAO eventDAO = new EventDAO(); // Assuming you have a constructor for EventDAO
-    private String eventId; // Example event ID for testing
+    // EventDAO object
+    private final EventDAO eventDAO = new EventDAO();
+    // LocalDateTime for testing
+    private final LocalDateTime testTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
 
+    /**
+     * Create a test event with a specific start time
+     * @param startTime LocalDateTime object
+     * @return Event object
+     */
     private Event createTestEvent(LocalDateTime startTime) {
         // Create entry for the event
         Entry<?> newEntry = new Entry<>();
@@ -26,190 +57,250 @@ public class EventDAOTest {
 
         // Create new event and return it
         return new Event(
-                entryID,
-                "Test Event",
-                "Test location",
-                new Interval(startTime, startTime.plusHours(2)), // Will this cause issues near 11:59 PM?
-                false,
-                false,
-                "default",
-                "",
-                startTime.toLocalDate()
+            entryID,
+            "Test Event",
+            "Test location",
+            new Interval(startTime, startTime.plusHours(2)), // Will this cause issues near 11:59 PM?
+            false,
+            false,
+            "testing",
+            "",
+            startTime.toLocalDate()
         );
     }
 
-    @AfterEach
-    public void tearDown() {
-        // Delete the event after testing if it exists
-        if (eventId != null) {
-            eventDAO.deleteEvent(eventId);
-            eventId = null;
-        }
-    }
-
-    @Test
-    public void testCreateEvent() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create an event and check if the event ID exists
-        eventId = eventDAO.addEvent(createTestEvent(startTime));
+    @Test // Test the addEvent method
+    public void testAddEvent() {
+        // Create test event
+        String eventId = eventDAO.addEvent(createTestEvent(testTime));
+        // Check if the event id is not null
         assertNotNull(eventId, "Event ID should not be null");
 
-        // Verify details of the created event
-        Event createdEvent = eventDAO.getEventById(eventId);
-        assertNotNull(createdEvent, "Created event should not be null");
-        assertEquals(eventId, createdEvent.getId(), "Event ID should match");
-
-        // To be implemented, check other attributes
-    }
-
-    @Test
-    public void testGetEventById() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create an event for testing
-        eventId = eventDAO.addEvent(createTestEvent(startTime));
-        assertNotNull(eventId, "Event ID should not be null");
-
-        // Get an event by ID and check if it is not null
+        // Retrieve the event by ID and check if it is not null
         Event event = eventDAO.getEventById(eventId);
         assertNotNull(event, "Event should not be null");
+
+        // Verify the components of the event
+        assertEquals("Test Event", event.getTitle(), "Event title should match");
+        assertEquals("Test location", event.getLocation(), "Event location should match");
+        assertEquals(new Interval(testTime, testTime.plusHours(2)).toString(), event.getInterval().toString(), "Event interval should match");
+        assertEquals(false, event.getFullDay(), "Event full day should match");
+        assertEquals(false, event.getStaticPos(), "Event static position should match");
+        assertEquals("testing", event.getCalendar(), "Event calendar should match");
+        // recurrenceRules to be removed
+        // allocatedUntil to be removed
+
+        // Delete the event after testing
+        eventDAO.deleteEvent(eventId);
+
+        // Try to add a null event
+        eventId = eventDAO.addEvent(null);
+        assertNull(eventId, "Adding a null event should fail");
     }
 
-    @Test
+    @Test // Test the updateEvent method
     public void testUpdateEvent() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create an event for testing
-        eventId = eventDAO.addEvent(createTestEvent(startTime));
-        assertNotNull(eventId, "Event ID should not be null");
-
-        // Update an event and check if successful
+        // Create test event
+        String eventId = eventDAO.addEvent(createTestEvent(testTime));
+        // Retrieve the event by ID
         Event event = eventDAO.getEventById(eventId);
-        event.setTitle("New Title");
+
+        // Update the event
+        event.setTitle("Updated Event");
+        event.setLocation("Updated location");
+        event.setInterval(new Interval(testTime.plusHours(1), testTime.plusHours(3)));
+        event.setFullDay(true);
+        event.setStaticPos(true);
+        event.setCalendar("updated");
+        // recurrenceRules to be removed
+        // allocatedUntil to be removed
+
+        // Update the event
         boolean success = eventDAO.updateEvent(event);
         assertTrue(success, "Event should be updated successfully");
 
-        // Check if the changes are reflected
+        // Retrieve the event by ID
         event = eventDAO.getEventById(eventId);
-        assertEquals("New Title", event.getTitle(), "Title should be updated");
 
-        // To be implemented, check other attributes
+        // Verify the components of the event
+        assertEquals("Updated Event", event.getTitle(), "Event title should match");
+        assertEquals("Updated location", event.getLocation(), "Event location should match");
+        assertEquals(new Interval(testTime.plusHours(1), testTime.plusHours(3)).toString(), event.getInterval().toString(), "Event interval should match");
+        assertEquals(true, event.getFullDay(), "Event full day should match");
+        assertEquals(true, event.getStaticPos(), "Event static position should match");
+        assertEquals("updated", event.getCalendar(), "Event calendar should match");
+        // recurrenceRules to be removed
+        // allocatedUntil to be removed
+
+        // Delete the event after testing
+        eventDAO.deleteEvent(eventId);
+
+        // Try to update a null event
+        success = eventDAO.updateEvent(null);
+        assertFalse(success, "Updating a null event should fail");
     }
 
-    @Test
+    @Test // Test the deleteEvent method
     public void testDeleteEvent() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create an event for testing
-        eventId = eventDAO.addEvent(createTestEvent(startTime));
-        assertNotNull(eventId, "Event ID should not be null");
+        // Create test event
+        String eventId = eventDAO.addEvent(createTestEvent(testTime));
 
-        // Delete an event and check if successful
+        // Delete the event
         boolean success = eventDAO.deleteEvent(eventId);
         assertTrue(success, "Event should be deleted successfully");
 
-        // Check if the event is deleted
+        // Confirm the event is deleted
         Event event = eventDAO.getEventById(eventId);
+        assertNull(event, "Event should not exist");
+
+        // Try to delete the event again
+        success = eventDAO.deleteEvent(eventId);
+        assertFalse(success, "Deleting a non-existent event should fail");
+
+        // Try to delete a non-existent event
+        success = eventDAO.deleteEvent("invalidEventID");
+        assertFalse(success, "Deleting a non-existent event should fail");
+
+        // Try to delete a null event
+        success = eventDAO.deleteEvent(null);
+        assertFalse(success, "Deleting a null event should fail");
+    }
+
+    @Test // Test the getEventById method
+    public void testGetEventById() {
+        // Create test events
+        String eventId1 = eventDAO.addEvent(createTestEvent(testTime));
+        String eventId2 = eventDAO.addEvent(createTestEvent(testTime.plusHours(1)));
+
+        // Try to get the events by ID
+        Event event1 = eventDAO.getEventById(eventId1);
+        assertNotNull(event1, "Event 1 should not be null");
+        Event event2 = eventDAO.getEventById(eventId2);
+        assertNotNull(event2, "Event 2 should not be null");
+
+        // Confirm the event IDs do not match
+        assertNotEquals(eventId1, eventId2, "Event IDs should not match");
+
+        // Confirm the event IDs match their respective events
+        assertEquals(eventId1, event1.getId(), "Event 2 ID should match");
+        assertEquals(eventId2, event2.getId(), "Event 2 ID should match");
+
+        // Delete the events after testing
+        eventDAO.deleteEvent(eventId1);
+        eventDAO.deleteEvent(eventId2);
+
+        // Try to get a non-existent event
+        Event event = eventDAO.getEventById("invalidEventID");
+        assertNull(event, "Event should not exist");
+
+        // Try to get a null event (An ID of null should not exist in the database)
+        event = eventDAO.getEventById(null);
         assertNull(event, "Event should not exist");
     }
 
-    // Paused implementation
-//    @Test
-//    public void testGetEvents() {
-//        // Create more events for testing
-//        String eventID1 = eventDAO.addEvent(createTestEvent());
-//        String eventID2 = eventDAO.addEvent(createTestEvent());
-//        String eventID3 = eventDAO.addEvent(createTestEvent());
-//
-//        // Get all events at date and check if the list is equal to 2
-//        List<Event> events = eventDAO.getEvents(date);
-//        assertEquals(2, events.size(), "List should contain 2 events (1&2)");
-//        // Check correct events are returned (1&2)
-//        assertEquals(eventID1, events.get(0).getId(), "Event ID should match: 1");
-//        assertEquals(eventID2, events.get(1).getId(), "Event ID should match: 2");
-//
-//        // Get all events between two dates and check if the list is equal to 2
-//        events = eventDAO.getEvents(startDate, endDate);
-//        assertEquals(2, events.size(), "List should contain 2 events (2&3)");
-//        // Check correct events are returned (2&3)
-//        assertEquals(eventID2, events.get(0).getId(), "Event ID should match: 2");
-//        assertEquals(eventID3, events.get(1).getId(), "Event ID should match: 3");
-//
-//        // Get all events and check if the list is equal to 3
-//        events = eventDAO.getEvents();
-//        assertEquals(3, events.size(), "List should contain 3 events (1&2&3)");
-//        // Check correct events are returned (1&2&3)
-//        assertEquals(eventID1, events.get(0).getId(), "Event ID should match: 1");
-//        assertEquals(eventID2, events.get(1).getId(), "Event ID should match: 2");
-//        assertEquals(eventID3, events.get(2).getId(), "Event ID should match: 3");
-//
-//        // Delete the events after testing
-//        eventDAO.deleteEvent(eventID1);
-//        eventDAO.deleteEvent(eventID2);
-//        eventDAO.deleteEvent(eventID3);
-//        // Confirm deletion
-//        assertNull(eventDAO.getEventById(eventID1), "Event 1 should not exist");
-//        assertNull(eventDAO.getEventById(eventID2), "Event 2 should not exist");
-//        assertNull(eventDAO.getEventById(eventID3), "Event 3 should not exist");
-//    }
+    @Test // Test the getAllEvents method
+    public void testGetAllEvents() {
+        // Create test events
+        String eventId1 = eventDAO.addEvent(createTestEvent(testTime));
+        String eventId2 = eventDAO.addEvent(createTestEvent(testTime.plusHours(2)));
+        String eventId3 = eventDAO.addEvent(createTestEvent(testTime.plusHours(42)));
 
-    @Test
-    public void testUniqueEventID() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create two identical events
-        Event event1 = createTestEvent(startTime);
-        Event event2 = createTestEvent(startTime);
-        String eventID1 = eventDAO.addEvent(event1);
-        String eventID2 = eventDAO.addEvent(event2);
-        // Check if the events exist
-        assertNotNull(eventID1, "Event ID 1 should not be null");
-        assertNotNull(eventID2, "Event ID 2 should not be null");
+        // Get all events
+        List<Event> events = eventDAO.getAllEvents();
+        assertEquals(3, events.size(), "List should contain 3 events");
 
-        // Check if the event IDs are different
-        assertNotEquals(eventID1, eventID2, "Event IDs should be different");
+        // Check correct events are returned
+        assertEquals(eventId1, events.get(0).getId(), "Event ID should match");
+        assertEquals(eventId2, events.get(1).getId(), "Event ID should match");
+        assertEquals(eventId3, events.get(2).getId(), "Event ID should match");
 
         // Delete the events after testing
-        eventDAO.deleteEvent(eventID1);
-        eventDAO.deleteEvent(eventID2);
-        // Confirm deletion
-        assertNull(eventDAO.getEventById(eventID1), "Event 1 should not exist");
-        assertNull(eventDAO.getEventById(eventID2), "Event 2 should not exist");
+        eventDAO.deleteEvent(eventId1);
+        eventDAO.deleteEvent(eventId2);
+        eventDAO.deleteEvent(eventId3);
     }
 
-    @Test
-    public void testAddInvalidEvent() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // To be implemented, check other invalid attributes
+    /* DISABLED UNTIL IMPLEMENTED
+    @Test // Test the getEvents method with a single date
+    public void testGetEventsSingleDate() {
+        // Create test events
+        String eventId1 = eventDAO.addEvent(createTestEvent(testTime));
+        String eventId2 = eventDAO.addEvent(createTestEvent(testTime.plusHours(2)));
+        String eventId3 = eventDAO.addEvent(createTestEvent(testTime.plusHours(42)));
+
+        // Get events for the test date
+        List<Event> events = eventDAO.getEvents(testTime.toLocalDate());
+        assertEquals(2, events.size(), "List should contain 2 events");
+
+        // Check correct events are returned
+        assertEquals(eventId1, events.get(0).getId(), "Event ID should match");
+        assertEquals(eventId2, events.get(1).getId(), "Event ID should match");
+
+        // Get event for 42 hours later
+        events = eventDAO.getEvents(testTime.plusHours(42).toLocalDate());
+        assertEquals(1, events.size(), "List should contain 1 event");
+        assertEquals(eventId3, events.get(0).getId(), "Event ID should match");
+
+        // Delete the events after testing
+        eventDAO.deleteEvent(eventId1);
+        eventDAO.deleteEvent(eventId2);
+        eventDAO.deleteEvent(eventId3);
+
+        // Get events for a non-existent date
+        events = eventDAO.getEvents(LocalDate.of(1970, 1, 1));
+        assertEquals(0, events.size(), "List should be empty");
+
+        // Get events for a null date
+        events = eventDAO.getEvents(null);
+        assertEquals(0, events.size(), "List should be empty");
     }
+     */
 
-    @Test
-    public void testUpdateInvalidEvent() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now(); // Preferably set to a specific time
-        // Create an event for testing
-        eventId = eventDAO.addEvent(createTestEvent(startTime));
-        assertNotNull(eventId, "Event ID should not be null");
+    /* DISABLED UNTIL IMPLEMENTED
+    @Test // Test the getEvents method with a date range
+    public void testGetEventsDateRange() {
+        // Create test events
+        String eventId1 = eventDAO.addEvent(createTestEvent(testTime));
+        String eventId2 = eventDAO.addEvent(createTestEvent(testTime.plusHours(2)));
+        String eventId3 = eventDAO.addEvent(createTestEvent(testTime.plusHours(42)));
 
-        // Get event class
-        Event event = eventDAO.getEventById(eventId);
-        // Confirm event is not null
-        assertNotNull(event, "Event should not be null");
+        // Get events for the test date range
+        List<Event> events = eventDAO.getEvents(testTime.toLocalDate(), testTime.plusHours(2).toLocalDate());
+        assertEquals(2, events.size(), "List should contain 2 events");
 
-        // Update the event with invalid title (To be implemented, need a way to test if I can update an invalid event)
-//        event.setTitle(""); // Invalid title
-//        boolean success = eventDAO.updateEvent(event);
-//        assertFalse(success, "Updating an invalid event should fail");
+        // Check correct events are returned
+        assertEquals(eventId1, events.get(0).getId(), "Event ID should match");
+        assertEquals(eventId2, events.get(1).getId(), "Event ID should match");
 
-        // To be implemented, check other update attributes
+        // Get events for the test date range
+        events = eventDAO.getEvents(testTime.plusHours(2).toLocalDate(), testTime.plusHours(42).toLocalDate());
+        assertEquals(2, events.size(), "List should contain 2 events");
+
+        // Check correct events are returned
+        assertEquals(eventId2, events.get(0).getId(), "Event ID should match");
+        assertEquals(eventId3, events.get(1).getId(), "Event ID should match");
+
+        // Get events for the test date range
+        events = eventDAO.getEvents(testTime.toLocalDate(), testTime.plusHours(42).toLocalDate());
+        assertEquals(3, events.size(), "List should contain 3 events");
+
+        // Check correct events are returned
+        assertEquals(eventId1, events.get(0).getId(), "Event ID should match");
+        assertEquals(eventId2, events.get(1).getId(), "Event ID should match");
+        assertEquals(eventId3, events.get(2).getId(), "Event ID should match");
+
+        // Delete the events after testing
+        eventDAO.deleteEvent(eventId1);
+        eventDAO.deleteEvent(eventId2);
+        eventDAO.deleteEvent(eventId3);
+
+        // Get events for a non-existent date range
+        events = eventDAO.getEvents(LocalDate.of(1970, 1, 1), LocalDate.of(1970, 1, 2));
+        assertEquals(0, events.size(), "List should be empty");
+
+        // Get events for a null date range
+        events = eventDAO.getEvents(null, null);
+        assertEquals(0, events.size(), "List should be empty");
     }
-
-    @Test
-    public void testDeleteNonExistentEvent() {
-        // Try to delete a non-existent event
-        boolean success = eventDAO.deleteEvent("invalidEventID");
-        assertFalse(success, "Deleting a non-existent event should fail");
-    }
+     */
 }
