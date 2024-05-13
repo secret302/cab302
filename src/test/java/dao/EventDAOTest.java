@@ -1,17 +1,11 @@
 package dao;
 
 import com.calendarfx.model.Interval;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.calendarfx.model.Entry;
-
 import com.serenitask.model.Event;
 import com.serenitask.util.DatabaseManager.EventDAO;
 
@@ -24,8 +18,8 @@ import com.serenitask.util.DatabaseManager.EventDAO;
     deleteEvent(String eventID)
     getEventById(String eventID)
     getAllEvents()
-    getEvents(LocalDate date) - NOT IMPLEMENTED
-    getEvents(LocalDate startDate, LocalDate endDate) - NOT IMPLEMENTED
+    getEvents(LocalDate date) - NOT IMPLEMENTED?
+    getEvents(LocalDate startDate, LocalDate endDate) - NOT IMPLEMENTED?
  */
 
 /* Test Cases:
@@ -34,8 +28,8 @@ import com.serenitask.util.DatabaseManager.EventDAO;
     testDeleteEvent()
     testGetEventById()
     testGetAllEvents()
-    testGetEventsSingleDate() - DISABLED UNTIL IMPLEMENTED
-    testGetEventsDateRange() - DISABLED UNTIL IMPLEMENTED
+    testGetEventsSingleDate() - DISABLED UNTIL IMPLEMENTED?
+    testGetEventsDateRange() - DISABLED UNTIL IMPLEMENTED?
  */
 
 // EventDAOTest class tests the EventDAO class
