@@ -73,8 +73,12 @@ public class GoalControllerTest {
         assertEquals(15, goals.get(0).getMinChunk());
         assertEquals(60, goals.get(0).getMaxChunk());
 
+        // Get the goal ID
+        goals = goalDAO.getAllGoals();
+        int goalID = goals.get(0).getId();
+
         // Delete the test goal from goalController
-        goalController.deleteGoal(goals.get(0).getId());
+        goalController.deleteGoal(goalID);
     }
 
     @Test
