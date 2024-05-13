@@ -3,75 +3,152 @@ package model;
 import com.calendarfx.model.Interval;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 import com.serenitask.model.Event;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/* Methods:
+    getId()
+    setId(String id)
+    getTitle()
+    setTitle(String title)
+    getLocation()
+    setLocation(String location)
+    getInterval()
+    setInterval(Interval interval)
+    getFullDay()
+    setFullDay(boolean fullDay)
+    getStaticPos()
+    setStaticPos(boolean staticPos)
+    getCalendar()
+    setCalendar(String calendar)
+    getRecurrenceRules() - TO BE REMOVED?
+    setRecurrenceRules(String recurrenceRules) - TO BE REMOVED?
+    getAllocatedUntil() - TO BE REMOVED?
+    setAllocatedUntil(LocalDate allocatedUntil) - TO BE REMOVED?
+ */
+
+/* Test Cases:
+    testEventConstructor()
+    testEventSetters()
+ */
+
+// EventTest class tests the Event class
 public class EventTest {
-    public Event createTestEvent(LocalDateTime startTime) {
+    // LocalDateTime for testing
+    private final LocalDateTime testTime = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+    /**
+     * Create a test event with a specific start time
+     * @param startTime LocalDateTime object
+     * @return Event object
+     */
+    private Event createTestEvent(LocalDateTime startTime) {
         // Create entry for the event and return it
         return new Event(
                 "Test ID",
                 "Test Event",
                 "Test location",
-                new Interval(startTime, startTime.plusHours(2)), // Will this cause issues near 11:59 PM?
+                new Interval(startTime, startTime.plusHours(2)),
                 false,
                 false,
-                "default",
+                "testing",
                 "",
                 startTime.toLocalDate()
         );
-        // Events will be cleaned up by the garbage collector
     }
 
-    @Test
+    @Test // Test the getters of the Event class
     public void testEventConstructor() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now();
         // Test the constructor of the Event class
-        Event event = createTestEvent(startTime);
-        assertNotNull(event, "Event should not be null");
+        Event event = createTestEvent(testTime);
+
+        // Verify the values
+        assertEquals("Test ID", event.getId(), "Event ID should match");
         assertEquals("Test Event", event.getTitle(), "Event title should match");
         assertEquals("Test location", event.getLocation(), "Event location should match");
-        assertEquals(startTime, event.getInterval().getStartDateTime(), "Event start time should match");
+        assertEquals(new Interval(testTime, testTime.plusHours(2)).toString(), event.getInterval().toString(), "Event interval should match");
         assertFalse(event.getFullDay(), "Event should not be full day");
         assertFalse(event.getStaticPos(), "Event should not have static position");
-        assertEquals("default", event.getCalendar(), "Event calendar should match");
-        assertEquals("", event.getRecurrenceRules(), "Event recurrence rules should match");
-        assertEquals(startTime.toLocalDate(), event.getAllocatedUntil(), "Event allocated until should match");
+        assertEquals("testing", event.getCalendar(), "Event calendar should match");
+
+        // Test the constructor with invalid values
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Event(
+                    "Test ID",
+                    "", // empty title
+                    "Test location",
+                    new Interval(testTime, testTime.plusHours(2)),
+                    false,
+                    false,
+                    "testing",
+                    "",
+                    testTime.toLocalDate()
+            );
+        }, "Title cannot be empty");
+
+        // Test the constructor with null values
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Event(
+                    null, // null ID
+                    "Test Event",
+                    "Test location",
+                    new Interval(testTime, testTime.plusHours(2)),
+                    false,
+                    false,
+                    "testing",
+                    "",
+                    testTime.toLocalDate()
+            );
+        }, "Title cannot be null");
+
+        // Test the empty constructor of the Event class
+        Event emptyEvent = new Event();
+        assertNull(emptyEvent.getId(), "Event ID should be null");
+        assertNull(emptyEvent.getTitle(), "Event title should be null");
+        assertNull(emptyEvent.getLocation(), "Event location should be null");
+        assertNull(emptyEvent.getInterval(), "Event interval should be null");
+        assertFalse(emptyEvent.getFullDay(), "Event should not be full day");
+        assertFalse(emptyEvent.getStaticPos(), "Event should not have static position");
+        assertNull(emptyEvent.getCalendar(), "Event calendar should be null");
     }
 
     @Test
     public void testEventSetters() {
-        // Set LocalDateTime
-        LocalDateTime startTime = LocalDateTime.now();
         // Test the setters of the Event class
-        Event event = createTestEvent(startTime);
-        event.setTitle("New Title");
-        event.setLocation("New Location");
-        event.setInterval(new Interval(startTime, startTime.plusHours(3)));
+        Event event = createTestEvent(testTime);
+
+        // Set new values
+        event.setId("New ID");
+        event.setTitle("New Event");
+        event.setLocation("New location");
+        event.setInterval(new Interval(testTime.plusHours(1), testTime.plusHours(3)));
         event.setFullDay(true);
         event.setStaticPos(true);
-        event.setCalendar("New Calendar");
-        event.setRecurrenceRules("New Recurrence Rules");
-        event.setAllocatedUntil(startTime.toLocalDate().plusDays(1));
+        event.setCalendar("new calendar");
 
-        // Verify the changes
-        assertEquals("New Title", event.getTitle(), "Event title should match");
-        assertEquals("New Location", event.getLocation(), "Event location should match");
-        assertEquals(startTime, event.getInterval().getStartDateTime(), "Event start time should match");
+        // Verify the new values
+        assertEquals("New ID", event.getId(), "Event ID should match");
+        assertEquals("New Event", event.getTitle(), "Event title should match");
+        assertEquals("New location", event.getLocation(), "Event location should match");
+        assertEquals(new Interval(testTime.plusHours(1), testTime.plusHours(3)).toString(), event.getInterval().toString(), "Event interval should match");
         assertTrue(event.getFullDay(), "Event should be full day");
         assertTrue(event.getStaticPos(), "Event should have static position");
-        assertEquals("New Calendar", event.getCalendar(), "Event calendar should match");
-        assertEquals("New Recurrence Rules", event.getRecurrenceRules(), "Event recurrence rules should match");
-        assertEquals(startTime.toLocalDate().plusDays(1), event.getAllocatedUntil(), "Event allocated until should match");
-    }
+        assertEquals("new calendar", event.getCalendar(), "Event calendar should match");
 
-    @Test
-    public void testInvalidEventConstructor() {
-        // Test recurrence_rules and date_time
-        // To be implemented
+        // Test the setters with invalid values
+        assertThrows(IllegalArgumentException.class, () -> {
+            event.setTitle(""); // empty title
+        }, "Title cannot be empty");
+        assertThrows(IllegalArgumentException.class, () -> {
+            event.setId(""); // empty title
+        }, "ID cannot be empty");
+
+        // Test the setters with null values
+        assertThrows(IllegalArgumentException.class, () -> {
+            event.setTitle(null); // null title
+        }, "Title cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> {
+            event.setId(null); // null ID
+        }, "ID cannot be null");
     }
 }
