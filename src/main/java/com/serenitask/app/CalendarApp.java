@@ -50,12 +50,12 @@ import javafx.scene.Scene;
  
      @Override
      public void start(Stage primaryStage) {
- 
-         DetailedDayView calendarDayView = new DetailedDayView();
-         DetailedWeekView calendarWeekView = new DetailedWeekView();
-         EventLoader eventLoader = new EventLoader();
-         CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
-         CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
+         try {
+             DetailedDayView calendarDayView = new DetailedDayView();
+             DetailedWeekView calendarWeekView = new DetailedWeekView();
+             EventLoader eventLoader = new EventLoader();
+             CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
+             CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
 
 
          Text dateToday = new Text(LocalDate.now().toString());
@@ -119,63 +119,68 @@ import javafx.scene.Scene;
          });
 
 
-         GoalController goalController = new GoalController();
-         for(String title : goalController.loadSimpleGoal())
-         {
-             dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+
+             GoalController goalController = new GoalController();
+             for (String title : goalController.loadSimpleGoal()) {
+                 dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+             }
+
+             // Switches betwenn Day view and Week View
+             switchViewButton.setOnMouseClicked(event -> {
+                 CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+             });
+
+             // Creates vertical box that can be clicked to change view
+             HBox calendarDisplay = new HBox();
+             calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
+
+             // Prevents Calendar from being squished by other HBox Components
+             HBox.setHgrow(leftPanel, Priority.ALWAYS);
+             leftPanel.setMaxWidth(1420);
+             calendarDayView.setMinHeight(900);
+             calendarDayView.setMaxHeight(900);
+             calendarDayView.setPadding(new Insets(62, 0, 0, 0));
+
+
+             // Text for the goal completion question
+             Text goalText = new Text("Have you completed " +
+                     (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
+                     " goal?");
+             goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+             StackPane calendar = new StackPane();
+             Rectangle shadowPanel = new Rectangle();
+             Rectangle taskPopupPanel = new Rectangle();
+             VBox contentVBox = new VBox();
+             HBox buttonBox = new HBox();
+             StackPane taskPopup = new StackPane();
+             Button noButton = new Button("No");
+             Button yesButton = new Button("Yes");
+
+             EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
+
+             calendar.getChildren().addAll(calendarDisplay);
+
+             // Update Clock
+             EndOfDayComponent.checkTime(calendar, calendarDayView, shadowPanel, taskPopup, goalText, goalController);
+
+             Scene scene = new Scene(calendar);
+             scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
+             CSSFX.start(scene);
+
+             primaryStage.setTitle("SereniTask");
+             primaryStage.setResizable(false);
+             primaryStage.setScene(scene);
+             primaryStage.setWidth(1920);
+             primaryStage.setHeight(1080);
+             primaryStage.centerOnScreen();
+             primaryStage.show();
+             primaryStage.setMaximized(true);
          }
- 
-          // Switches betwenn Day view and Week View
-          switchViewButton.setOnMouseClicked(event -> {
-            CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
-        });
-
-         // Creates vertical box that can be clicked to change view
-         HBox calendarDisplay = new HBox();
-         calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
- 
-         // Prevents Calendar from being squished by other HBox Components
-         HBox.setHgrow(leftPanel, Priority.ALWAYS);
-         leftPanel.setMaxWidth(1420);
-         calendarDayView.setMinHeight(900);
-         calendarDayView.setMaxHeight(900);
-         calendarDayView.setPadding(new Insets(62,0,0,0));
-
-
-         // Text for the goal completion question
-         Text goalText = new Text("Have you completed " +
-                 (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
-                 " goal?");
-         goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-
-         StackPane calendar = new StackPane();
-         Rectangle shadowPanel = new Rectangle();
-         Rectangle taskPopupPanel = new Rectangle();
-         VBox contentVBox = new VBox();
-         HBox buttonBox = new HBox();
-         StackPane taskPopup = new StackPane();
-         Button noButton = new Button("No");
-         Button yesButton = new Button("Yes");
-
-         EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
-
-         calendar.getChildren().addAll(calendarDisplay);
-
-         // Update Clock
-         EndOfDayComponent.checkTime(calendar, calendarDayView, shadowPanel, taskPopup, goalText, goalController);
-            
-         Scene scene = new Scene(calendar);
-         scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
-         CSSFX.start(scene);
-
-         primaryStage.setTitle("SereniTask");
-         primaryStage.setResizable(false);
-         primaryStage.setScene(scene);
-         primaryStage.setWidth(1920);
-         primaryStage.setHeight(1080);
-         primaryStage.centerOnScreen();
-         primaryStage.show();
-         primaryStage.setMaximized(true);
+         catch(Exception e){
+             System.err.println("An error has occurred while starting the application: " + e.getMessage());
+             e.printStackTrace();
+         }
      }
  
      public static void main(String[] args) {

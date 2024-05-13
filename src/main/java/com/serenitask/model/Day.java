@@ -18,6 +18,10 @@ public class Day {
     // Private parameters
     private int priority;
     private int freeTime;
+
+
+    private int workingTime;
+    private int healthTime;
     private boolean dateSet = false;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -31,7 +35,8 @@ public class Day {
      */
     public Day() {
         priority = -1;
-        freeTime = 0;
+        freeTime = -1;
+        workingTime = -1;
         timeWindows = new ArrayList<>();
     }
 
@@ -43,10 +48,16 @@ public class Day {
      * @param close Localtime object representing the end of the window
      */
     public void addWindow(LocalTime open, LocalTime close) {
-        TimeWindow newWindow = new TimeWindow(open, close);
-        timeWindows.add(newWindow);
-        freeTime = calculateFreeTime();
-        System.out.println("new Free time: " + freeTime);
+        try {
+            TimeWindow newWindow = new TimeWindow(open, close);
+            timeWindows.add(newWindow);
+            freeTime = calculateFreeTime();
+            System.out.println("new Free time: " + freeTime);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -56,6 +67,9 @@ public class Day {
      */
     private int calculateFreeTime() {
         int sum = 0;
+        if (freeTime < 0) {
+            freeTime++;
+        }
         for (TimeWindow window : timeWindows) {
             sum += MINUTES.between(window.getWindowOpen(), window.getWindowClose());
         }
@@ -122,8 +136,16 @@ public class Day {
      * @return TimeWindow object representing the largest window of the day
      */
     public TimeWindow getBiggestWindow() {
-        biggestWindow = findBiggestWindow();
-        return biggestWindow;
+        try {
+            biggestWindow = findBiggestWindow();
+            return biggestWindow;
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if the calculations for the biggest window of the day cannot be completed
+        return null;
     }
 
     /**
@@ -133,6 +155,24 @@ public class Day {
      */
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    /**
+     * Getter for workingTime parameter
+     *
+     * @return int object representing total working time for day
+     */
+    public int getWorkingTime() {
+        return workingTime;
+    }
+
+    /**
+     * Getter for healthTime parameter
+     *
+     * @return int object representing total health based time for day
+     */
+    public int getHealthTime() {
+        return healthTime;
     }
 
     /**
@@ -213,5 +253,41 @@ public class Day {
         for (TimeWindow window : timeWindows) {
             System.out.println("Window " + index + " - start: " + window.getWindowOpen() + " - to close: " + window.getWindowClose());
         }
+    }
+
+    /**
+     * Adds work based activity time to total sum for day
+     *
+     * @param work integer representing minutes of work based events
+     */
+    public void addWork(int work) {
+        if (workingTime < 0) {
+            workingTime++;
+        }
+        workingTime += work;
+    }
+
+    /**
+     * Adds health based activity time to total sum for day
+     *
+     * @param health integer representing minutes of health based events
+     */
+    public void addHealth(int health) {
+        if (healthTime < 0) {
+            healthTime++;
+        }
+        healthTime += health;
+    }
+
+    /**
+     * Returns an integer of total minutes needed to achieve target health ratio
+     *
+     * @param ratio integer value of ratio target
+     * @return minutes required to achieve target ratio
+     */
+    public int getHealthNeeded(int ratio) {
+        return (int) (workingTime / ratio);
+
+
     }
 }
