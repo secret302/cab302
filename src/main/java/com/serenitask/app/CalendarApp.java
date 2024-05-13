@@ -27,7 +27,8 @@
 import fr.brouillard.oss.cssfx.CSSFX;
  import javafx.application.Application;
  import javafx.geometry.Insets;
- import javafx.scene.Scene;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
  import javafx.scene.control.Button;
  import javafx.scene.control.TextField;
  import javafx.scene.layout.*;
@@ -73,8 +74,10 @@ import fr.brouillard.oss.cssfx.CSSFX;
 
          AtomicBoolean isWeeklyView = new AtomicBoolean(false);
          HBox dateTodayPanel = new HBox();
+         VBox actionsPanel = new VBox();
          Region spacer = new Region();
-         CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox);
+
+         CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer);
          
 
          VBox leftPanel = new VBox();
@@ -97,10 +100,23 @@ import fr.brouillard.oss.cssfx.CSSFX;
          agenda.lookAheadPeriodInDaysProperty().set(3);
          agenda.setPadding(new Insets(10));
 
-         VBox rightPanel = new VBox();
-         rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
+         VBox rightPanel = new VBox();//for end (sus)
+         VBox rightPanelObjects = new VBox(); // new one good
+         rightPanelObjects.setPadding(new Insets(20));
+         Button switchRightPanelButton = new Button("Goals / Actions");
+         switchRightPanelButton.minWidth(100.0);
+         switchRightPanelButton.setAlignment(Pos.CENTER);
+
+         AtomicBoolean isActionsView = new AtomicBoolean(false);
+         RightPanelComponent.actionsComponent(rightPanelObjects, dailyText, weeklyText, switchViewBox, switchViewButton, isWeeklyView, actionsPanel, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox);
+         
+         rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
          rightPanel.setMinHeight(700);
          rightPanel.setMaxWidth(800);
+
+         switchRightPanelButton.setOnMouseClicked(event -> {
+            RightPanelComponent.switchRightPanel(rightPanelObjects,isActionsView, rightPanel, agenda, dailygoals);
+         });
 
 
          GoalController goalController = new GoalController();
@@ -166,4 +182,5 @@ import fr.brouillard.oss.cssfx.CSSFX;
          launch(args);
      }
  }
+ 
  
