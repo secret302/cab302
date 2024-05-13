@@ -27,7 +27,8 @@
 import fr.brouillard.oss.cssfx.CSSFX;
  import javafx.application.Application;
  import javafx.geometry.Insets;
- import javafx.scene.Scene;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
  import javafx.scene.control.Button;
  import javafx.scene.control.TextField;
  import javafx.scene.layout.*;
@@ -57,41 +58,79 @@ import fr.brouillard.oss.cssfx.CSSFX;
              CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
 
 
-             Text dateToday = new Text(LocalDate.now().toString());
-             Text dailyText = new Text("Daily");
-             Text weeklyText = new Text("Weekly");
-             StackPane switchViewButton = new StackPane();
-             Rectangle switchViewBox = new Rectangle(120, 50);
-             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
-             HBox dateTodayPanel = new HBox();
-             Region spacer = new Region();
-             CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer);
+         Text dateToday = new Text(LocalDate.now().toString());
+         Text dailyText = new Text("Daily");
+         Text weeklyText = new Text("Weekly");
+         StackPane switchViewButton = new StackPane();
+         Rectangle switchViewBox = new Rectangle(120, 50);
 
+         Text optimiseText = new Text("Optimise");
+         StackPane optimiseButton = new StackPane();
+         Rectangle optimiseViewBox = new Rectangle(120, 50);
+         optimiseButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addOptimiseClick();
+         });
 
-             VBox leftPanel = new VBox();
-             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
-             leftPanel.setMinHeight(700);
+         Text addGoalText = new Text("Add Goal");
+         StackPane addGoalButton = new StackPane();
+         Rectangle addGoalViewBox = new Rectangle(120, 50);
+         addGoalButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addGoalClick();
+         });
 
+         Text addEventText = new Text("Add Event");
+         StackPane addEventButton = new StackPane();
+         Rectangle addEventViewBox = new Rectangle(120, 50);
+         addEventButton.setOnMouseClicked(event -> {
+            RightPanelComponent.addEventClick();
+         });
 
-             VBox dailygoals = new VBox();
-             TextField goalTextField = new TextField();
-             Button createGoalButton = new Button("Create Goal");
-             DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+         AtomicBoolean isWeeklyView = new AtomicBoolean(false);
+         HBox dateTodayPanel = new HBox();
+         VBox actionsPanel = new VBox();
+         Region spacer = new Region();
 
-             YearMonthView heatmap = new YearMonthView();
-             heatmap.showUsageColorsProperty().set(true);
+         CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer);
+         
 
-             AgendaView agenda = new AgendaView();
-             agenda.setEnableTimeZoneSupport(true);
-             agenda.getCalendarSources().setAll(mainCalendarSource);
-             agenda.setRequestedTime(LocalTime.now());
-             agenda.lookAheadPeriodInDaysProperty().set(3);
-             agenda.setPadding(new Insets(10));
+         VBox leftPanel = new VBox();
+         leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
+         leftPanel.setMinHeight(700);
+ 
 
-             VBox rightPanel = new VBox();
-             rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
-             rightPanel.setMinHeight(700);
-             rightPanel.setMaxWidth(800);
+         VBox dailygoals = new VBox();
+         TextField goalTextField = new TextField();
+         Button createGoalButton = new Button("Create Goal");
+         DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+
+         YearMonthView heatmap = new YearMonthView();
+         heatmap.showUsageColorsProperty().set(true);
+
+         AgendaView agenda = new AgendaView();
+         agenda.setEnableTimeZoneSupport(true);
+         agenda.getCalendarSources().setAll(mainCalendarSource);
+         agenda.setRequestedTime(LocalTime.now());
+         agenda.lookAheadPeriodInDaysProperty().set(3);
+         agenda.setPadding(new Insets(10));
+
+         VBox rightPanel = new VBox();//for end (sus)
+         VBox rightPanelObjects = new VBox(); // new one good
+         rightPanelObjects.setPadding(new Insets(20,20,20,19));
+         Button switchRightPanelButton = new Button("Goals / Actions");
+         switchRightPanelButton.minWidth(100.0);
+         switchRightPanelButton.setAlignment(Pos.CENTER);
+
+         AtomicBoolean isActionsView = new AtomicBoolean(false);
+         RightPanelComponent.actionsComponent(rightPanelObjects, dailyText, weeklyText, switchViewBox, switchViewButton, isWeeklyView, actionsPanel, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox, addEventButton, addEventText, addEventViewBox);
+         
+         rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
+         rightPanel.setMinHeight(700);
+         rightPanel.setMaxWidth(800);
+
+         switchRightPanelButton.setOnMouseClicked(event -> {
+            RightPanelComponent.switchRightPanel(rightPanelObjects,isActionsView, rightPanel, agenda, dailygoals);
+         });
+
 
 
              GoalController goalController = new GoalController();
@@ -161,4 +200,5 @@ import fr.brouillard.oss.cssfx.CSSFX;
          launch(args);
      }
  }
+ 
  
