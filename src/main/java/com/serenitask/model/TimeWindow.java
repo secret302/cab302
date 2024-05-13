@@ -15,8 +15,12 @@ public class TimeWindow {
      *
      * @param open  LocalTime Object representing the start time of window
      * @param close LocalTime Object representing the end time of window
+     * @throws IllegalArgumentException Open Time cannot appear after Close time
      */
     public TimeWindow(LocalTime open, LocalTime close) {
+        if(open.isAfter(close)) {
+            throw new IllegalArgumentException("The Open time cannot appear after Close time");
+        }
         windowOpen = open;
         windowClose = close;
     }

@@ -49,108 +49,112 @@ import fr.brouillard.oss.cssfx.CSSFX;
  
      @Override
      public void start(Stage primaryStage) {
- 
-         DetailedDayView calendarDayView = new DetailedDayView();
-         DetailedWeekView calendarWeekView = new DetailedWeekView();
-         EventLoader eventLoader = new EventLoader();
-         CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
-         CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
+         try {
+             DetailedDayView calendarDayView = new DetailedDayView();
+             DetailedWeekView calendarWeekView = new DetailedWeekView();
+             EventLoader eventLoader = new EventLoader();
+             CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
+             CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
 
 
-         Text dateToday = new Text(LocalDate.now().toString());
-         Text dailyText = new Text("Daily");
-         Text weeklyText = new Text("Weekly");
-         StackPane switchViewButton = new StackPane();
-         Rectangle switchViewBox = new Rectangle(120, 50);
-         AtomicBoolean isWeeklyView = new AtomicBoolean(false);
-         HBox dateTodayPanel = new HBox();
-         Region spacer = new Region();
-         CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer);
-         
-
-         VBox leftPanel = new VBox();
-         leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
-         leftPanel.setMinHeight(700);
- 
-
-         VBox dailygoals = new VBox();
-         TextField goalTextField = new TextField();
-         Button createGoalButton = new Button("Create Goal");
-         DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
-
-         YearMonthView heatmap = new YearMonthView();
-         heatmap.showUsageColorsProperty().set(true);
-
-         AgendaView agenda = new AgendaView();
-         agenda.setEnableTimeZoneSupport(true);
-         agenda.getCalendarSources().setAll(mainCalendarSource);
-         agenda.setRequestedTime(LocalTime.now());
-         agenda.lookAheadPeriodInDaysProperty().set(3);
-         agenda.setPadding(new Insets(10));
-
-         VBox rightPanel = new VBox();
-         rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
-         rightPanel.setMinHeight(700);
-         rightPanel.setMaxWidth(800);
+             Text dateToday = new Text(LocalDate.now().toString());
+             Text dailyText = new Text("Daily");
+             Text weeklyText = new Text("Weekly");
+             StackPane switchViewButton = new StackPane();
+             Rectangle switchViewBox = new Rectangle(120, 50);
+             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
+             HBox dateTodayPanel = new HBox();
+             Region spacer = new Region();
+             CalendarViewComponent.calendarView(dailyText, weeklyText, dateToday, switchViewBox, switchViewButton, isWeeklyView, dateTodayPanel, spacer);
 
 
-         GoalController goalController = new GoalController();
-         for(String title : goalController.loadSimpleGoal())
-         {
-             dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+             VBox leftPanel = new VBox();
+             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
+             leftPanel.setMinHeight(700);
+
+
+             VBox dailygoals = new VBox();
+             TextField goalTextField = new TextField();
+             Button createGoalButton = new Button("Create Goal");
+             DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+
+             YearMonthView heatmap = new YearMonthView();
+             heatmap.showUsageColorsProperty().set(true);
+
+             AgendaView agenda = new AgendaView();
+             agenda.setEnableTimeZoneSupport(true);
+             agenda.getCalendarSources().setAll(mainCalendarSource);
+             agenda.setRequestedTime(LocalTime.now());
+             agenda.lookAheadPeriodInDaysProperty().set(3);
+             agenda.setPadding(new Insets(10));
+
+             VBox rightPanel = new VBox();
+             rightPanel.getChildren().addAll(heatmap, agenda, dailygoals);
+             rightPanel.setMinHeight(700);
+             rightPanel.setMaxWidth(800);
+
+
+             GoalController goalController = new GoalController();
+             for (String title : goalController.loadSimpleGoal()) {
+                 dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+             }
+
+             // Switches betwenn Day view and Week View
+             switchViewButton.setOnMouseClicked(event -> {
+                 CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+             });
+
+             // Creates vertical box that can be clicked to change view
+             HBox calendarDisplay = new HBox();
+             calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
+
+             // Prevents Calendar from being squished by other HBox Components
+             HBox.setHgrow(leftPanel, Priority.ALWAYS);
+             leftPanel.setMaxWidth(1420);
+             calendarDayView.setMinHeight(900);
+             calendarDayView.setMaxHeight(900);
+             calendarDayView.setPadding(new Insets(62, 0, 0, 0));
+
+
+             // Text for the goal completion question
+             Text goalText = new Text("Have you completed " +
+                     (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
+                     " goal?");
+             goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+             StackPane calendar = new StackPane();
+             Rectangle shadowPanel = new Rectangle();
+             Rectangle taskPopupPanel = new Rectangle();
+             VBox contentVBox = new VBox();
+             HBox buttonBox = new HBox();
+             StackPane taskPopup = new StackPane();
+             Button noButton = new Button("No");
+             Button yesButton = new Button("Yes");
+
+             EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
+
+             calendar.getChildren().addAll(calendarDisplay);
+
+             // Update Clock
+             EndOfDayComponent.checkTime(calendar, calendarDayView, shadowPanel, taskPopup, goalText, goalController);
+
+             Scene scene = new Scene(calendar);
+             scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
+             CSSFX.start(scene);
+
+             primaryStage.setTitle("SereniTask");
+             primaryStage.setResizable(false);
+             primaryStage.setScene(scene);
+             primaryStage.setWidth(1920);
+             primaryStage.setHeight(1080);
+             primaryStage.centerOnScreen();
+             primaryStage.show();
+             primaryStage.setMaximized(true);
          }
- 
-          // Switches betwenn Day view and Week View
-          switchViewButton.setOnMouseClicked(event -> {
-            CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
-        });
-
-         // Creates vertical box that can be clicked to change view
-         HBox calendarDisplay = new HBox();
-         calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
- 
-         // Prevents Calendar from being squished by other HBox Components
-         HBox.setHgrow(leftPanel, Priority.ALWAYS);
-         leftPanel.setMaxWidth(1420);
-         calendarDayView.setMinHeight(900);
-         calendarDayView.setMaxHeight(900);
-         calendarDayView.setPadding(new Insets(62,0,0,0));
-
-
-         // Text for the goal completion question
-         Text goalText = new Text("Have you completed " +
-                 (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
-                 " goal?");
-         goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-
-         StackPane calendar = new StackPane();
-         Rectangle shadowPanel = new Rectangle();
-         Rectangle taskPopupPanel = new Rectangle();
-         VBox contentVBox = new VBox();
-         HBox buttonBox = new HBox();
-         StackPane taskPopup = new StackPane();
-         Button noButton = new Button("No");
-         Button yesButton = new Button("Yes");
-
-         EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
-
-         calendar.getChildren().addAll(calendarDisplay);
-
-         // Update Clock
-         EndOfDayComponent.checkTime(calendar, calendarDayView, shadowPanel, taskPopup, goalText, goalController);
-            
-         Scene scene = new Scene(calendar);
-         scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
-         CSSFX.start(scene);
-
-         primaryStage.setTitle("SereniTask");
-         primaryStage.setResizable(false);
-         primaryStage.setScene(scene);
-         primaryStage.setWidth(1920);
-         primaryStage.setHeight(1080);
-         primaryStage.centerOnScreen();
-         primaryStage.show();
-         primaryStage.setMaximized(true);
+         catch(Exception e){
+             System.err.println("An error has occurred while starting the application: " + e.getMessage());
+             e.printStackTrace();
+         }
      }
  
      public static void main(String[] args) {

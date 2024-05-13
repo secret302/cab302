@@ -50,22 +50,27 @@ public class RoutineTwoController {
      * @param mainSource CalandarSource Object containing all calendars
      */
     public void runRoutine(CalendarSource mainSource) {
+        try {
+            Calendar healthCalendar = OptimizerUtil.getGoalCalendar(mainSource.getCalendars(), TargetCalendar);
 
-        Calendar healthCalendar = OptimizerUtil.getGoalCalendar(mainSource.getCalendars(), TargetCalendar);
+            EventDAO eventDAO = new EventDAO();
+            List<Event> eventList = eventDAO.getAllEvents();
 
-        EventDAO eventDAO = new EventDAO();
-        List<Event> eventList = eventDAO.getAllEvents();
+            LocalDate allocationStart = LocalDate.now();
+            LocalDate allocationEnd = OptimizerUtil.getTargetDate(allocationThreshold);
 
-        LocalDate allocationStart = LocalDate.now();
-        LocalDate allocationEnd = OptimizerUtil.getTargetDate(allocationThreshold);
+            List<List<Event>> rawDaysLists = OptimizerUtil.splitDays(allocationStart, allocationEnd, eventList);
 
-        List<List<Event>> rawDaysLists = OptimizerUtil.splitDays(allocationStart, allocationEnd, eventList);
+            List<Day> preparedDays = prepareDays(rawDaysLists);
 
-        List<Day> preparedDays = prepareDays(rawDaysLists);
+            List<Entry<?>> entriesToAdd = improveDays(preparedDays);
 
-        List<Entry<?>> entriesToAdd = improveDays(preparedDays);
-
-        OptimizerUtil.commitEntries(entriesToAdd, healthCalendar);
+            OptimizerUtil.commitEntries(entriesToAdd, healthCalendar);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while handling the ratio between work and health: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

@@ -48,10 +48,16 @@ public class Day {
      * @param close Localtime object representing the end of the window
      */
     public void addWindow(LocalTime open, LocalTime close) {
-        TimeWindow newWindow = new TimeWindow(open, close);
-        timeWindows.add(newWindow);
-        freeTime = calculateFreeTime();
-        System.out.println("new Free time: " + freeTime);
+        try {
+            TimeWindow newWindow = new TimeWindow(open, close);
+            timeWindows.add(newWindow);
+            freeTime = calculateFreeTime();
+            System.out.println("new Free time: " + freeTime);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -130,8 +136,16 @@ public class Day {
      * @return TimeWindow object representing the largest window of the day
      */
     public TimeWindow getBiggestWindow() {
-        biggestWindow = findBiggestWindow();
-        return biggestWindow;
+        try {
+            biggestWindow = findBiggestWindow();
+            return biggestWindow;
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if the calculations for the biggest window of the day cannot be completed
+        return null;
     }
 
     /**
