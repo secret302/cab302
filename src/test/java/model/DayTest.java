@@ -1,12 +1,9 @@
 package model;
 
-import com.calendarfx.model.Interval;
 import com.serenitask.model.Day;
 import com.serenitask.model.TimeWindow;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
