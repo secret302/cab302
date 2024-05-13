@@ -16,7 +16,6 @@ import java.util.Objects;
  */
 public class OptimizerUtil {
 
-
     /**
      * Method takes a list of entries and the calendar to inset them into.
      *
@@ -24,8 +23,14 @@ public class OptimizerUtil {
      * @param goalCalendar Target calendar to attach entries to
      */
     public static void commitEntries(List<Entry<?>> entries, Calendar goalCalendar) {
-        for (Entry<?> entry : entries) {
-            goalCalendar.addEntry(entry);
+        try {
+            for (Entry<?> entry : entries) {
+                goalCalendar.addEntry(entry);
+            }
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while committing entries: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -36,12 +41,20 @@ public class OptimizerUtil {
      * @return LocalDate of the closest following sunday
      */
     public static LocalDate getNextSunday(LocalDate startDate) {
-        LocalDate sunday = startDate;
+        try {
+            LocalDate sunday = startDate;
 
-        while (sunday.getDayOfWeek().getValue() != 7) {
-            sunday = sunday.plusDays(1);
+            while (sunday.getDayOfWeek().getValue() != 7) {
+                sunday = sunday.plusDays(1);
+            }
+            return sunday;
         }
-        return sunday;
+        catch(Exception e){
+            System.err.println("An error occurred while returning the nearest Sunday: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns startDate if the sunday is not retrievable
+        return startDate;
     }
 
     /**
@@ -55,25 +68,30 @@ public class OptimizerUtil {
      */
     public static List<List<Event>> splitDays(LocalDate start, LocalDate end, List<Event> eventList) {
         System.out.println("Split Days Start");
+        try {
+            List<List<Event>> dayLists = new ArrayList<>();
 
-        List<List<Event>> dayLists = new ArrayList<>();
-
-        while (end.compareTo(start) > 0) {
-            List<Event> dayList = new ArrayList<>();
-            for (Event event : eventList) {
-                // What if a day
-                if (event.getInterval().getStartDate().isEqual(start) || event.getInterval().getEndDate().isEqual(start)) {
-                    dayList.add(event);
+            while (end.compareTo(start) > 0) {
+                List<Event> dayList = new ArrayList<>();
+                for (Event event : eventList) {
+                    // What if a day
+                    if (event.getInterval().getStartDate().isEqual(start) || event.getInterval().getEndDate().isEqual(start)) {
+                        dayList.add(event);
+                    }
                 }
+                start = start.plusDays(1);
+                dayLists.add(dayList);
+
             }
-            start = start.plusDays(1);
-            dayLists.add(dayList);
-
+            return dayLists;
         }
-
-        return dayLists;
+        catch(Exception e){
+            System.err.println("An error occurred while trying to split days: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if days cannot be split
+        return null;
     }
-
 
     /**
      * Takes in a list of calendars and a target calendar as a string and returns the calendar with the name Goals
@@ -83,14 +101,20 @@ public class OptimizerUtil {
      * @return Calendar object representing Goals calendar
      */
     public static Calendar getGoalCalendar(List<Calendar> calendars, String Target) {
-        for (Calendar calendar : calendars) {
-            if (Objects.equals(calendar.getName(), Target)) {
-                return calendar;
+        try {
+            for (Calendar calendar : calendars) {
+                if (Objects.equals(calendar.getName(), Target)) {
+                    return calendar;
+                }
             }
+            return new Calendar("Unknown");
+        } catch(Exception e){
+            System.err.println("An error has occurred while trying to get Goal calendars: " + e.getMessage());
+            e.printStackTrace();
         }
-        return new Calendar("Unknown");
+        // returns null if no calendar with the name Goals exists
+        return null;
     }
-
 
     /**
      * Takes in a single event list and sorts it based on start times. returns the list sorted in chronological order
@@ -100,31 +124,40 @@ public class OptimizerUtil {
      */
     public static List<Event> getSortedList(List<Event> unsortedlist) {
         System.out.println("getSortedList Start");
-        List<Event> sorted = new ArrayList<>();
+
+        try {
+            List<Event> sorted = new ArrayList<>();
 
 
-        while (!unsortedlist.isEmpty()) {
-            int index = 0;
-            int indexRemove = 0;
-            LocalTime minTime = LocalTime.of(23, 59);
-            Event earliestEvent = new Event();
+            while (!unsortedlist.isEmpty()) {
+                int index = 0;
+                int indexRemove = 0;
+                LocalTime minTime = LocalTime.of(23, 59);
+                Event earliestEvent = new Event();
 
-            for (Event event : unsortedlist) {
+                for (Event event : unsortedlist) {
 
-                if (event.getInterval().getStartTime().compareTo(minTime) < 0) {
-                    minTime = event.getInterval().getStartTime();
-                    earliestEvent = event;
-                    indexRemove = index;
+                    if (event.getInterval().getStartTime().compareTo(minTime) < 0) {
+                        minTime = event.getInterval().getStartTime();
+                        earliestEvent = event;
+                        indexRemove = index;
+                    }
+                    index++;
                 }
-                index++;
+                // add to sorted and remove from unsortedlist
+                sorted.add(earliestEvent);
+                unsortedlist.remove(indexRemove);
             }
-            // add to sorted and remove from unsortedlist
-            sorted.add(earliestEvent);
-            unsortedlist.remove(indexRemove);
-        }
-        System.out.println("getSortedList End");
+            System.out.println("getSortedList End");
 
-        return sorted;
+            return sorted;
+        }
+        catch(Exception e){
+            System.err.println("An error has occurred while trying to return a sorted list: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns the unsorted list if the list cannot be sorted
+        return unsortedlist;
     }
 
     /**
@@ -137,37 +170,43 @@ public class OptimizerUtil {
      * @return A Day Object representing the Date
      */
     public static Day createDay(List<Event> list, LocalTime dayStart, LocalTime dayEnd) {
+        try{
+            Day newDay = new Day();
+            List<Event> sortedList = OptimizerUtil.getSortedList(list);
+            LocalTime windowStart = dayStart;
 
-        Day newDay = new Day();
-        List<Event> sortedList = OptimizerUtil.getSortedList(list);
-        LocalTime windowStart = dayStart;
-
-        for (Event event : sortedList) {
+            for (Event event : sortedList) {
 
 
-            if (windowStart.isBefore(dayEnd)) {
+                if (windowStart.isBefore(dayEnd)) {
 
-                if (windowStart.compareTo(event.getInterval().getStartTime()) < 0) {
-                    newDay.addWindow(windowStart, event.getInterval().getStartTime());
-                    windowStart = event.getInterval().getEndTime();
-                } else windowStart = event.getInterval().getEndTime();
-            } else {
-                windowStart = dayEnd;
+                    if (windowStart.compareTo(event.getInterval().getStartTime()) < 0) {
+                        newDay.addWindow(windowStart, event.getInterval().getStartTime());
+                        windowStart = event.getInterval().getEndTime();
+                    } else windowStart = event.getInterval().getEndTime();
+                } else {
+                    windowStart = dayEnd;
+                }
+                if (!newDay.isDateSet()) {
+                    newDay.setStartDate(event.getInterval().getStartDate());
+                    newDay.setEndDate(event.getInterval().getEndDate());
+                    newDay.setDateSet(true);
+                }
             }
-            if (!newDay.isDateSet()) {
-                newDay.setStartDate(event.getInterval().getStartDate());
-                newDay.setEndDate(event.getInterval().getEndDate());
-                newDay.setDateSet(true);
+
+            if (windowStart.compareTo(dayEnd) < 0) {
+                newDay.addWindow(windowStart, dayEnd);
             }
-        }
 
-        if (windowStart.compareTo(dayEnd) < 0) {
-            newDay.addWindow(windowStart, dayEnd);
+            return newDay;
         }
-
-        return newDay;
+        catch(Exception e){
+            System.err.println("An error has occurred while trying to create a day object to allocate free windows of time in the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if a day object cannot be created
+        return null;
     }
-
 
     /**
      * Gets the current date and returns a future date based on the allocationThreshold class parameter
@@ -177,9 +216,15 @@ public class OptimizerUtil {
      * @return new LocalDate used for target date
      */
     public static LocalDate getTargetDate(int allocationThreshold) {
-        LocalDate targetDate = LocalDate.now().plusDays(allocationThreshold);
-
-        return OptimizerUtil.getNextSunday(targetDate);
+        try {
+            LocalDate targetDate = LocalDate.now().plusDays(allocationThreshold);
+            return OptimizerUtil.getNextSunday(targetDate);
+        }
+        catch(Exception e){
+            System.err.println("An error has occurred while trying to get the current date and return a future date based on the allocationThreshold parameter: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if the future date cannot be returned
+        return null;
     }
-
 }
