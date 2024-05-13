@@ -13,16 +13,29 @@ import com.serenitask.model.Event;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Class handling loading and creation of calendars. Handles loading in persist entries from database or creating a new
+ * calendar set if one does not exist.
+ */
 public class EventLoader {
 
     private List<String> defaultCalendars = new ArrayList<>();
 
+    /**
+     * Default constructor for EventLoader. Sets a default calendar for loading.
+     */
     public EventLoader() {
         defaultCalendars.add("Personal Events");
         defaultCalendars.add("Goals");
-        defaultCalendars.add("Block");
+        defaultCalendars.add("Health");
     }
 
+    /**
+     * Sets the color palette of the given calendar
+     *
+     * @param calendar Object representing a calendar
+     * @return Calendar object with style adjusted
+     */
     private Calendar setColor(Calendar calendar) {
         switch (calendar.getName()) {
             case "Personal Events":
@@ -31,7 +44,7 @@ public class EventLoader {
             case "Goals":
                 calendar.setStyle(Style.STYLE2);
                 return calendar;
-            case "Blocks":
+            case "Health":
                 calendar.setStyle(Style.STYLE3);
                 return calendar;
             default:
@@ -39,6 +52,12 @@ public class EventLoader {
         }
     }
 
+    /**
+     * Converts a model Event object to a calendarFX Entry<>
+     *
+     * @param event Object representing an event in the calendar
+     * @return Entry object representing an event in the calendar
+     */
     private Entry<?> convertEventToEntry(Event event) {
         Entry<?> newEntry = new Entry<>(event.getTitle(), event.getId());
 
@@ -54,6 +73,11 @@ public class EventLoader {
     }
 
 
+    /**
+     * Creates a new set of calendars based on presets. Runs on first launch only.
+     *
+     * @return CalendarSource object containing empty calendars
+     */
     private CalendarSource createNew() {
         Calendar personal = new Calendar("Personal Events");
         Calendar goals = new Calendar("Goals");
@@ -80,6 +104,11 @@ public class EventLoader {
     }
 
 
+    /**
+     * Loads in events from Events Database table. Events are loaded and allocated to their preexisting calendar object
+     *
+     * @return CalendarSource object containing populated calendars
+     */
     public CalendarSource loadEventsFromDatabase() {
 
         EventDAO eventDAO = new EventDAO();
