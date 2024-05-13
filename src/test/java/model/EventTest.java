@@ -99,7 +99,7 @@ public class EventTest {
                     "",
                     testTime.toLocalDate()
             );
-        }, "Title cannot be null");
+        }, "ID cannot be null");
 
         // Test the empty constructor of the Event class
         Event emptyEvent = new Event();
@@ -107,8 +107,8 @@ public class EventTest {
         assertNull(emptyEvent.getTitle(), "Event title should be null");
         assertNull(emptyEvent.getLocation(), "Event location should be null");
         assertNull(emptyEvent.getInterval(), "Event interval should be null");
-        assertFalse(emptyEvent.getFullDay(), "Event should not be full day");
-        assertFalse(emptyEvent.getStaticPos(), "Event should not have static position");
+        assertNull(emptyEvent.getFullDay(), "Event full day should be null");
+        assertNull(emptyEvent.getStaticPos(), "Event static position should be null");
         assertNull(emptyEvent.getCalendar(), "Event calendar should be null");
     }
 

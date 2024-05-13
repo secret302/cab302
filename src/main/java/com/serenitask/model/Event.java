@@ -51,6 +51,7 @@ public class Event {
             LocalDate allocatedUntil
     ) {
         // Validate values
+        if (id == null || id.isEmpty()) throw new IllegalArgumentException("ID cannot be null or empty");
         if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
         // Set values
         this.id = id;
