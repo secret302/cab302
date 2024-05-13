@@ -23,11 +23,17 @@ public class Optimizer {
      * @param calendarSource Contains all calendars used in application
      */
     public void optimize(CalendarSource calendarSource) {
-        RoutineOneController routineOne = new RoutineOneController(userDayStart, userDayEnd, allocateAhead);
-        RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd, allocateAhead);
+        try {
+            RoutineOneController routineOne = new RoutineOneController(userDayStart, userDayEnd, allocateAhead);
+            RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd, allocateAhead);
 
-        routineOne.runRoutine(calendarSource);
-        routineTwo.runRoutine(calendarSource);
+            routineOne.runRoutine(calendarSource);
+            routineTwo.runRoutine(calendarSource);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while running the routines for the Schedule Optimiser: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     ;
