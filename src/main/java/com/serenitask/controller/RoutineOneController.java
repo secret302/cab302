@@ -60,19 +60,24 @@ public class RoutineOneController {
      * This routine handles the allocation of goals that require x time per repeating period y.
      */
     public void runRoutine(CalendarSource mainSource) {
+        try {
+            EventDAO eventDAO = new EventDAO();
 
-        EventDAO eventDAO = new EventDAO();
+            List<Goal> goalList = getGoalList();
+            List<Goal> parsedList = parseGoalList(goalList);
 
-        List<Goal> goalList = getGoalList();
-        List<Goal> parsedList = parseGoalList(goalList);
+            Calendar goalCalendar = OptimizerUtil.getGoalCalendar(mainSource.getCalendars(), TargetCalendar);
 
-        Calendar goalCalendar = OptimizerUtil.getGoalCalendar(mainSource.getCalendars(), TargetCalendar);
-
-        for (Goal goal : parsedList) {
-            List<Event> eventList = eventDAO.getAllEvents();
-            System.out.println("eventList size: " + eventList.size());
-            System.out.println("Starting goal " + goal.getTitle());
-            allocateGoal(goal, eventList, goalCalendar);
+            for (Goal goal : parsedList) {
+                List<Event> eventList = eventDAO.getAllEvents();
+                System.out.println("eventList size: " + eventList.size());
+                System.out.println("Starting goal " + goal.getTitle());
+                allocateGoal(goal, eventList, goalCalendar);
+            }
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while allocating goals in routine 1 of the optimizer: " + e.getMessage());
+            e.printStackTrace();
         }
 
     }
