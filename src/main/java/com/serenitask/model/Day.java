@@ -144,6 +144,8 @@ public class Day {
             System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
             e.printStackTrace();
         }
+        // returns null if the calculations for the biggest window of the day cannot be completed
+        return null;
     }
 
     /**
