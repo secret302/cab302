@@ -18,6 +18,10 @@ public class Day {
     // Private parameters
     private int priority;
     private int freeTime;
+
+
+    private int workingTime;
+    private int healthTime;
     private boolean dateSet = false;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -31,7 +35,8 @@ public class Day {
      */
     public Day() {
         priority = -1;
-        freeTime = 0;
+        freeTime = -1;
+        workingTime = -1;
         timeWindows = new ArrayList<>();
     }
 
@@ -56,6 +61,9 @@ public class Day {
      */
     private int calculateFreeTime() {
         int sum = 0;
+        if (freeTime < 0) {
+            freeTime++;
+        }
         for (TimeWindow window : timeWindows) {
             sum += MINUTES.between(window.getWindowOpen(), window.getWindowClose());
         }
@@ -136,6 +144,24 @@ public class Day {
     }
 
     /**
+     * Getter for workingTime parameter
+     *
+     * @return int object representing total working time for day
+     */
+    public int getWorkingTime() {
+        return workingTime;
+    }
+
+    /**
+     * Getter for healthTime parameter
+     *
+     * @return int object representing total health based time for day
+     */
+    public int getHealthTime() {
+        return healthTime;
+    }
+
+    /**
      * Setter for StartDate parameter
      *
      * @param startDate LocalDate object to set as StartDate
@@ -213,5 +239,41 @@ public class Day {
         for (TimeWindow window : timeWindows) {
             System.out.println("Window " + index + " - start: " + window.getWindowOpen() + " - to close: " + window.getWindowClose());
         }
+    }
+
+    /**
+     * Adds work based activity time to total sum for day
+     *
+     * @param work integer representing minutes of work based events
+     */
+    public void addWork(int work) {
+        if (workingTime < 0) {
+            workingTime++;
+        }
+        workingTime += work;
+    }
+
+    /**
+     * Adds health based activity time to total sum for day
+     *
+     * @param health integer representing minutes of health based events
+     */
+    public void addHealth(int health) {
+        if (healthTime < 0) {
+            healthTime++;
+        }
+        healthTime += health;
+    }
+
+    /**
+     * Returns an integer of total minutes needed to achieve target health ratio
+     *
+     * @param ratio integer value of ratio target
+     * @return minutes required to achieve target ratio
+     */
+    public int getHealthNeeded(int ratio) {
+        return (int) (workingTime / ratio);
+
+
     }
 }
