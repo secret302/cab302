@@ -110,55 +110,60 @@ public class EventLoader {
      * @return CalendarSource object containing populated calendars
      */
     public CalendarSource loadEventsFromDatabase() {
-
         EventDAO eventDAO = new EventDAO();
         List<Event> unsortedEvents = eventDAO.getAllEvents();
+        try {
+            if (unsortedEvents.size() == 0) {
+                return createNew();
+            } else {
 
-        if (unsortedEvents.size() == 0) {
-            return createNew();
-        } else {
+                List<String> uniqueCalendars = new ArrayList<>();
 
-            List<String> uniqueCalendars = new ArrayList<>();
-
-            for (String name : defaultCalendars) {
-                uniqueCalendars.add(name);
-            }
-
-            for (Event event : unsortedEvents) {
-                if (!uniqueCalendars.contains((event.getCalendar()))) {
-                    uniqueCalendars.add(event.getCalendar());
+                for (String name : defaultCalendars) {
+                    uniqueCalendars.add(name);
                 }
-            }
 
-            List<Calendar> calendars = new ArrayList<>();
-            EventListener eventListener = new EventListener();
-
-            for (String calendarName : uniqueCalendars) {
-
-                Calendar newCalendar = new Calendar<>(calendarName);
-
-                newCalendar = setColor(newCalendar);
-                calendars.add(newCalendar);
-            }
-
-            for (Event event : unsortedEvents) {
-                for (Calendar calendar : calendars) {
-                    if (Objects.equals(event.getCalendar(), calendar.getName())) {
-                        Entry<?> entry = convertEventToEntry(event);
-                        entry.setCalendar(calendar);
-                        calendar.addEntry(entry);
+                for (Event event : unsortedEvents) {
+                    if (!uniqueCalendars.contains((event.getCalendar()))) {
+                        uniqueCalendars.add(event.getCalendar());
                     }
                 }
+
+
+                List<Calendar> calendars = new ArrayList<>();
+                EventListener eventListener = new EventListener();
+
+                for (String calendarName : uniqueCalendars) {
+
+                    Calendar newCalendar = new Calendar<>(calendarName);
+
+                    newCalendar = setColor(newCalendar);
+                    calendars.add(newCalendar);
+                }
+
+                for (Event event : unsortedEvents) {
+                    for (Calendar calendar : calendars) {
+                        if (Objects.equals(event.getCalendar(), calendar.getName())) {
+                            Entry<?> entry = convertEventToEntry(event);
+                            entry.setCalendar(calendar);
+                            calendar.addEntry(entry);
+                        }
+                    }
+                }
+
+                CalendarSource loadedCalendar = new CalendarSource();
+                for (Calendar calendar : calendars) {
+                    calendar = eventListener.setupListeners(calendar);
+                    loadedCalendar.getCalendars().add(calendar);
+                }
+
+                return loadedCalendar;
+
             }
-
-            CalendarSource loadedCalendar = new CalendarSource();
-            for (Calendar calendar : calendars) {
-                calendar = eventListener.setupListeners(calendar);
-                loadedCalendar.getCalendars().add(calendar);
-            }
-
-            return loadedCalendar;
-
-        }
+        } catch (Exception e) {
+            System.err.println("An Error has occurred while loading events from the Database:" + e.getMessage());
+        };
+        // If there is no calendar, it returns null
+        return null;
     }
 }
