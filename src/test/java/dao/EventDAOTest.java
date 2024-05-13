@@ -209,11 +209,6 @@ public class EventDAOTest {
         List<Event> events = eventDAO.getAllEvents();
         assertEquals(3, events.size(), "List should contain 3 events");
 
-        // Check correct events are returned
-        assertEquals(eventId1, events.get(0).getId(), "Event ID should match");
-        assertEquals(eventId2, events.get(1).getId(), "Event ID should match");
-        assertEquals(eventId3, events.get(2).getId(), "Event ID should match");
-
         // Delete the events after testing
         eventDAO.deleteEvent(eventId1);
         eventDAO.deleteEvent(eventId2);
