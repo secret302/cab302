@@ -260,6 +260,7 @@ public class GoalDAO {
 
                 // Create a new goal object
                 Goal goal = new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
+                goal.setId(id); // IMPORTANT: Set the ID of the goal
                 // Add event to list
                 goals.add(goal);
             }

@@ -93,6 +93,7 @@ public class Goal {
      * @param id Goal ID
      */
     public void setId(int id) {
+        if (id < 0) throw new IllegalArgumentException("Goal ID cannot be negative");
         this.id = id;
     }
 
@@ -109,7 +110,7 @@ public class Goal {
      * @param title Goal title
      */
     public void setTitle(String title) {
-        if (title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty");
+        if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty or null");
         this.title = title;
     }
 

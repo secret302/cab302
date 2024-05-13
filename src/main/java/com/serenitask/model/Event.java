@@ -51,6 +51,7 @@ public class Event {
             LocalDate allocatedUntil
     ) {
         // Validate values
+        if (id == null || id.isEmpty()) throw new IllegalArgumentException("ID cannot be null or empty");
         if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
         // Set values
         this.id = id;
@@ -78,7 +79,7 @@ public class Event {
      */
     public void setId(String id) {
         // Validate ID
-        if (id.isEmpty()) throw new IllegalArgumentException("ID cannot be empty");
+        if (id == null || id.isEmpty()) throw new IllegalArgumentException("ID cannot be empty or null");
         this.id = id;
     }
 
@@ -96,7 +97,7 @@ public class Event {
      */
     public void setTitle(String title) {
         // Validate title
-        if (title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty");
+        if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty or null");
         this.title = title;
     }
 
