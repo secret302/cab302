@@ -1,2 +1,7 @@
 module:com.calendarfx.app
 com.serenitask.app
+com.serenitask.controller
+com.serenitask.model
+com.serenitask.ui
+com.serenitask.util.DatabaseManager
+com.serenitask.util.routine
