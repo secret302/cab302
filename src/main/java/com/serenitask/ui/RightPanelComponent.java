@@ -4,12 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 
 
 import com.serenitask.controller.GoalController;
+import com.serenitask.model.Optimizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -87,9 +89,22 @@ public class RightPanelComponent {
         throw new UnsupportedOperationException("Unimplemented method 'addGoalClick'");
     }
 
-    public static void addOptimiseClick() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
+    public static void addOptimiseClick(CalendarSource calendarSource) {
+
+        try {
+            LocalTime userDayStart = LocalTime.of(8, 0, 0);
+            LocalTime userDayEnd = LocalTime.of(18, 30, 0);
+            int allocateAhead = 7;
+
+            Optimizer.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+       // throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
     }
 
     public static void addEventClick() {
