@@ -6,6 +6,7 @@ import com.calendarfx.model.Entry;
 import com.calendarfx.model.Interval;
 import com.serenitask.model.*;
 import com.serenitask.util.DatabaseManager.EventDAO;
+import com.serenitask.util.DatabaseManager.GoalDAO;
 import com.serenitask.util.routine.OptimizerUtil;
 
 import java.time.Duration;
@@ -28,18 +29,6 @@ public class RoutineOneController {
     private final LocalTime DayEnd;
     private final String TargetCalendar = "Goals";
 
-    // Dummy variables setup
-
-    // goals
-    Goal goalOne = new Goal("Exercise", 1, 30, 60, LocalDate.now(), 0);
-    Goal goalThree = new Goal("Read", 1, 15, 60, LocalDate.now(), 0);
-
-    /*
-    This routine currently operates on dummy values;
-    Routine requires updating pending changes to Event, Goal and GoalDAO
-    Event: requires constructor to create blank object.
-    goal and GoalDAO: Addition of an "AllocatedUpTo" value. Will store the date the optimizer has allocated up until.
-     */
 
     /**
      * Constructor for RoutineOne, Represents the complex routine used for allocating goals into events.
@@ -93,11 +82,8 @@ public class RoutineOneController {
      * @return List of all goals from the database
      */
     private List<Goal> getGoalList() {
-        List<Goal> goalList = new ArrayList<>();
-        goalList.add(goalOne);
-        goalList.add(goalThree);
-
-        return goalList;
+        GoalDAO goalDAO = new GoalDAO();
+        return goalDAO.getAllGoals();
     }
 
 
@@ -179,8 +165,8 @@ public class RoutineOneController {
     private List<Entry<?>> allocateBlock(int blockTarget, Goal goal, List<Event> eventList) {
         System.out.println("\nAllocate Block Start");
         int buffer = 5;
-        LocalDate allocationStart = goal.getAllocatedUntil().plusDays(1);
-        LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart);
+        LocalDate allocationStart = goal.getAllocatedUntil().plusDays(1); //!! dummy currently !!
+        LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart).plusDays(1);
 
         System.out.println("Allocate Block date range: " + allocationStart + " to " + allocationEnd);
 
@@ -188,13 +174,14 @@ public class RoutineOneController {
 
         System.out.println("Raw Day List loaded");
 
-        List<Day> prioritizedDays = prioritizeDays(getDaysList(rawDaysLists));
+        List<Day> orderedDays = getDaysList(rawDaysLists, allocationStart);
+        List<Day> prioritizedDays = prioritizeDays(orderedDays);
 
         System.out.println("Days Validation Start\n");
         for (Day day : prioritizedDays) {
             day.validate();
         }
-        System.out.println("Days Validation Start\n");
+        System.out.println("Days Validation End\n");
 
         System.out.println("Days Prioritized\n");
 
@@ -203,12 +190,13 @@ public class RoutineOneController {
         while (blockTarget > buffer) {
             boolean hasWindows = false;
             for (Day day : prioritizedDays) {
-                System.out.println("BlockTarget Loop Start: Setup");
+                System.out.println("BlockTarget Loop Start: Setup; Date: " + day.getStartDate());
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
                 int windowMins = (int) (duration.getSeconds() / 60);
+                System.out.println("windowMins: "+windowMins);
 
-                if (windowMins > 0) {
+                if (windowMins > 0 ) {
                     hasWindows = true;
                 }
                 System.out.println("BlockTarget Loop: Setup complete");
@@ -256,13 +244,17 @@ public class RoutineOneController {
      * available for allocation. Each list of events is converted to a Day which contains a List of Windows.
      *
      * @param rawDaysLists List of lists containing events, sorted by date
+     * @param date Localdate object representing starting date of allocation
      * @return List of Day objects
      */
-    private List<Day> getDaysList(List<List<Event>> rawDaysLists) {
+    private List<Day> getDaysList(List<List<Event>> rawDaysLists, LocalDate date) {
+
         System.out.println("Days List Start");
         List<Day> daysList = new ArrayList<>();
         for (List<Event> list : rawDaysLists) {
-            daysList.add(OptimizerUtil.createDay(list, DayStart, DayEnd));
+            Day newDay = OptimizerUtil.createDay(list, DayStart, DayEnd,date);
+            daysList.add(newDay);
+            date = date.plusDays(1);
         }
         System.out.println("Days List End");
         return daysList;
