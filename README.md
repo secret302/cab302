@@ -1,7 +1,7 @@
-App Description to be added.
+App Description to be added.  
 [GitHub Pages](https://secret302.github.io/cab302/)
 
-Collaborators:
+##Collaborators:  
 Luca King - n0597  
 Scott May - n0062  
 Caleb Worth - n1073  
