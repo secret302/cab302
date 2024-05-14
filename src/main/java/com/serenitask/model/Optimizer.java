@@ -12,20 +12,15 @@ import java.time.LocalTime;
  */
 public class Optimizer {
 
-    private final LocalTime userDayStart = LocalTime.of(8, 0, 0);
-    private final LocalTime userDayEnd = LocalTime.of(18, 30, 0);
-    private final int allocateAhead = 7;
-
-
     /**
      * Method that runs routines that make up the optimizer.
      *
      * @param calendarSource Contains all calendars used in application
      */
-    public void optimize(CalendarSource calendarSource) {
+    public static void optimize(CalendarSource calendarSource, LocalTime userDayStart, LocalTime userDayEnd, int allocateAhead ) {
         try {
             RoutineOneController routineOne = new RoutineOneController(userDayStart, userDayEnd, allocateAhead);
-            RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd, allocateAhead);
+            RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd);
 
             routineOne.runRoutine(calendarSource);
             routineTwo.runRoutine(calendarSource);
