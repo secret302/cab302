@@ -96,33 +96,6 @@ public class CalendarApp extends Application {
                 RightPanelComponent.addEventClick(mainCalendarSource);
              });
 
-             Text dateToday = new Text(LocalDate.now().toString());
-             Text dailyText = new Text("Daily");
-             Text weeklyText = new Text("Weekly");
-             StackPane switchViewButton = new StackPane();
-             Rectangle switchViewBox = new Rectangle(120, 50);
-
-             Text optimiseText = new Text("Optimise");
-             StackPane optimiseButton = new StackPane();
-             Rectangle optimiseViewBox = new Rectangle(120, 50);
-             optimiseButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addOptimiseClick(mainCalendarSource);
-             });
-
-             Text addGoalText = new Text("Add Goal");
-             StackPane addGoalButton = new StackPane();
-             Rectangle addGoalViewBox = new Rectangle(120, 50);
-             addGoalButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addGoalClick();
-             });
-
-             Text addEventText = new Text("Add Event");
-             StackPane addEventButton = new StackPane();
-             Rectangle addEventViewBox = new Rectangle(120, 50);
-             addEventButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addEventClick(mainCalendarSource);
-             });
-
              AtomicBoolean isWeeklyView = new AtomicBoolean(false);
              HBox dateTodayPanel = new HBox();
              VBox actionsPanel = new VBox();
@@ -134,7 +107,6 @@ public class CalendarApp extends Application {
              VBox leftPanel = new VBox();
              leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
              leftPanel.setMinHeight(700);
-
 
              //VBox dailygoals = new VBox();
              //TextField goalTextField = new TextField();
