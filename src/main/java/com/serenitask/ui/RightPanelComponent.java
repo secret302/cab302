@@ -1,20 +1,26 @@
 package com.serenitask.ui;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 
-
+import com.serenitask.ui.WindowComponents.AddEvent;
+import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.controller.GoalController;
 import com.serenitask.model.Optimizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -24,6 +30,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 
 public class RightPanelComponent {
     public static void actionsComponent(VBox rightPanelObjects, Text dailyText, Text weeklyText, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, VBox actionsPanel, StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox
@@ -85,8 +95,7 @@ public class RightPanelComponent {
     }
 
     public static void addGoalClick() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGoalClick'");
+        AddGoal.displayAddGoalView();
     }
 
     public static void addOptimiseClick(CalendarSource calendarSource) {
@@ -107,8 +116,7 @@ public class RightPanelComponent {
        // throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
     }
 
-    public static void addEventClick() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addEventClick'");
+    public static void addEventClick(CalendarSource calendarSource) {
+        AddEvent.displayAddEventView(calendarSource);
     }
 }
