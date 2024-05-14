@@ -16,6 +16,8 @@
 
  package com.serenitask.app;
 
+
+
  import com.calendarfx.model.Calendar;
  import com.calendarfx.model.Calendar.Style;
  import com.calendarfx.model.CalendarSource;
@@ -25,7 +27,8 @@
  import com.calendarfx.view.YearMonthView;
 
 import fr.brouillard.oss.cssfx.CSSFX;
- import javafx.application.Application;
+import impl.com.calendarfx.view.NavigateDateView;
+import javafx.application.Application;
  import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -97,8 +100,10 @@ import com.serenitask.util.DatabaseManager.GoalDAO;
          HBox dateTodayPanel = new HBox();
          VBox actionsPanel = new VBox();
          Region spacer = new Region();
+         NavigationBar navigationBar = new NavigationBar ();
+         NavigateDateView navigateDateView = navigationBar.createButton();
 
-         CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer);
+         CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer, navigateDateView);
 
 
          VBox leftPanel = new VBox();
@@ -112,7 +117,10 @@ import com.serenitask.util.DatabaseManager.GoalDAO;
          //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
 
          YearMonthView heatmap = new YearMonthView();
-         heatmap.showUsageColorsProperty().set(true);
+         heatmap.getCalendarSources().setAll(mainCalendarSource);
+         heatmap.setRequestedTime(LocalTime.now());
+         heatmap.setShowUsageColors(true);
+         heatmap.setShowTodayButton(false);
 
          AgendaView agenda = new AgendaView();
          agenda.setEnableTimeZoneSupport(true);

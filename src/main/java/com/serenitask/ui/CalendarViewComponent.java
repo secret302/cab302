@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.serenitask.controller.GoalController;
+
+import impl.com.calendarfx.view.NavigateDateView;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,14 +24,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class CalendarViewComponent {
-    public static void calendarView(Text dateToday, HBox dateTodayPanel, Region spacer)
+    public static void calendarView(Text dateToday, HBox dateTodayPanel, Region spacer, NavigateDateView navigateView)
     {
+
          dateToday.setFont(Font.font(40));
-         dateTodayPanel.getChildren().addAll(dateToday, spacer);
+         dateTodayPanel.getChildren().addAll(dateToday, spacer, navigateView);
          dateTodayPanel.setPadding(new Insets(20,0,0,30));
          HBox.setHgrow(dateToday, Priority.ALWAYS);
          StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
-         spacer.setMinWidth(1400);
+         spacer.setMinWidth(1100);
     }
 
     public static void switchView(AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
