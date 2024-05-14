@@ -97,17 +97,17 @@ public class RightPanelComponent {
      * @param agenda            The AgendaView component.
      * @param dailyGoals        The VBox containing daily goals.
      */
-    public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals) {
+    public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda) {
         isActionsView.set(!isActionsView.get());
 
         if (isActionsView.get()) {
             rightPanel.getChildren().remove(agenda);
-            rightPanel.getChildren().remove(dailyGoals);
+            // rightPanel.getChildren().remove(dailyGoals);
             rightPanel.getChildren().add(2, rightPanelObjects);
         } else {
             rightPanel.getChildren().remove(rightPanelObjects);
             rightPanel.getChildren().add(2, agenda);
-            rightPanel.getChildren().add(3, dailyGoals);
+            // rightPanel.getChildren().add(3, dailyGoals);
         }
     }
 
