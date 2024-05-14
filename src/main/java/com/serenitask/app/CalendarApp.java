@@ -82,7 +82,7 @@ import javafx.scene.Scene;
          StackPane addEventButton = new StackPane();
          Rectangle addEventViewBox = new Rectangle(120, 50);
          addEventButton.setOnMouseClicked(event -> {
-            RightPanelComponent.addEventClick();
+            RightPanelComponent.addEventClick(mainCalendarSource);
          });
 
          AtomicBoolean isWeeklyView = new AtomicBoolean(false);
