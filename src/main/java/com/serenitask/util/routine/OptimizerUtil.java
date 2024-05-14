@@ -167,17 +167,26 @@ public class OptimizerUtil {
      * @param list     List of events for a single date
      * @param dayStart LocalTime object representing start of the users day
      * @param dayEnd   LocalTime object representing end of the users day
+     * @param date Localdate object representing the date of the day
      * @return A Day Object representing the Date
      */
-    public static Day createDay(List<Event> list, LocalTime dayStart, LocalTime dayEnd) {
+    public static Day createDay(List<Event> list, LocalTime dayStart, LocalTime dayEnd, LocalDate date) {
         try{
             Day newDay = new Day();
             List<Event> sortedList = OptimizerUtil.getSortedList(list);
             LocalTime windowStart = dayStart;
 
+            System.out.println("sortedList size: " + sortedList.size());
+            if(sortedList.isEmpty())
+            {
+
+                newDay.setStartDate(date);
+                newDay.setEndDate(date);
+                newDay.setDateSet(true);
+            }
+            else
+            {
             for (Event event : sortedList) {
-
-
                 if (windowStart.isBefore(dayEnd)) {
 
                     if (windowStart.compareTo(event.getInterval().getStartTime()) < 0) {
@@ -192,7 +201,7 @@ public class OptimizerUtil {
                     newDay.setEndDate(event.getInterval().getEndDate());
                     newDay.setDateSet(true);
                 }
-            }
+            }}
 
             if (windowStart.compareTo(dayEnd) < 0) {
                 newDay.addWindow(windowStart, dayEnd);
