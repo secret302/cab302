@@ -29,8 +29,11 @@ import fr.brouillard.oss.cssfx.CSSFX;
  import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
- import javafx.scene.control.Button;
- import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
  import javafx.scene.layout.*;
  import javafx.scene.shape.Rectangle;
  import javafx.scene.text.Font;
@@ -43,9 +46,11 @@ import javafx.scene.Scene;
  import java.time.LocalTime;
  import java.time.temporal.WeekFields;
  import java.util.concurrent.atomic.AtomicBoolean;
- 
- import com.serenitask.controller.*;
- import com.serenitask.ui.*;
+
+import com.serenitask.controller.*;
+import com.serenitask.model.Goal;
+import com.serenitask.ui.*;
+import com.serenitask.util.DatabaseManager.GoalDAO;
  
  
  public class CalendarApp extends Application {
@@ -101,10 +106,10 @@ import javafx.scene.Scene;
          leftPanel.setMinHeight(700);
 
 
-         VBox dailygoals = new VBox();
-         TextField goalTextField = new TextField();
-         Button createGoalButton = new Button("Create Goal");
-         DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+         //VBox dailygoals = new VBox();
+         //TextField goalTextField = new TextField();
+         //Button createGoalButton = new Button("Create Goal");
+         //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
 
          YearMonthView heatmap = new YearMonthView();
          heatmap.showUsageColorsProperty().set(true);
@@ -120,8 +125,11 @@ import javafx.scene.Scene;
          VBox rightPanelObjects = new VBox(); // new one good
          rightPanelObjects.setPadding(new Insets(20,20,20,19));
          Button switchRightPanelButton = new Button("Goals / Actions");
+         HBox rightPanelButton = new HBox(switchRightPanelButton);
+         
+         rightPanelButton.setPadding(new Insets(40, 0, 40, 0));
          switchRightPanelButton.minWidth(100.0);
-         switchRightPanelButton.setAlignment(Pos.CENTER);
+         rightPanelButton.setAlignment(Pos.CENTER);
 
          AtomicBoolean isActionsView = new AtomicBoolean(false);
          RightPanelComponent.actionsComponent(rightPanelObjects,
@@ -141,20 +149,18 @@ import javafx.scene.Scene;
                  addEventText,
                  addEventViewBox);
          
-         rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
+         rightPanel.getChildren().addAll(heatmap, rightPanelButton, agenda);
+         rightPanel.setAlignment(Pos.TOP_CENTER);
          rightPanel.setMinHeight(700);
          rightPanel.setMaxWidth(800);
 
          switchRightPanelButton.setOnMouseClicked(event -> {
-            RightPanelComponent.switchRightPanel(rightPanelObjects,isActionsView, rightPanel, agenda, dailygoals);
+            RightPanelComponent.switchRightPanel(rightPanelObjects,isActionsView, rightPanel, agenda);
          });
 
 
 
              GoalController goalController = new GoalController();
-             for (String title : goalController.loadSimpleGoal()) {
-                 dailygoals.getChildren().add(new javafx.scene.control.Label(title));
-             }
 
              // Switches betwenn Day view and Week View
              switchViewButton.setOnMouseClicked(event -> {
@@ -188,7 +194,7 @@ import javafx.scene.Scene;
              Button noButton = new Button("No");
              Button yesButton = new Button("Yes");
 
-             EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
+             //EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
 
              calendar.getChildren().addAll(calendarDisplay);
 
@@ -207,6 +213,39 @@ import javafx.scene.Scene;
              primaryStage.centerOnScreen();
              primaryStage.show();
              primaryStage.setMaximized(true);
+             primaryStage.setOnCloseRequest(event -> {
+            // Consume the event to prevent the application from closing
+            if (goalController.loadSimpleGoal().toString()=="[]"){
+                primaryStage.close();
+            }
+            else{
+                event.consume();
+            
+            
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Did you complete all your goals today?\nGoals: " + goalController.loadSimpleGoal().toString());
+            ButtonType buttonYes = new ButtonType("Yes");
+            ButtonType buttonNo = new ButtonType("No");
+            ButtonType buttonCancel = new ButtonType("Cancel");
+            alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
+            alert.showAndWait().ifPresent(response -> {
+                if (response == buttonYes) 
+                {
+                    GoalDAO goalDAO = new GoalDAO();
+                    for (Goal goal: goalDAO.getAllGoals()){
+                        goalController.deleteGoal(goal.getId());
+                    }
+                    primaryStage.close();
+                } 
+                
+                else if (response == buttonNo) 
+                {
+                    primaryStage.close();
+                } 
+
+            });
+            }
+            
+        });
          }
          catch(Exception e){
              System.err.println("An error has occurred while starting the application: " + e.getMessage());

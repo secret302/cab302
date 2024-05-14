@@ -77,20 +77,19 @@ public class RightPanelComponent {
          addEventButton.getChildren().addAll(addEventViewBox, addEventText);
 
          rightPanelObjects.getChildren().addAll(switchViewButton, optimiseButton, addGoalButton, addEventButton);
+         rightPanelObjects.setSpacing(30);
     }
 
-    public static void switchRightPanel(VBox rightPanelObjects,AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals){
+    public static void switchRightPanel(VBox rightPanelObjects,AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda){
         isActionsView.set(!isActionsView.get());
         
              if (isActionsView.get()) {
                  rightPanel.getChildren().remove(agenda);
-                 rightPanel.getChildren().remove(dailyGoals);
                  rightPanel.getChildren().add(2, rightPanelObjects);
                  } 
             else {
                  rightPanel.getChildren().remove(rightPanelObjects);
                  rightPanel.getChildren().add(2, agenda);
-                 rightPanel.getChildren().add(3, dailyGoals);
                 }
     }
 
