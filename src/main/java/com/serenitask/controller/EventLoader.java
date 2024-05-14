@@ -53,7 +53,7 @@ public class EventLoader {
     }
 
     /**
-     * Converts a model Event object to a calendarFX Entry<>
+     * Converts a model Event object to a calendarFX Entry
      *
      * @param event Object representing an event in the calendar
      * @return Entry object representing an event in the calendar
