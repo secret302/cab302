@@ -22,11 +22,21 @@ import java.util.Random;
  */
 public class RoutineTwoController {
 
-    // Dummy value of 7, will be replaced with 28 for 1 month or ~4 weeks
+    /**
+     * Target ratio value - 240 minutes / 30 minutes = 8
+     */
     private final int healthRatio = 8;
-    private final int allocationThreshold;
+    /**
+     * Target calendar for health based events
+     */
     private final String TargetCalendar = "Health";
+    /**
+     * LocalTime object representing users start of day
+     */
     private final LocalTime DayStart;
+    /**
+     * LocalTime object representing users end of day
+     */
     private final LocalTime DayEnd;
 
     /**
@@ -34,10 +44,8 @@ public class RoutineTwoController {
      *
      * @param dayStart            LocalTime object representing the Start of users day
      * @param dayEnd              LocalTime object representing the End of users day
-     * @param allocationThreshold integer value of days to allocate ahead. 7 = 1 week;
      */
-    public RoutineTwoController(LocalTime dayStart, LocalTime dayEnd, int allocationThreshold) {
-        this.allocationThreshold = allocationThreshold;
+    public RoutineTwoController(LocalTime dayStart, LocalTime dayEnd) {
         this.DayStart = dayStart;
         this.DayEnd = dayEnd;
     }
@@ -57,12 +65,12 @@ public class RoutineTwoController {
             List<Event> eventList = eventDAO.getAllEvents();
 
             LocalDate allocationStart = LocalDate.now();
-            LocalDate allocationEnd = OptimizerUtil.getTargetDate(allocationThreshold);
+            LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart);
 
             List<List<Event>> rawDaysLists = OptimizerUtil.splitDays(allocationStart, allocationEnd, eventList);
-
-            List<Day> preparedDays = prepareDays(rawDaysLists);
-
+            System.out.println("run test: rawList size: " + rawDaysLists.size());
+            List<Day> preparedDays = prepareDays(rawDaysLists,allocationStart);
+            System.out.println("run test: preparedDays size: " + preparedDays.size());
             List<Entry<?>> entriesToAdd = improveDays(preparedDays);
 
             OptimizerUtil.commitEntries(entriesToAdd, healthCalendar);
@@ -82,31 +90,38 @@ public class RoutineTwoController {
      * @return List of entries to be added to calendar
      */
     private List<Entry<?>> improveDays(List<Day> days) {
+        System.out.println("improveDays: Days size: " + days.size());
+        System.out.println("improveDays Start");
         List<Entry<?>> entriesToAdd = new ArrayList<>();
         Random random = new Random();
 
         boolean hasWindows = false;
         for (Day day : days) {
-
+            System.out.println("improveDays: Day test");
             while (checkRatio(day)) {
+                System.out.println("improveDays: Ratio test");
                 int targetChange = day.getHealthNeeded(healthRatio);
                 if (targetChange > 30) {
                     targetChange = 30;
                 }
 
-
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
                 int windowMins = (int) (duration.getSeconds() / 60);
+
+                System.out.println("windowMins test: " + windowMins);
                 if (windowMins > 0) {
                     hasWindows = true;
+                }
+                else
+                {
+                    break;
                 }
 
                 if (hasWindows) {
                     int activityNumber = random.nextInt(10) + 1;
 
                     if (windowMins > targetChange) {
-
                         LocalTime startTime = window.getWindowOpen();
                         LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
                         day.addWindow(endTime, window.getWindowClose());
@@ -115,6 +130,7 @@ public class RoutineTwoController {
                         newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
                         newEntry.setFullDay(false);
                         entriesToAdd.add(newEntry);
+
                     } else {
                         Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
                         newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
@@ -126,7 +142,7 @@ public class RoutineTwoController {
                 }
             }
         }
-
+        System.out.println("improveDays End");
         return entriesToAdd;
     }
 
@@ -175,7 +191,20 @@ public class RoutineTwoController {
     private boolean checkRatio(Day day) {
         int work = day.getWorkingTime();
         int health = day.getHealthTime();
-        if (work / health > healthRatio) {
+
+        System.out.println("work test: " + work);
+        System.out.println("health test: " + health);
+
+        if (work == 0 ) {
+            return false;
+        }
+        else if (health == 0)
+        {
+            return true;
+        }
+        else if ((int)(work / health) > healthRatio) {
+            int ratio = (int) (work/health);
+            System.out.println("healthTime test: " + ratio);
             return true;
         }
         return false;
@@ -187,14 +216,19 @@ public class RoutineTwoController {
      * available for allocation. Each list of events is converted to a Day which contains a List of Windows.
      *
      * @param rawDaysLists List of lists containing events, sorted by date
+     * @param date Localdate object representing starting date of allocation
      * @return List of Day objects
      */
-    private List<Day> prepareDays(List<List<Event>> rawDaysLists) {
+    private List<Day> prepareDays(List<List<Event>> rawDaysLists, LocalDate date) {
         System.out.println("Days List Start");
         List<Day> daysList = new ArrayList<>();
+
+
         for (List<Event> list : rawDaysLists) {
-            Day newDay = OptimizerUtil.createDay(list, DayStart, DayEnd);
+            List<Event> createList = new ArrayList<>(list);
+            Day newDay = OptimizerUtil.createDay(createList, DayStart, DayEnd, date);
             newDay = appendEvents(newDay, list);
+            daysList.add(newDay);
         }
         System.out.println("Days List End");
         return daysList;
@@ -208,10 +242,13 @@ public class RoutineTwoController {
      * @return Returns updated Day object
      */
     private Day appendEvents(Day day, List<Event> events) {
+        System.out.println("Day - List Size: " + events.size());
         for (Event event : events) {
             if (event.getCalendar().equals("Health")) {
+                System.out.println("Day - Added health: " + (int) event.getInterval().getDuration().toMinutes());
                 day.addHealth((int) event.getInterval().getDuration().toMinutes());
             } else {
+                System.out.println("Day - Added work: " + (int) event.getInterval().getDuration().toMinutes());
                 day.addWork((int) event.getInterval().getDuration().toMinutes());
             }
         }

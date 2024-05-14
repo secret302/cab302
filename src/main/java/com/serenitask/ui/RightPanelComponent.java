@@ -16,6 +16,7 @@ import com.calendarfx.view.DetailedWeekView;
 import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.controller.GoalController;
+import com.serenitask.model.Optimizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -97,9 +98,22 @@ public class RightPanelComponent {
         AddGoal.displayAddGoalView();
     }
 
-    public static void addOptimiseClick() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
+    public static void addOptimiseClick(CalendarSource calendarSource) {
+
+        try {
+            LocalTime userDayStart = LocalTime.of(8, 0, 0);
+            LocalTime userDayEnd = LocalTime.of(18, 30, 0);
+            int allocateAhead = 7;
+
+            Optimizer.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+       // throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
     }
 
     public static void addEventClick(CalendarSource calendarSource) {

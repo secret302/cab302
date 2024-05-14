@@ -37,9 +37,11 @@ import javafx.scene.Scene;
  import javafx.scene.text.FontWeight;
  import javafx.scene.text.Text;
  import javafx.stage.Stage;
- 
+
+ import java.time.DayOfWeek;
  import java.time.LocalDate;
  import java.time.LocalTime;
+ import java.time.temporal.WeekFields;
  import java.util.concurrent.atomic.AtomicBoolean;
  
  import com.serenitask.controller.*;
@@ -53,6 +55,7 @@ import javafx.scene.Scene;
          try {
              DetailedDayView calendarDayView = new DetailedDayView();
              DetailedWeekView calendarWeekView = new DetailedWeekView();
+             calendarWeekView.setWeekFields(WeekFields.of(DayOfWeek.MONDAY,1));
              EventLoader eventLoader = new EventLoader();
              CalendarSource mainCalendarSource = eventLoader.loadEventsFromDatabase();
              CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
@@ -68,7 +71,7 @@ import javafx.scene.Scene;
          StackPane optimiseButton = new StackPane();
          Rectangle optimiseViewBox = new Rectangle(120, 50);
          optimiseButton.setOnMouseClicked(event -> {
-            RightPanelComponent.addOptimiseClick();
+            RightPanelComponent.addOptimiseClick(mainCalendarSource);
          });
 
          Text addGoalText = new Text("Add Goal");
@@ -91,12 +94,12 @@ import javafx.scene.Scene;
          Region spacer = new Region();
 
          CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer);
-         
+
 
          VBox leftPanel = new VBox();
          leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
          leftPanel.setMinHeight(700);
- 
+
 
          VBox dailygoals = new VBox();
          TextField goalTextField = new TextField();
@@ -121,7 +124,22 @@ import javafx.scene.Scene;
          switchRightPanelButton.setAlignment(Pos.CENTER);
 
          AtomicBoolean isActionsView = new AtomicBoolean(false);
-         RightPanelComponent.actionsComponent(rightPanelObjects, dailyText, weeklyText, switchViewBox, switchViewButton, isWeeklyView, actionsPanel, optimiseButton, optimiseText, optimiseViewBox, addGoalButton, addGoalText, addGoalViewBox, addEventButton, addEventText, addEventViewBox);
+         RightPanelComponent.actionsComponent(rightPanelObjects,
+                 dailyText,
+                 weeklyText,
+                 switchViewBox,
+                 switchViewButton,
+                 isWeeklyView,
+                 actionsPanel,
+                 optimiseButton,
+                 optimiseText,
+                 optimiseViewBox,
+                 addGoalButton,
+                 addGoalText,
+                 addGoalViewBox,
+                 addEventButton,
+                 addEventText,
+                 addEventViewBox);
          
          rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
          rightPanel.setMinHeight(700);

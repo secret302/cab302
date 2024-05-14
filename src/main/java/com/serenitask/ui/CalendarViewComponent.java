@@ -1,5 +1,6 @@
 package com.serenitask.ui;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,6 +43,8 @@ public class CalendarViewComponent {
                  calendarWeekView.setMinHeight(900);
                  calendarWeekView.setMaxHeight(900);
                  calendarWeekView.setPadding(new Insets(40,0,0,0));
+                 calendarWeekView.setAdjustToFirstDayOfWeek(true);
+
              } else {
                  leftPanel.getChildren().remove(calendarWeekView);
                  leftPanel.getChildren().add(1, calendarDayView);
