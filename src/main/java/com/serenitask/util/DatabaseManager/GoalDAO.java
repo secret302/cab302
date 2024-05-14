@@ -19,7 +19,6 @@ public class GoalDAO {
 
     /**
      * GoalDAO constructor
-     * @constructor
      */
     public GoalDAO() {
         // Get connection to the database
