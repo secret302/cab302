@@ -7,11 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 
-
+import com.serenitask.ui.WindowComponents.AddEvent;
+import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.controller.GoalController;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -91,8 +94,7 @@ public class RightPanelComponent {
     }
 
     public static void addGoalClick() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGoalClick'");
+        AddGoal.displayAddGoalView();
     }
 
     public static void addOptimiseClick() {
@@ -100,59 +102,7 @@ public class RightPanelComponent {
         throw new UnsupportedOperationException("Unimplemented method 'addOptimiseClick'");
     }
 
-    public static void addEventClick() {
-        Stage popOutStage = new Stage();
-        popOutStage.initModality(Modality.APPLICATION_MODAL);
-        popOutStage.setTitle("Add Event");
-
-        Label titleLabel = new Label("Title:");
-        TextField titleInput = new TextField();
-
-        Label startDateLabel = new Label("Start Date:");
-        DatePicker startDateInput = new DatePicker(LocalDate.now());
-
-        Label endDateLabel = new Label("End Date:");
-        DatePicker endDateInput = new DatePicker(LocalDate.now());
-
-        CheckBox allDayCheckBox = new CheckBox("All Day Event");
-
-        Label startTimeLabel = new Label("Start Time:");
-        ComboBox<String> startTimeInput = createTimeComboBox();
-
-        Label endTimeLabel = new Label("End Time:");
-        ComboBox<String> endTimeInput = createTimeComboBox();
-
-        Label calendarSelectLabel = new Label("Select Calendar");
-        ComboBox<String> calendarSelectInput = new ComboBox<>();
-        // PLACEHOLDER CALENDARS
-        calendarSelectInput.getItems().addAll("Personal Events", "Health", "Goals");
-
-        Button saveButton = new Button("Save");
-        saveButton.setOnAction(e -> popOutStage.close());
-        Button backButton = new Button("Back");
-        backButton.setOnAction(e -> popOutStage.close());
-
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(titleLabel, titleInput, startDateLabel, startDateInput, endDateLabel,
-                endDateInput, startTimeLabel, startTimeInput, endTimeLabel, endTimeInput, allDayCheckBox,
-                calendarSelectLabel, calendarSelectInput, saveButton, backButton);
-        layout.setAlignment(Pos.BASELINE_LEFT);
-
-        Scene popOutScene = new Scene(layout, 300, 200);
-        popOutStage.setScene(popOutScene);
-        popOutStage.showAndWait();
-    }
-    private static ComboBox<String> createTimeComboBox() {
-        List<String> timeOptions = new ArrayList<>();
-        for (int hour = 0; hour < 24; hour++) {
-            for (int minute = 0; minute < 60; minute += 15) {
-                String time = String.format("%02d:%02d", hour, minute);
-                timeOptions.add(time);
-            }
-        }
-
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(timeOptions);
-        return comboBox;
+    public static void addEventClick(CalendarSource calendarSource) {
+        AddEvent.displayAddEventView(calendarSource);
     }
 }
