@@ -95,7 +95,6 @@ public class RightPanelComponent {
      * @param isActionsView     AtomicBoolean indicating whether the actions view is currently displayed.
      * @param rightPanel        The main right panel VBox that switches between displaying actions and agenda/daily goals.
      * @param agenda            The AgendaView component.
-     * @param dailyGoals        The VBox containing daily goals.
      */
     public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda) {
         isActionsView.set(!isActionsView.get());
