@@ -101,10 +101,8 @@ import com.serenitask.util.DatabaseManager.GoalDAO;
          VBox actionsPanel = new VBox();
          Region spacer = new Region();
          NavigationBar navigationBar = new NavigationBar ();
-         NavigateDateView navigateDateView = navigationBar.createButton();
-
+         NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView,calendarWeekView );
          CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer, navigateDateView);
-
 
          VBox leftPanel = new VBox();
          leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
