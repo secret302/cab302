@@ -48,6 +48,7 @@ public class RightPanelComponent {
             , StackPane addEventButton, Text addEventText, Rectangle addEventViewBox) {
         switchViewBox.setWidth(170.0);
         switchViewBox.setFill(Color.GREY);
+
         switchViewBox.setArcWidth(10);
         switchViewBox.setArcHeight(10);
         dailyText.setFont(Font.font(30));
@@ -94,19 +95,18 @@ public class RightPanelComponent {
      * @param isActionsView     AtomicBoolean indicating whether the actions view is currently displayed.
      * @param rightPanel        The main right panel VBox that switches between displaying actions and agenda/daily goals.
      * @param agenda            The AgendaView component.
-     * @param dailyGoals        The VBox containing daily goals.
      */
-    public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals) {
+    public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda) {
         isActionsView.set(!isActionsView.get());
 
         if (isActionsView.get()) {
             rightPanel.getChildren().remove(agenda);
-            rightPanel.getChildren().remove(dailyGoals);
+            // rightPanel.getChildren().remove(dailyGoals);
             rightPanel.getChildren().add(2, rightPanelObjects);
         } else {
             rightPanel.getChildren().remove(rightPanelObjects);
             rightPanel.getChildren().add(2, agenda);
-            rightPanel.getChildren().add(3, dailyGoals);
+            // rightPanel.getChildren().add(3, dailyGoals);
         }
     }
 

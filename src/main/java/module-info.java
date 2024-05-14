@@ -4,6 +4,7 @@ module com.calendarfx.app {
     requires javafx.controls;
     requires com.calendarfx.view;
     requires java.sql;
+    requires java.desktop;
 
     exports com.serenitask.app;
     exports com.serenitask.controller;
