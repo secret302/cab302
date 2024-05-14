@@ -11,6 +11,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/* Methods:
+    loadEventsFromDatabase()
+ */
+
+/* Test Cases:
+    testLoadEventsFromDatabase()
+ */
+
 public class EventLoaderTest {
     // EventLoader object
     private final EventLoader eventLoader = new EventLoader();

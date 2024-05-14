@@ -30,8 +30,16 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Provides a user interface component for adding a new goal.
+ * This class is responsible for rendering a pop-up window where users can enter details about a new goal they wish to achieve.
+ */
 
 public class AddGoal {
+    /**
+     * Displays a modal window for adding a new goal, allowing the user to input goal details such as duration and frequency.
+     * The window contains form inputs for the goal description, hours and minutes of effort, and the recurrence period.
+     */
     public static void displayAddGoalView() {
         Stage popOutStage = new Stage();
         popOutStage.initModality(Modality.APPLICATION_MODAL);

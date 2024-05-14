@@ -22,13 +22,11 @@ public class Event {
 
     /**
      * Event constructor for an empty event
-     * @constructor
      */
     public Event() {}
 
     /**
      * Main Event constructor
-     * @constructor
      * @param id Event ID
      * @param title Title of the event
      * @param location Location of the event
