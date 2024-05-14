@@ -21,7 +21,18 @@ import com.serenitask.model.Event;
 
 import com.serenitask.util.DatabaseManager.EventDAO;
 
+/**
+ * Provides a user interface for adding new events to a calendar.
+ * This class is responsible for rendering a pop-up window where users can enter details about a new event
+ * and save it to a selected calendar within the application.
+ */
 public class AddEvent {
+    /**
+     * Displays a modal window for adding a new event to the specified calendar source.
+     * Users can input event details such as title, start and end times, and select which calendar to add the event to.
+     *
+     * @param calendarSource The source containing multiple calendars to which the event can be added.
+     */
     public static void displayAddEventView(CalendarSource calendarSource) {
         Stage popOutStage = new Stage();
         popOutStage.initModality(Modality.APPLICATION_MODAL);
@@ -106,7 +117,13 @@ public class AddEvent {
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
     }
-
+    
+    /**
+     * Creates a ComboBox containing time options in 15-minute increments.
+     * This method generates a list of times from 00:00 to 23:45 for user selection.
+     *
+     * @return A ComboBox filled with time options.
+     */
     private static ComboBox<String> createTimeComboBox() {
         List<String> timeOptions = new ArrayList<>();
         for (int hour = 0; hour < 24; hour++) {
