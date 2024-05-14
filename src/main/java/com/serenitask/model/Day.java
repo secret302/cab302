@@ -28,7 +28,7 @@ public class Day {
     private TimeWindow biggestWindow;
 
     // List containing all TimeWindows for the day
-    List<TimeWindow> timeWindows;
+    private List<TimeWindow> timeWindows;
 
     /**
      * Base Constructor; represents a single day on a date containing windows of free time
@@ -36,8 +36,9 @@ public class Day {
     public Day() {
         priority = -1;
         freeTime = -1;
-        workingTime = -1;
+        workingTime = 0;
         timeWindows = new ArrayList<>();
+        healthTime = 0;
     }
 
     /**
@@ -145,7 +146,7 @@ public class Day {
             e.printStackTrace();
         }
         // returns null if the calculations for the biggest window of the day cannot be completed
-        return null;
+        return new TimeWindow(LocalTime.of(0,0),LocalTime.of(0,0));
     }
 
     /**
@@ -217,7 +218,7 @@ public class Day {
 
         for (TimeWindow window : timeWindows) {
             Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-            System.out.println("window Duration: " + duration.getSeconds());
+            System.out.println("duration REEEEE: " + duration);
             int diff = (int) duration.getSeconds();
             if (diff > maxDiff) {
                 index = indexer;
@@ -225,7 +226,6 @@ public class Day {
                 maxWindow = window;
             }
             indexer++;
-
         }
         if (!timeWindows.isEmpty()) {
             timeWindows.remove(index);
@@ -246,8 +246,6 @@ public class Day {
         System.out.println("Date Start: " + startDate);
         System.out.println("Date End: " + endDate);
         System.out.println("Date Set: " + dateSet);
-
-        System.out.println("Biggest Window: " + biggestWindow);
         System.out.println("Windows: ");
         int index = 1;
         for (TimeWindow window : timeWindows) {
@@ -261,10 +259,8 @@ public class Day {
      * @param work integer representing minutes of work based events
      */
     public void addWork(int work) {
-        if (workingTime < 0) {
-            workingTime++;
-        }
         workingTime += work;
+        System.out.println("workingTime test: " + workingTime);
     }
 
     /**
@@ -273,10 +269,9 @@ public class Day {
      * @param health integer representing minutes of health based events
      */
     public void addHealth(int health) {
-        if (healthTime < 0) {
-            healthTime++;
-        }
+
         healthTime += health;
+        System.out.println("healthTime test: " + healthTime);
     }
 
     /**
@@ -286,8 +281,10 @@ public class Day {
      * @return minutes required to achieve target ratio
      */
     public int getHealthNeeded(int ratio) {
-        return (int) (workingTime / ratio);
-
+        if(workingTime != 0) {
+            return (int) (workingTime / ratio);
+        }
+        return 0;
 
     }
 }
