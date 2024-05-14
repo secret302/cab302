@@ -10,4 +10,5 @@ module com.calendarfx.app {
     exports com.serenitask.model;
     exports com.serenitask.ui;
     exports com.serenitask.util.DatabaseManager;
+    exports com.serenitask.util.routine;
 }
