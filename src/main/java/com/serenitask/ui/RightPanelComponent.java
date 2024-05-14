@@ -1,38 +1,21 @@
 package com.serenitask.ui;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
-import com.calendarfx.view.DetailedDayView;
-import com.calendarfx.view.DetailedWeekView;
 
 import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
-import com.serenitask.controller.GoalController;
-import com.serenitask.model.Optimizer;
-import javafx.application.Platform;
+import com.serenitask.model.Optimiser;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 
 public class RightPanelComponent {
@@ -105,7 +88,7 @@ public class RightPanelComponent {
             LocalTime userDayEnd = LocalTime.of(18, 30, 0);
             int allocateAhead = 7;
 
-            Optimizer.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+            Optimiser.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
         }
         catch(Exception e){
             System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());

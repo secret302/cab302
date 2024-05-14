@@ -1,6 +1,5 @@
 package com.serenitask.util.DatabaseManager;
 
-
 import com.serenitask.model.GoalTracking;
 
 import java.sql.Connection;
@@ -10,9 +9,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GoalTrackingDAO class manages the database operations for the Goal Tracking table
+ */
 public class GoalTrackingDAO {
+    // Connection to the SQLite database
     private Connection connection;
 
+    /**
+     * GoalTrackingDAO constructor
+     * Creates a connection to the SQLite database and creates the Goal Tracking table if it doesn't exist
+     */
     public GoalTrackingDAO() {
         connection = SqliteConnection.getConnection();
         createTable();
@@ -20,6 +27,9 @@ public class GoalTrackingDAO {
         // addSampleEntries();
     }
 
+    /**
+     * Add sample entries to the Goal Tracking table
+     */
     private void addSampleEntries() {
         try {
             // Clear before inserting
@@ -41,6 +51,9 @@ public class GoalTrackingDAO {
         }
     }
 
+    /**
+     * Create the Goal Tracking table if it doesn't exist
+     */
     private void createTable() {
         try {
             // Create table if it doesn't exist
@@ -57,6 +70,11 @@ public class GoalTrackingDAO {
         }
     }
 
+    /**
+     * Add a new Goal Tracking entry to the database
+     * @param goalTracking Goal Tracking object
+     * @return ID of the new Goal Tracking entry
+     */
     public int addEvent(GoalTracking goalTracking) {
         try {
             // Create insert query
@@ -83,7 +101,11 @@ public class GoalTrackingDAO {
         return -1;
     }
 
-
+    /**
+     * Update a Goal Tracking entry in the database
+     * @param goalTracking Goal Tracking object
+     * @return True if the Goal Tracking entry was updated successfully
+     */
     public boolean updateGoalTracking(GoalTracking goalTracking) {
         try {
             // Create update query
@@ -107,7 +129,12 @@ public class GoalTrackingDAO {
     }
 
     // To be brought pack as an optional.
-    /*
+    /**
+     * Delete a Goal Tracking entry from the database
+     * @param id Goal Tracking ID
+     * @param date Goal Tracking Date
+     * @return True if the Goal Tracking entry was deleted successfully
+     *
     public boolean deleteGoalTracking(int id, string date) {
         try {
             // Create delete query
@@ -129,7 +156,12 @@ public class GoalTrackingDAO {
     }
      */
 
-    // Goal Track
+    /**
+     * Get a single Goal Tracking entry from the database
+     * @param id Goal Tracking ID
+     * @param date Goal Tracking Date
+     * @return Goal Tracking object
+     */
     public GoalTracking getSingleTrackedGoal(int id, String date) {
         try {
             // Select the goal tracking
@@ -152,7 +184,10 @@ public class GoalTrackingDAO {
         return null;
     }
 
-    // Returns a list containing all unique IDs from a given list
+    /**
+     * Get all Goal Tracking entries from the database
+     * @return List of Goal Tracking objects
+     */
     private List<Integer> getIdList(List<GoalTracking> unsorted)
     {
         List<Integer> goalIds = new ArrayList<>();
@@ -167,7 +202,11 @@ public class GoalTrackingDAO {
         return goalIds;
     };
 
-    // Returns a list containing a list of each goaltracked and its respective entries from the database
+    /**
+     * Sort all Goal Tracking entries by ID
+     * @param unsorted List of Goal Tracking objects
+     * @return List of lists of Goal Tracking objects
+     */
     private List<List<GoalTracking>> sortTrackedGoals(List<GoalTracking> unsorted)
     {
         // Setup return list and list of unique IDs
@@ -194,7 +233,10 @@ public class GoalTrackingDAO {
         return AllGoals;
     };
 
-    // Returns a list of all entries related to a goal ID
+    /**
+     * Get all Goal Tracking entries from the database
+     * @return List of Goal Tracking objects
+     */
     public List<GoalTracking> getTrackedGoalById(int id) {
         List<GoalTracking> goals = new ArrayList<>();
         try {
@@ -217,7 +259,10 @@ public class GoalTrackingDAO {
         return goals;
     }
 
-    // Create a list of all goal tracking by Date
+    /**
+     * Get all Goal Tracking entries from the database
+     * @return List of Goal Tracking objects
+     */
     public List<GoalTracking> getTrackedGoalByDate(String date) {
         List<GoalTracking> goals = new ArrayList<>();
         try {
@@ -240,7 +285,10 @@ public class GoalTrackingDAO {
         return goals;
     }
 
-    // Create list of all tracked goals
+    /**
+     * Get all Goal Tracking entries from the database
+     * @return List of Goal Tracking objects
+     */
     public List<List<GoalTracking>> getAllTrackedGoals() {
         List<List<GoalTracking>> AllGoals = new ArrayList<>();
         List<GoalTracking> unsorted = new ArrayList<>();
@@ -263,6 +311,4 @@ public class GoalTrackingDAO {
         }
         return AllGoals;
     }
-
-
 }
