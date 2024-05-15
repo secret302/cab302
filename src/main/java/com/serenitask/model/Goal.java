@@ -28,7 +28,7 @@ public class Goal {
      * @param targetAmount Target amount of the goal
      * @param minChunk Minimum amount of time to allocate
      * @param maxChunk Maximum amount of time to allocate
-     * @param allocatedUntil Date until the goal is allocated
+     * @param allocatedUntil Sets the goal from the day previous
      * @param daysOutstanding Days outstanding for the goal
      */
     public Goal(
@@ -74,6 +74,19 @@ public class Goal {
         this.maxChunk = maxChunk;
         this.allocatedUntil = LocalDate.now(); // Requires further implementation (simple?)
         this.daysOutstanding = 0;
+    }
+    /**
+     * Goal constructor for a complex goal
+     * @constructor
+     * @param title Title of the goal
+     * @param minChunk Minimum amount of time to allocate
+     * @param maxChunk Maximum amount of time to allocate
+     * @param maxChunk Maximum amount of time to allocate
+     * @param allocatedUntil Sets the goal from the day previous
+     */
+
+    public Goal(String title, int targetAmount, int minChunk, int maxChunk, LocalDate allocatedUntil) {
+        this(title, targetAmount, minChunk, maxChunk, allocatedUntil, 0);
     }
 
     // public Boolean isSimple() { return Simple; }
