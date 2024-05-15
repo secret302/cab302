@@ -30,9 +30,10 @@ public class CalendarViewComponent {
      * @param navigateDateView
      */
     public static void calendarView(Text dateToday, HBox dateTodayPanel, Region spacer, NavigateDateView navigateDateView) {
-        dateToday.setFont(Font.font(40));
 
-        dateTodayPanel.getChildren().addAll(dateToday, spacer);
+        dateToday.setFont(Font.font(40));
+        dateTodayPanel.getChildren().addAll(dateToday, spacer, navigateDateView);
+        dateTodayPanel.setPadding(new Insets(20, 0, 0, 30));
         HBox.setHgrow(dateToday, Priority.ALWAYS);
         StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
         spacer.setMinWidth(700);
