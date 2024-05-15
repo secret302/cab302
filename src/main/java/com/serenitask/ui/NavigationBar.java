@@ -10,6 +10,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Pos;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -47,11 +48,13 @@ public class NavigationBar extends DateControl {
         calendarWeekView.setDate(LocalDate.now());
         calendarDayView.setDate(LocalDate.now());
 
-        String dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
+        //String dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
 
-        navBar.getTodayButton().setText(dateToday);
-        navBar.getTodayButton().setStyle("-fx-font-size: 40px;");
-        navBar.getTodayButton().setMinHeight(70);
+        navBar.getTodayButton().setText("Today");
+        navBar.getTodayButton().setStyle("-fx-font-size: 20px;");
+        navBar.getTodayButton().setMinHeight(20);
+        navBar.getTodayButton().setAlignment(Pos.CENTER_LEFT);
+        
 
         navBar.setOnBackward(() -> {
             CalendarNavigation.goBack(calendarDayView,calendarWeekView);
