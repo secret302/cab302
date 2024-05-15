@@ -39,13 +39,13 @@ public class EventLoader {
     private Calendar setColor(Calendar calendar) {
         switch (calendar.getName()) {
             case "Personal Events":
-                calendar.setStyle(Style.STYLE2);
+                calendar.setStyle(Style.STYLE1);
                 return calendar;
             case "Goals":
-                calendar.setStyle(Style.STYLE6);
+                calendar.setStyle(Style.STYLE2);
                 return calendar;
             case "Health":
-                calendar.setStyle(Style.STYLE1);
+                calendar.setStyle(Style.STYLE6);
                 return calendar;
             default:
                 return calendar;
@@ -93,9 +93,9 @@ public class EventLoader {
         setEventListener.setupListeners(health);
 
         // Colours can be specified to meet colour blind needs
-        personal.setStyle(Style.STYLE2);
-        goals.setStyle(Style.STYLE6);
-        health.setStyle(Style.STYLE1);
+        personal.setStyle(Style.STYLE1);
+        goals.setStyle(Style.STYLE2);
+        health.setStyle(Style.STYLE6);
 
         CalendarSource mainCalendarSource = new CalendarSource("Main");
         mainCalendarSource.getCalendars().addAll(personal, goals, health);
