@@ -33,7 +33,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -42,7 +41,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,7 +73,6 @@ public class CalendarApp extends Application {
             CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
 
             // Create the main buttons for the application
-            Text dateToday = new Text(LocalDate.now().toString());
             Text dailyText = new Text("Daily");
             Text weeklyText = new Text("Weekly");
             StackPane switchViewButton = new StackPane();
@@ -105,7 +102,6 @@ public class CalendarApp extends Application {
             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
             HBox dateTodayPanel = new HBox();
             VBox actionsPanel = new VBox();
-            Region spacer = new Region();
             NavigationBar navigationBar = new NavigationBar();
             NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView, calendarWeekView);
             CalendarViewComponent.calendarView(dateTodayPanel, navigateDateView);
@@ -113,11 +109,6 @@ public class CalendarApp extends Application {
             VBox leftPanel = new VBox();
             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
             leftPanel.setMinHeight(700);
-
-            //VBox dailygoals = new VBox();
-            //TextField goalTextField = new TextField();
-            //Button createGoalButton = new Button("Create Goal");
-            //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
 
             YearMonthView heatmap = new YearMonthView();
             heatmap.getCalendarSources().setAll(mainCalendarSource);
@@ -196,12 +187,7 @@ public class CalendarApp extends Application {
 
             StackPane calendar = new StackPane();
             Rectangle shadowPanel = new Rectangle();
-            Rectangle taskPopupPanel = new Rectangle();
-            VBox contentVBox = new VBox();
-            HBox buttonBox = new HBox();
             StackPane taskPopup = new StackPane();
-            Button noButton = new Button("No");
-            Button yesButton = new Button("Yes");
 
             //EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
 
