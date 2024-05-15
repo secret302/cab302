@@ -5,6 +5,8 @@ import java.util.stream.IntStream;
 
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -23,57 +25,60 @@ public class AddGoal {
         Label forLabel = new Label("For");
         TextField hourInput = new TextField();
         Label hourLabel = new Label("hours");
-        Label andLabel = new Label("and");
-        TextField minuteInput = new TextField();
-        Label minuteLabel = new Label("minutes.");
-        Label perLabel = new Label("Per");
 
         Label minChunkLabel = new Label("Min chunk:");
-        ComboBox<Integer> minChunkInput = new ComboBox<>();
-        minChunkInput.getItems().addAll(15, 30, 45, 60);
+        TextField minChunkInput = new TextField();
 
         Label maxChunkLabel = new Label("Max chunk:");
-        ComboBox<Integer> maxChunkInput = new ComboBox<>();
-        maxChunkInput.getItems().addAll(15, 30, 45, 60);
+        TextField maxChunkInput = new TextField();
 
         Label goalEndDateLabel = new Label("Enter the date you wish to complete your goal by:");
         DatePicker goalEndDateInput = new DatePicker(LocalDate.now());
 
         ComboBox<String> periodInput = new ComboBox<>();
         // REFACTOR THIS
-        periodInput.getItems().addAll("Day", "Week", "Month", "Year");
+        periodInput.getItems().addAll("Week");
 
         Button saveButton = new Button("Save");
         saveButton.setOnAction(e -> {
             String title = wantInput.getText();
-            LocalDate goalEndDate = goalEndDateInput.getValue();
+            int minChunk = Integer.parseInt(minChunkInput.getText());
+            int maxChunk = Integer.parseInt(maxChunkInput.getText());
+            int targetAmount = Integer.parseInt(hourInput.getText());
 
-            Integer minChunkValue = minChunkInput.getValue();
-            Integer maxChunkValue = maxChunkInput.getValue();
+            LocalDate allocatedUntil = goalEndDateInput.getValue().minusDays(1);
 
-            if (minChunkValue == null || maxChunkValue == null) {
-                System.err.println("Please select values for minChunk and maxChunk.");
-                return;
-            }
-
-            int minChunk = minChunkInput.getValue();
-            int maxChunk = maxChunkInput.getValue();
-
-            Goal goal = new Goal(title, minChunk, maxChunk);
+            Goal goal = new Goal(title, targetAmount, minChunk, maxChunk, allocatedUntil);
             GoalDAO goalDAO = new GoalDAO();
             goalDAO.addGoal(goal);
 
             popOutStage.close();
-                });
+        });
+
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> popOutStage.close());
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel,
-                andLabel, minuteInput, minuteLabel, perLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, backButton, saveButton);
+        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, backButton, saveButton);
         layout.setAlignment(Pos.BASELINE_LEFT);
         Scene popOutScene = new Scene(layout, 500, 500);
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
+
+        // Listeners to make sure that the inputs are numeric only
+        addNumericOnlyListener(minChunkInput);
+        addNumericOnlyListener(maxChunkInput);
+        addNumericOnlyListener(hourInput);
+    }
+
+    private static void addNumericOnlyListener(TextField textField) {
+        textField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    textField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
     }
 }
