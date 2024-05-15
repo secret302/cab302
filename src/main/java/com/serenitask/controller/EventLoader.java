@@ -10,7 +10,6 @@ import com.serenitask.util.DatabaseManager.*;
 
 import com.serenitask.model.Event;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -113,7 +112,7 @@ public class EventLoader {
         EventDAO eventDAO = new EventDAO();
         List<Event> unsortedEvents = eventDAO.getAllEvents();
         try {
-            if (unsortedEvents.size() == 0) {
+            if (unsortedEvents.isEmpty()) {
                 return createNew();
             } else {
 
@@ -162,7 +161,7 @@ public class EventLoader {
             }
         } catch (Exception e) {
             System.err.println("An Error has occurred while loading events from the Database:" + e.getMessage());
-        };
+        }
         // If there is no calendar, it returns null
         return null;
     }

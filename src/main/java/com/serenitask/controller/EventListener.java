@@ -11,7 +11,6 @@ import com.calendarfx.model.Entry;
 import javafx.event.EventHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Class responsible for managing calendar events and interfacing with the EventDAO for database operations.
@@ -72,7 +71,7 @@ public class EventListener {
 
                     }
                 } catch(Exception e) {
-                    System.err.println("An Error has Occured:" + e.getMessage());
+                    System.err.println("An Error has Occurred:" + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -89,7 +88,7 @@ public class EventListener {
      */
     private Event convertToEventModel(Entry<?> entry) {
 
-        // This needs to turn from an entry to an Event class and retreive ID if it is not stored;
+        // This needs to turn from an entry to an Event class and retrieve ID if it is not stored;
 
         String id = entry.getId();
         String title = entry.getTitle();
