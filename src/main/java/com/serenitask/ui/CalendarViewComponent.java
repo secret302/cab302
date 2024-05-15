@@ -24,19 +24,18 @@ public class CalendarViewComponent {
     /**
      * Configures the main display for showing the current date on the calendar view.
      *
-     * @param dateToday        A Text object to display the current date.
      * @param dateTodayPanel   An HBox that holds the date display.
-     * @param spacer           A Region used to manage spacing within the layout.
      * @param navigateDateView
      */
-    public static void calendarView(Text dateToday, HBox dateTodayPanel, Region spacer, NavigateDateView navigateDateView) {
+    public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 
-        dateToday.setFont(Font.font(40));
-        dateTodayPanel.getChildren().addAll(dateToday, spacer, navigateDateView);
-        dateTodayPanel.setPadding(new Insets(20, 0, 0, 30));
-        HBox.setHgrow(dateToday, Priority.ALWAYS);
-        StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
-        spacer.setMinWidth(700);
+        dateTodayPanel.getChildren().addAll(navigateDateView);
+        dateTodayPanel.setPadding(new Insets(30, 0, 0, 0));
+        dateTodayPanel.setMinWidth(1650);
+        dateTodayPanel.setAlignment(Pos.CENTER_LEFT);
+        // HBox.setHgrow(dateToday, Priority.ALWAYS);
+        // StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
+        // spacer.setMinWidth(700);
     }
 
     /**

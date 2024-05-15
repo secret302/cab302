@@ -108,7 +108,7 @@ public class CalendarApp extends Application {
             Region spacer = new Region();
             NavigationBar navigationBar = new NavigationBar();
             NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView, calendarWeekView);
-            CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer, navigateDateView);
+            CalendarViewComponent.calendarView(dateTodayPanel, navigateDateView);
 
             VBox leftPanel = new VBox();
             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
