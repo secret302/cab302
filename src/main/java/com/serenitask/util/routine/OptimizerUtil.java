@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Class containing optimizer utility functions that are static.
@@ -235,5 +236,20 @@ public class OptimizerUtil {
         }
         // returns null if the future date cannot be returned
         return null;
+    }
+
+    /**
+     * Calculates the random offset value when generating events. Offset values will be in
+     * steps of 15 minutes to avoid unsightly event allocations
+     * @param windowMins Number of minutes in the given window
+     * @param eventDuration Duration of the given event
+     * @return Integer in steps of 15m
+     */
+    public static int calcOffsetMins(int windowMins, int eventDuration)
+    {
+        int minsAvailable =(int) Math.floor((double) (windowMins - eventDuration) / 15);
+        Random random = new Random();
+
+        return (random.nextInt(minsAvailable)+1)*15;
     }
 }
