@@ -215,6 +215,9 @@ public class CalendarApp extends Application {
             scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
             CSSFX.start(scene);
 
+            // Calls the ShortcutController to allow Shortcuts to be used
+            ShortcutController.setupShortcuts(scene, mainCalendarSource);
+
             // Set the application parameters
             primaryStage.setTitle("SereniTask");
             primaryStage.setResizable(false);
