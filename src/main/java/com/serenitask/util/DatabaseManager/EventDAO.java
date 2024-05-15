@@ -3,7 +3,6 @@ import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -28,29 +27,6 @@ public class EventDAO {
         // addSampleEntries();
     }
 
-    // Private
-    /**
-     * Add sample entries to the database
-     */
-    private void addSampleEntries() {
-        try {
-            // Create and execute clear statement
-            Statement clearStatement = connection.createStatement();
-            String clearQuery = "DELETE FROM events";
-            clearStatement.execute(clearQuery);
-            // Create and execute insert statement
-            Statement insertStatement = connection.createStatement();
-            String insertQuery = "INSERT INTO events "
-                    + "(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
-                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(1)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(2)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(3)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
-            insertStatement.execute(insertQuery);
-        } catch (Exception e) {
-            // Print error if sample entries fail
-            e.printStackTrace();
-        }
-    }
 
     // Private (Maybe to be moved to a utility class)
     /**

@@ -27,29 +27,6 @@ public class GoalTrackingDAO {
         // addSampleEntries();
     }
 
-    /**
-     * Add sample entries to the Goal Tracking table
-     */
-    private void addSampleEntries() {
-        try {
-            // Clear before inserting
-            Statement clearStatement = connection.createStatement();
-            String clearQuery = "DELETE FROM goal_tracking";
-            clearStatement.execute(clearQuery);
-            Statement insertStatement = connection.createStatement();
-            // goal_date values are strings, placeholder for DATE
-            String insertQuery =
-                    "INSERT INTO goal_tracking (goal_id, goal_date, completed) VALUES "
-                            + "(1, 'A', TRUE),"
-                            + "(1, 'B', FALSE ),"
-                            + "(2, 'A', TRUE ),"
-                            + "(2, 'B', FALSE ),"
-                            + "(3, 'C', TRUE )";
-            insertStatement.execute(insertQuery);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Create the Goal Tracking table if it doesn't exist
@@ -200,7 +177,7 @@ public class GoalTrackingDAO {
             }
         }
         return goalIds;
-    };
+    }
 
     /**
      * Sort all Goal Tracking entries by ID
@@ -231,7 +208,7 @@ public class GoalTrackingDAO {
 
         // Return list of lists
         return AllGoals;
-    };
+    }
 
     /**
      * Get all Goal Tracking entries from the database

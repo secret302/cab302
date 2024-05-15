@@ -31,31 +31,6 @@ public class GoalDAO {
 
     // Private
     /**
-     * Add sample entries to the database
-     */
-    private void addSampleEntries() {
-        try {
-            // Create and execute clear query
-            Statement clearStatement = connection.createStatement();
-            String clearQuery = "DELETE FROM goals";
-            clearStatement.execute(clearQuery);
-            // Create and execute insert query
-            Statement insertStatement = connection.createStatement();
-            String insertQuery =
-                    "INSERT INTO goals "
-                            + "(title, goalTargetAmount, min_chunk, max_chunk, allocatedUntil, daysOutstanding) VALUES "
-                            + "('Goal 1', 3, 15, 15, " + java.sql.Date.valueOf(LocalDate.now().plusDays(1)) + ", 1),"
-                            + "('Goal 2', 5, 30, 30, " + java.sql.Date.valueOf(LocalDate.now().plusDays(2)) + ", 2),"
-                            + "('Goal 3', 7, 45, 45, " + java.sql.Date.valueOf(LocalDate.now().plusDays(3)) + ", 3)";
-            insertStatement.execute(insertQuery);
-        } catch (Exception e) {
-            // Print error if sample entries fail
-            e.printStackTrace();
-        }
-    }
-
-    // Private
-    /**
      * Create Goals SQLite table if it doesn't exist
      */
     private void createTable() {
