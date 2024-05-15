@@ -216,7 +216,7 @@ public class CalendarApp extends Application {
             CSSFX.start(scene);
 
             // Calls the ShortcutController to allow Shortcuts to be used
-            ShortcutController.setupShortcuts(scene, mainCalendarSource);
+            ShortcutController.setupShortcuts(scene, mainCalendarSource, isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
 
             // Set the application parameters
             primaryStage.setTitle("SereniTask");
