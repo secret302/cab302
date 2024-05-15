@@ -55,9 +55,11 @@ public class AddGoal {
             String title = wantInput.getText();
             int minChunk = Integer.parseInt(minChunkInput.getText());
             int maxChunk = Integer.parseInt(maxChunkInput.getText());
-            int targetAmount = Integer.parseInt(hourInput.getText());
+            int targetAmount = (int) Float.parseFloat(hourInput.getText()) * 60;
 
-            LocalDate allocatedUntil = goalEndDateInput.getValue().minusDays(1);
+            // not implemented
+            //LocalDate allocatedUntil = goalEndDateInput.getValue().minusDays(1);
+            LocalDate allocatedUntil = LocalDate.now().minusDays(1);
 
             Goal goal = new Goal(title, targetAmount, minChunk, maxChunk, allocatedUntil);
             GoalDAO goalDAO = new GoalDAO();
