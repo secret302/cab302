@@ -18,7 +18,6 @@ public class EventDAO {
 
     /**
      * EventDAO constructor
-     * @constructor
      */
     public EventDAO() {
         // Get connection to the database

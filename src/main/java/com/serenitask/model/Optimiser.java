@@ -10,7 +10,7 @@ import java.time.LocalTime;
  * Class object handling the optimization of user calendars.
  * Made up of multiple routines that are executed sequentially.
  */
-public class Optimizer {
+public class Optimiser {
 
     /**
      * Method that runs routines that make up the optimizer.
@@ -30,9 +30,5 @@ public class Optimizer {
             e.printStackTrace();
         }
     }
-
-    ;
-
-
 };
 

@@ -6,7 +6,7 @@ import java.time.LocalTime;
  * Class representing a window of time. A window of time has an open and a close time.
  */
 public class TimeWindow {
-
+    // Private parameters
     private LocalTime windowOpen;
     private LocalTime windowClose;
 
