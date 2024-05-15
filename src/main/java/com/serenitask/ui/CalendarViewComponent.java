@@ -24,9 +24,7 @@ public class CalendarViewComponent {
     /**
      * Configures the main display for showing the current date on the calendar view.
      *
-     * @param dateToday        A Text object to display the current date.
      * @param dateTodayPanel   An HBox that holds the date display.
-     * @param spacer           A Region used to manage spacing within the layout.
      * @param navigateDateView
      */
     public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
