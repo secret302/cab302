@@ -77,10 +77,8 @@ public class Goal {
     }
     /**
      * Goal constructor for a complex goal
-     * @constructor
      * @param title Title of the goal
      * @param minChunk Minimum amount of time to allocate
-     * @param maxChunk Maximum amount of time to allocate
      * @param maxChunk Maximum amount of time to allocate
      * @param allocatedUntil Sets the goal from the day previous
      */
