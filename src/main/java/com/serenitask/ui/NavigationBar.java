@@ -4,6 +4,7 @@ import com.calendarfx.view.DateControl;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.calendarfx.view.Messages;
+import com.serenitask.util.Navigation.CalendarNavigation;
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -44,41 +45,15 @@ public class NavigationBar extends DateControl {
         calendarWeekView.setDate(LocalDate.now());
         calendarDayView.setDate(LocalDate.now());
         navBar.setOnBackward(() -> {
-            calendarDayView.setDate(calendarDayView.getDate().minusDays(1));
-            calendarWeekView.setDate(calendarWeekView.getStartDate().minusWeeks(1));
+            CalendarNavigation.goBack(calendarDayView,calendarWeekView);
         });
         navBar.setOnForward(() -> {
-            calendarDayView.setDate(calendarDayView.getDate().plusDays(1));
-            calendarWeekView.setDate(calendarWeekView.getStartDate().plusWeeks(1));
+            CalendarNavigation.goForward(calendarDayView,calendarWeekView);
         });
         navBar.setOnToday(() -> {
-            calendarDayView.setDate(LocalDate.now());
-            calendarWeekView.setDate(LocalDate.now());
+            CalendarNavigation.goToday(calendarDayView,calendarWeekView);
         });
         navBar.visibleProperty().bind(showNavigationProperty());
         return navBar;
     }
-
-    /**
-     * Moves the view to the previous day.
-     */
-    public void goBack() {
-        setDate(getDate().minusDays(1));
-    }
-
-    /**
-     * Sets the view to today's date.
-     */
-    public void goToday() {
-        setDate(getToday());
-    }
-
-    /**
-     * Moves the view to the next day.
-     */
-    public void goForward() {
-        setDate(getDate().plusDays(1));
-    }
-
-
 }
