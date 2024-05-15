@@ -12,6 +12,7 @@ import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.model.Optimiser;
 import com.serenitask.ui.CalendarViewComponent;
+import com.serenitask.util.Navigation.CalendarNavigation;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -36,6 +37,10 @@ public class ShortcutController {
         KeyCombination optimiserCombo = new KeyCodeCombination(KeyCode.SPACE, KeyCombination.CONTROL_DOWN);
         KeyCombination toggleViewCombo = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
 
+        KeyCombination toggleGoBackCombo = new KeyCodeCombination(KeyCode.B, KeyCombination.CONTROL_DOWN);
+        KeyCombination toggleTodayCombo = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+        KeyCombination toggleForwardCombo = new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN);
+
         scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (goalCombo.match(event)) {
                 openGoalAddMenu();
@@ -49,8 +54,20 @@ public class ShortcutController {
                 openOptimiserMenu(mainCalendarSource);
                 event.consume();
             }
+            else if (toggleGoBackCombo.match(event)) {
+                goBackToggle(calendarDayView, calendarWeekView);
+                event.consume();
+            }
             else if (toggleViewCombo.match(event)) {
                 changeViewToggle(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+                event.consume();
+            }
+            else if (toggleTodayCombo.match(event)) {
+                goTodayToggle(calendarDayView, calendarWeekView);
+                event.consume();
+            }
+            else if (toggleForwardCombo.match(event)) {
+                goForwardToggle(calendarDayView, calendarWeekView);
                 event.consume();
             }
         });
@@ -86,5 +103,17 @@ public class ShortcutController {
     private static void changeViewToggle(AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
                                          VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+    }
+
+    public static void goBackToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
+        CalendarNavigation.goBack(calendarDayView, calendarWeekView);
+    }
+
+    public static void goTodayToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
+        CalendarNavigation.goToday(calendarDayView, calendarWeekView);
+    }
+
+    public static void goForwardToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
+        CalendarNavigation.goForward(calendarDayView, calendarWeekView);
     }
 }
