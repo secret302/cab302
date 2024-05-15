@@ -78,7 +78,7 @@ public class Goal {
         this.daysOutstanding = 0;
     }
     /**
-     * Goal constructor for an simple goal
+     * Goal constructor for a complex goal
      * @constructor
      * @param title Title of the goal
      * @param minChunk Minimum amount of time to allocate
