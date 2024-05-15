@@ -24,12 +24,13 @@ public class AddGoal {
 
         Label forLabel = new Label("For");
         TextField hourInput = new TextField();
-        Label hourLabel = new Label("hours");
+        Label hourLabel = new Label("Hours");
+        Label perLabel = new Label("Per");
 
-        Label minChunkLabel = new Label("Min chunk:");
+        Label minChunkLabel = new Label("Minimum amount of time for a goal occurrance:");
         TextField minChunkInput = new TextField();
 
-        Label maxChunkLabel = new Label("Max chunk:");
+        Label maxChunkLabel = new Label("Maximum amount of time for a goal occurrance:");
         TextField maxChunkInput = new TextField();
 
         Label goalEndDateLabel = new Label("Enter the date you wish to complete your goal by:");
@@ -59,7 +60,7 @@ public class AddGoal {
         backButton.setOnAction(e -> popOutStage.close());
 
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, backButton, saveButton);
+        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel, perLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, backButton, saveButton);
         layout.setAlignment(Pos.BASELINE_LEFT);
         Scene popOutScene = new Scene(layout, 500, 500);
         popOutStage.setScene(popOutScene);
