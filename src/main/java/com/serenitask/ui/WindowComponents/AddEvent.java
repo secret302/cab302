@@ -19,8 +19,6 @@ import java.util.List;
 import com.serenitask.model.Event;
 
 
-import com.serenitask.util.DatabaseManager.EventDAO;
-
 /**
  * Provides a user interface for adding new events to a calendar.
  * This class is responsible for rendering a pop-up window where users can enter details about a new event

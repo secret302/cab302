@@ -1,7 +1,6 @@
 package com.serenitask.ui.WindowComponents;
 
 import java.time.LocalDate;
-import java.util.stream.IntStream;
 
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
@@ -37,14 +36,11 @@ public class AddGoal {
         Label hourLabel = new Label("Hours");
         Label perLabel = new Label("Per");
 
-        Label minChunkLabel = new Label("Minimum amount of time for a goal occurrance:");
+        Label minChunkLabel = new Label("Minimum amount of time for a goal occurrence:");
         TextField minChunkInput = new TextField();
 
-        Label maxChunkLabel = new Label("Maximum amount of time for a goal occurrance:");
+        Label maxChunkLabel = new Label("Maximum amount of time for a goal occurrence:");
         TextField maxChunkInput = new TextField();
-
-        Label goalEndDateLabel = new Label("Enter the date you wish to complete your goal by:");
-        DatePicker goalEndDateInput = new DatePicker(LocalDate.now());
 
         ComboBox<String> periodInput = new ComboBox<>();
         // REFACTOR THIS
