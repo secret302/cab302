@@ -86,6 +86,7 @@ public class RightPanelComponent {
         addEventButton.getChildren().addAll(addEventViewBox, addEventText);
 
         rightPanelObjects.getChildren().addAll(switchViewButton, optimiseButton, addGoalButton, addEventButton);
+        rightPanelObjects.setSpacing(20);
     }
 
     /**

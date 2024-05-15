@@ -29,14 +29,14 @@ public class CalendarViewComponent {
      * @param spacer           A Region used to manage spacing within the layout.
      * @param navigateDateView
      */
-    public static void calendarView(Text dateToday, HBox dateTodayPanel, Region spacer, NavigateDateView navigateDateView) {
+    public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 
-        dateToday.setFont(Font.font(40));
-        dateTodayPanel.getChildren().addAll(dateToday, spacer, navigateDateView);
+        dateTodayPanel.getChildren().addAll(navigateDateView);
         dateTodayPanel.setPadding(new Insets(20, 0, 0, 30));
-        HBox.setHgrow(dateToday, Priority.ALWAYS);
-        StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
-        spacer.setMinWidth(700);
+        dateTodayPanel.setMinWidth(1650);
+        // HBox.setHgrow(dateToday, Priority.ALWAYS);
+        // StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
+        // spacer.setMinWidth(700);
     }
 
     /**
