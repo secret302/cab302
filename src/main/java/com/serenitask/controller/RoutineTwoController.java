@@ -38,6 +38,10 @@ public class RoutineTwoController {
      * LocalTime object representing users end of day
      */
     private final LocalTime DayEnd;
+    /**
+     * Integer representing the maximum amount of time a health based event can be in minutes
+     */
+    private final int maxChunk = 30;
 
     /**
      * Constructor for RoutineTwo, Represents the complex routine used for allocating balanced health focused habits.
@@ -122,7 +126,22 @@ public class RoutineTwoController {
                     int activityNumber = random.nextInt(10) + 1;
 
                     if (windowMins > targetChange) {
+
                         LocalTime startTime = window.getWindowOpen();
+                        if(startTime.equals(DayStart))
+                        {
+                            int eventOffsetValue = OptimizerUtil.calcOffsetMins(windowMins, 30);
+                            startTime = window.getWindowOpen().plusMinutes(eventOffsetValue);
+                            LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange+eventOffsetValue);
+                            day.addWindow(endTime, window.getWindowClose());
+                            day.addHealth(targetChange);
+                            Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
+                            newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                            newEntry.setFullDay(false);
+                            entriesToAdd.add(newEntry);
+                        }
+                        else
+                        {
                         LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
                         day.addWindow(endTime, window.getWindowClose());
                         day.addHealth(targetChange);
@@ -130,7 +149,7 @@ public class RoutineTwoController {
                         newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
                         newEntry.setFullDay(false);
                         entriesToAdd.add(newEntry);
-
+                        }
                     } else {
                         Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
                         newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
