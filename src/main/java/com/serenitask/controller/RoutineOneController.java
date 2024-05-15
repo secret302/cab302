@@ -74,7 +74,7 @@ public class RoutineOneController {
 
 
     // 1. Pull list of time base-based goals
-    // NOT IMPLEMENTED AS OF YET
+    // NOT IMPLEMENTED AS YET
 
     /**
      * Extracts all goals from the database and returns them as a list. Goals extracted are of the type:
@@ -202,7 +202,6 @@ public class RoutineOneController {
         while (blockTarget > buffer) {
             boolean hasWindows = false;
             for (Day day : prioritizedDays) {
-                Random random = new Random();
                 System.out.println("BlockTarget Loop Start: Setup; Date: " + day.getStartDate());
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
@@ -294,7 +293,7 @@ public class RoutineOneController {
      * Takes in an unsorted List of day objects and sorts them based on the amount of unallocated time. returns a sorted
      * list of days from most free time to least. Additionally, assigns priority to the day objects based on ordering.
      *
-     * @param rawDays Raw day objects in list form. Unsorted, unprioritized.
+     * @param rawDays Raw day objects in list form. Unsorted, unprioritied.
      * @return Sorted Day List, from most free time to least.
      */
     private List<Day> prioritizeDays(List<Day> rawDays) {
