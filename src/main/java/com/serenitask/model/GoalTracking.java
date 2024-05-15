@@ -10,7 +10,7 @@ public class GoalTracking {
     private Boolean completed;
 
     /**
-     * Constuctor for GoalTracking; Takes in an id, the goals date and whether it has been completed
+     * Constructor for GoalTracking; Takes in an id, the goals date and whether it has been completed
      *
      * @param id        The unique identifier for the goal.
      * @param goalDate  The date of the goal.
@@ -49,14 +49,6 @@ public class GoalTracking {
         return goal_date;
     }
 
-    /**
-     * Sets the date of the goal.
-     *
-     * @param goalDate The new date for the goal.
-     */
-    public void setGoalDate(String goalDate) {
-        this.goal_date = goalDate;
-    }
 
     /**
      * Returns the completion status of the goal.
@@ -67,12 +59,4 @@ public class GoalTracking {
         return completed;
     }
 
-    /**
-     * Sets the completion status of the goal.
-     *
-     * @param achieved The new completion status of the goal.
-     */
-    public void setCompleted(Boolean achieved) {
-        this.completed = achieved;
-    }
 }

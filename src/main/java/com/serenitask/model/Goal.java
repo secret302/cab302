@@ -15,13 +15,6 @@ public class Goal {
     private LocalDate allocatedUntil;
     private int daysOutstanding;
 
-    // Removed for now
-    // private int periodicity;
-    // private String endDate;
-    // private String recurrenceRules;
-    // private Boolean Simple;
-
-
     /**
      * Goal constructor for an empty goal
      * @param title Title of the goal

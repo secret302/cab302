@@ -2,7 +2,6 @@ package com.serenitask.model;
 import com.calendarfx.model.Interval;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 /**
@@ -185,15 +184,6 @@ public class Event {
      */
     public String getRecurrenceRules() {
         return recurrenceRules;
-    }
-
-    /**
-     * Sets the recurrence rules for the event
-     * @param recurrenceRules Event recurrence rules
-     */
-    public void setRecurrenceRules(String recurrenceRules) {
-        // Validate recurrence rules. To be implemented
-        this.recurrenceRules = recurrenceRules;
     }
 
     /**

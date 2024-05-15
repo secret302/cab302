@@ -282,7 +282,7 @@ public class Day {
      */
     public int getHealthNeeded(int ratio) {
         if(workingTime != 0) {
-            return (int) (workingTime / ratio);
+            return (workingTime / ratio);
         }
         return 0;
 
