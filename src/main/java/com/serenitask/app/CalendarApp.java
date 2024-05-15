@@ -40,6 +40,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import com.serenitask.controller.ShortcutController;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -100,6 +101,147 @@ public class CalendarApp extends Application {
             Rectangle addEventViewBox = new Rectangle(120, 50);
             addEventButton.setOnMouseClicked(event -> {
                 RightPanelComponent.addEventClick(mainCalendarSource);
+             });
+
+             // Create the main panels for the application
+             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
+             HBox dateTodayPanel = new HBox();
+             VBox actionsPanel = new VBox();
+             Region spacer = new Region();
+             CalendarViewComponent.calendarView(dateToday, dateTodayPanel, spacer);
+
+             VBox leftPanel = new VBox();
+             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
+             leftPanel.setMinHeight(700);
+
+             VBox dailygoals = new VBox();
+             TextField goalTextField = new TextField();
+             Button createGoalButton = new Button("Create Goal");
+             DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+
+             YearMonthView heatmap = new YearMonthView();
+             heatmap.showUsageColorsProperty().set(true);
+
+             AgendaView agenda = new AgendaView();
+             agenda.setEnableTimeZoneSupport(true);
+             agenda.getCalendarSources().setAll(mainCalendarSource);
+             agenda.setRequestedTime(LocalTime.now());
+             agenda.lookAheadPeriodInDaysProperty().set(3);
+             agenda.setPadding(new Insets(10));
+
+             VBox rightPanel = new VBox();//for end (sus) Amongus?!?!
+             VBox rightPanelObjects = new VBox(); // new one good
+             rightPanelObjects.setPadding(new Insets(20,20,20,19));
+             Button switchRightPanelButton = new Button("Goals / Actions");
+             switchRightPanelButton.minWidth(100.0);
+             switchRightPanelButton.setAlignment(Pos.CENTER);
+
+             // Is the actions view currently displayed?
+             AtomicBoolean isActionsView = new AtomicBoolean(false);
+             RightPanelComponent.actionsComponent(rightPanelObjects,
+                     dailyText,
+                     weeklyText,
+                     switchViewBox,
+                     switchViewButton,
+                     isWeeklyView,
+                     actionsPanel,
+                     optimiseButton,
+                     optimiseText,
+                     optimiseViewBox,
+                     addGoalButton,
+                     addGoalText,
+                     addGoalViewBox,
+                     addEventButton,
+                     addEventText,
+                     addEventViewBox);
+
+             // Add the right panel components
+             rightPanel.getChildren().addAll(heatmap, switchRightPanelButton, agenda, dailygoals);
+             rightPanel.setMinHeight(700);
+             rightPanel.setMaxWidth(800);
+
+             switchRightPanelButton.setOnMouseClicked(event -> {
+                RightPanelComponent.switchRightPanel(rightPanelObjects,isActionsView, rightPanel, agenda, dailygoals);
+             });
+
+             // Load the daily goals
+             GoalController goalController = new GoalController();
+             for (String title : goalController.loadSimpleGoal()) {
+                 dailygoals.getChildren().add(new javafx.scene.control.Label(title));
+             }
+
+             // Switch between Day view and Week View
+             switchViewButton.setOnMouseClicked(event -> {
+                 CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+             });
+
+             // Creates vertical box that can be clicked to change view
+             HBox calendarDisplay = new HBox();
+             calendarDisplay.getChildren().addAll(leftPanel, rightPanel);
+
+             // Prevents Calendar from being squished by other HBox Components
+             HBox.setHgrow(leftPanel, Priority.ALWAYS);
+             leftPanel.setMaxWidth(1420);
+             calendarDayView.setMinHeight(900);
+             calendarDayView.setMaxHeight(900);
+             calendarDayView.setPadding(new Insets(62, 0, 0, 0));
+
+             // Text for the goal completion question
+             Text goalText = new Text("Have you completed " +
+                     (goalController.returnFirstGoal() != null ? goalController.returnFirstGoal().getTitle() : "no goal") +
+                     " goal?");
+             goalText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+             StackPane calendar = new StackPane();
+             Rectangle shadowPanel = new Rectangle();
+             Rectangle taskPopupPanel = new Rectangle();
+             VBox contentVBox = new VBox();
+             HBox buttonBox = new HBox();
+             StackPane taskPopup = new StackPane();
+             Button noButton = new Button("No");
+             Button yesButton = new Button("Yes");
+
+             EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
+
+             calendar.getChildren().addAll(calendarDisplay);
+
+             // Update Clock
+             EndOfDayComponent.checkTime(calendar, calendarDayView, shadowPanel, taskPopup, goalText, goalController);
+
+             // Create the main scene for the application
+             Scene scene = new Scene(calendar);
+             scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
+             CSSFX.start(scene);
+
+             // Calls the ShortcutController to allow Shortcuts to be used
+             ShortcutController.setupShortcuts(scene, mainCalendarSource);
+
+             // Set the application parameters
+             primaryStage.setTitle("SereniTask");
+             primaryStage.setResizable(false);
+             primaryStage.setScene(scene);
+             primaryStage.setWidth(1920);
+             primaryStage.setHeight(1080);
+             primaryStage.centerOnScreen();
+             primaryStage.show();
+             primaryStage.setMaximized(true);
+         }
+         catch(Exception e){
+             // If an error occurs, print the error message
+             System.err.println("An error has occurred while starting the application: " + e.getMessage());
+             e.printStackTrace();
+         }
+     }
+
+        /**
+        * Main method for the Calendar Application. This method is responsible for starting the application
+        * @param args The arguments for the application
+        */
+     public static void main(String[] args) {
+         launch(args);
+     }
+ }
+ 
             });
 
             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
