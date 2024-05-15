@@ -9,11 +9,8 @@ import impl.com.calendarfx.view.NavigateDateView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -25,7 +22,7 @@ public class CalendarViewComponent {
      * Configures the main display for showing the current date on the calendar view.
      *
      * @param dateTodayPanel   An HBox that holds the date display.
-     * @param navigateDateView
+     * @param navigateDateView Changes the view of the date display.
      */
     public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 
@@ -33,9 +30,6 @@ public class CalendarViewComponent {
         dateTodayPanel.setPadding(new Insets(30, 0, 0, 0));
         dateTodayPanel.setMinWidth(1650);
         dateTodayPanel.setAlignment(Pos.CENTER_LEFT);
-        // HBox.setHgrow(dateToday, Priority.ALWAYS);
-        // StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
-        // spacer.setMinWidth(700);
     }
 
     /**

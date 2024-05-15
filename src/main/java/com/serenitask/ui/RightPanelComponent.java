@@ -121,7 +121,7 @@ public class RightPanelComponent {
 
     /**
      * Handles the click event for the "Optimise" button.
-     * This method invokes the Optimiser to optimize the event scheduling based on user-defined constraints.
+     * This method invokes the Optimiser to optimise the event scheduling based on user-defined constraints.
      *
      * @param calendarSource The source of calendars to be optimized.
      */

@@ -3,19 +3,13 @@ package com.serenitask.ui;
 import com.calendarfx.view.DateControl;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
-import com.calendarfx.view.Messages;
 import com.serenitask.util.Navigation.CalendarNavigation;
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 
 /**
  * The NavigationBar class extends DateControl to provide navigation controls
