@@ -35,6 +35,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import com.serenitask.controller.ShortcutController;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -205,6 +206,9 @@ public class CalendarApp extends Application {
              Scene scene = new Scene(calendar);
              scene.focusOwnerProperty().addListener(it -> System.out.println("focus owner: " + scene.getFocusOwner()));
              CSSFX.start(scene);
+
+             // Calls the ShortcutController to allow Shortcuts to be used
+             ShortcutController.setupShortcuts(scene, mainCalendarSource);
 
              // Set the application parameters
              primaryStage.setTitle("SereniTask");
