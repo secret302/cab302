@@ -16,6 +16,8 @@ public class CalendarNavigation extends DateControl {
 
     /**
      * Moves the view to the previous day.
+     * @param calendarDayView The DetailedDayView to navigate.
+     * @param calendarWeekView The DetailedWeekView to navigate.
      */
     public static void goBack(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         calendarDayView.setDate(calendarDayView.getDate().minusDays(1));
@@ -23,7 +25,9 @@ public class CalendarNavigation extends DateControl {
     }
 
     /**
-     * Sets the view to today's date.
+     * Moves the view to the current day.
+     * @param calendarDayView The DetailedDayView to navigate.
+     * @param calendarWeekView The DetailedWeekView to navigate.
      */
     public static void goToday(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         calendarDayView.setDate(LocalDate.now());
@@ -32,6 +36,8 @@ public class CalendarNavigation extends DateControl {
 
     /**
      * Moves the view to the next day.
+     * @param calendarDayView The DetailedDayView to navigate.
+     * @param calendarWeekView The DetailedWeekView to navigate.
      */
     public static void goForward(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         calendarDayView.setDate(calendarDayView.getDate().plusDays(1));
