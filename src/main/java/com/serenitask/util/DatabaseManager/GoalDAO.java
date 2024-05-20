@@ -26,11 +26,8 @@ public class GoalDAO {
         connection = SqliteConnection.getConnection();
         // Create table if it doesn't exist
         createTable();
-        // Used for debugging
-        // addSampleEntries();
     }
 
-    // Private
     /**
      * Creates the 'goals' table in the database if it doesn't exist.
      * Defines the table schema with columns for goal attributes.
@@ -99,8 +96,6 @@ public class GoalDAO {
         return -1;
     }
 
-    // Add goal simple to be brought back if required.
-
     /**
      * Updates an existing Goal in the database.
      *
@@ -135,7 +130,7 @@ public class GoalDAO {
             return true;
         } catch (SQLException e) {
             // Print error if update fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // Return false if update fails
         return false;
@@ -167,7 +162,6 @@ public class GoalDAO {
         // Return false if delete fails
         return false;
     }
-
 
     /**
      * Retrieves a Goal from the database by its ID.
