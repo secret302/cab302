@@ -14,56 +14,86 @@ import static java.time.temporal.ChronoUnit.MINUTES;
  * for event allocation.
  */
 public class Day {
-
-    // Private parameters
+    /**
+     * Priority of the day when ordered based on available free time.
+     * Higher priority means more free time.
+     */
     private int priority;
+
+    /**
+     * Total free time in minutes available for the day.
+     */
     private int freeTime;
 
-
+    /**
+     * Total time in minutes allocated to work-related activities.
+     */
     private int workingTime;
+
+    /**
+     * Total time in minutes allocated to health-related activities.
+     */
     private int healthTime;
-    private boolean dateSet = false;
+
+    /**
+     * Flag indicating whether the date has been set for the day.
+     */
+    private boolean dateSet;
+
+    /**
+     * Start date of the day.
+     */
     private LocalDate startDate;
+
+    /**
+     * End date of the day.
+     */
     private LocalDate endDate;
+
+    /**
+     * The largest time window available for the day.
+     */
     private TimeWindow biggestWindow;
 
-    // List containing all TimeWindows for the day
+    /**
+     * List of time windows representing free time slots during the day.
+     */
     private List<TimeWindow> timeWindows;
 
     /**
      * Base Constructor; represents a single day on a date containing windows of free time
      */
     public Day() {
-        priority = -1;
-        freeTime = -1;
-        workingTime = 0;
-        timeWindows = new ArrayList<>();
-        healthTime = 0;
+        this.priority = -1;
+        this.freeTime = 0;
+        this.workingTime = 0;
+        this.healthTime = 0;
+        this.timeWindows = new ArrayList<>();
     }
 
     /**
      * Adds a window of time to the day. A window has a start and an end. The free time of the add will be totaled
      * and added to the Day's free time.
      *
-     * @param open  Localtime object representing the start of the window
+     * @param open Localtime object representing the start of the window
      * @param close Localtime object representing the end of the window
      */
     public void addWindow(LocalTime open, LocalTime close) {
-        try {
-            TimeWindow newWindow = new TimeWindow(open, close);
-            timeWindows.add(newWindow);
-            freeTime = calculateFreeTime();
-            System.out.println("new Free time: " + freeTime);
+        // Check if the open time is after the close time, throw an exception if it is
+        if (open.isAfter(close)) {
+            throw new IllegalArgumentException("Open time cannot be after close time.");
         }
-        catch(Exception e){
-            System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Create a new TimeWindow object and add it to the list of time windows
+        TimeWindow newWindow = new TimeWindow(open, close);
+        timeWindows.add(newWindow);
+        // Calculate the free time for the day
+        // freeTime = calculateFreeTime(); // Paused for now
+        freeTime += (int) MINUTES.between(open, close); // Does this work?
     }
 
     /**
      * Calculates the total free time for the day. Cycles through all time windows and sums their differences
-     *
+     * !! This method is not currently used, but may be used in the future !!
      * @return integer sum of total free time for day
      */
     private int calculateFreeTime() {
@@ -78,81 +108,87 @@ public class Day {
     }
 
     /**
-     * Getter for Priority parameter
+     * Returns the priority of the day.
      *
-     * @return integer representing the Days priority when ordered
+     * @return Priority of the day.
      */
     public int getPriority() {
         return priority;
     }
 
     /**
-     * Setter for priority parameter
+     *  Sets the priority of the day.
      *
-     * @param priority integer value to set priority as
+     * @param priority Priority to set for the day.
      */
     public void setPriority(int priority) {
         this.priority = priority;
     }
 
     /**
-     * Getter for free time parameter
+     * Returns the total free time available for the day.
      *
-     * @return integer representing the days total free time
+     * @return Total free time in minutes.
      */
     public int getFreeTime() {
         return freeTime;
     }
 
     /**
-     * Setter for free time parameter
+     * Sets the total free time available for the day.
+     * Note: It's generally not recommended to set freeTime directly.
+     * Use the addWindow method to manage time windows and let freeTime be calculated automatically.
      *
-     * @param freeTime integer value to set free time as
+     * @param freeTime Total free time in minutes.
      */
     public void setFreeTime(int freeTime) {
         this.freeTime = freeTime;
     }
 
     /**
-     * Getter for dateSet boolean parameter
+     * Checks whether the date has been set for the day.
      *
-     * @return True if the date field has been set, otherwise false
+     * @return True if the date has been set, false otherwise.
      */
     public boolean isDateSet() {
         return dateSet;
     }
 
     /**
-     * Setter for dateSet parameter
+     * Sets the flag indicating whether the date has been set for the day.
      *
-     * @param dateSet True or False
+     * @param dateSet True if the date has been set, false otherwise.
      */
     public void setDateSet(boolean dateSet) {
         this.dateSet = dateSet;
     }
 
     /**
-     * Getter for biggest window parameter. Calculates biggest window prior to returning
+     * Returns the largest time window available for the day.
      *
-     * @return TimeWindow object representing the largest window of the day
+     * @return Largest time window.
      */
     public TimeWindow getBiggestWindow() {
-        try {
+//        try {
+//            biggestWindow = findBiggestWindow();
+//            return biggestWindow;
+//        }
+//        catch(Exception e){
+//            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        // returns null if the calculations for the biggest window of the day cannot be completed
+//        return new TimeWindow(LocalTime.of(0,0),LocalTime.of(0,0));
+        if (biggestWindow == null) {
             biggestWindow = findBiggestWindow();
-            return biggestWindow;
         }
-        catch(Exception e){
-            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
-            e.printStackTrace();
-        }
-        // returns null if the calculations for the biggest window of the day cannot be completed
-        return new TimeWindow(LocalTime.of(0,0),LocalTime.of(0,0));
+        return biggestWindow;
     }
 
     /**
-     * Getter for StartDate parameter
+     * Returns the start date of the day.
      *
-     * @return LocalDate object representing days Start Date
+     * @return Start date of the day.
      */
     public LocalDate getStartDate() {
         return startDate;
@@ -210,30 +246,47 @@ public class Day {
      * @return TimeWindow object representing the largest window of the day
      */
     private TimeWindow findBiggestWindow() {
-        System.out.println("Windows in day: " + timeWindows.size());
-        int maxDiff = 0;
+//        System.out.println("Windows in day: " + timeWindows.size());
+//        int maxDiff = 0;
+//        TimeWindow maxWindow = null;
+//        int index = 0;
+//        int indexer = 0;
+//
+//        for (TimeWindow window : timeWindows) {
+//            Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
+//            System.out.println("duration REEEEE: " + duration);
+//            int diff = (int) duration.getSeconds();
+//            if (diff > maxDiff) {
+//                index = indexer;
+//                maxDiff = diff;
+//                maxWindow = window;
+//            }
+//            indexer++;
+//        }
+//        if (!timeWindows.isEmpty()) {
+//            timeWindows.remove(index);
+//            return maxWindow;
+//        } else {
+//            return new TimeWindow(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0));
+//        }
         TimeWindow maxWindow = null;
-        int index = 0;
-        int indexer = 0;
+        long maxDuration = 0;
+        int maxIndex = -1;
 
-        for (TimeWindow window : timeWindows) {
+        for (int i = 0; i < timeWindows.size(); i++) {
+            TimeWindow window = timeWindows.get(i);
             Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-            System.out.println("duration REEEEE: " + duration);
-            int diff = (int) duration.getSeconds();
-            if (diff > maxDiff) {
-                index = indexer;
-                maxDiff = diff;
+            if (duration.toMinutes() > maxDuration) {
+                maxDuration = duration.toMinutes();
                 maxWindow = window;
+                maxIndex = i;
             }
-            indexer++;
-        }
-        if (!timeWindows.isEmpty()) {
-            timeWindows.remove(index);
-            return maxWindow;
-        } else {
-            return new TimeWindow(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0));
         }
 
+        if (maxIndex != -1) {
+            timeWindows.remove(maxIndex);
+        }
+        return maxWindow;
     }
 
     /**
@@ -260,7 +313,6 @@ public class Day {
      */
     public void addWork(int work) {
         workingTime += work;
-        System.out.println("workingTime test: " + workingTime);
     }
 
     /**
@@ -271,7 +323,6 @@ public class Day {
     public void addHealth(int health) {
 
         healthTime += health;
-        System.out.println("healthTime test: " + healthTime);
     }
 
     /**
