@@ -30,8 +30,8 @@ public class CalendarViewComponent {
     public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 
         dateTodayPanel.getChildren().addAll(navigateDateView);
-        dateTodayPanel.setPadding(new Insets(30, 0, 0, 0));
-        dateTodayPanel.setMinWidth(1650);
+        dateTodayPanel.setPadding(new Insets(30, 0, 0, 20));
+        dateTodayPanel.setMaxWidth(1000);
         dateTodayPanel.setAlignment(Pos.CENTER_LEFT);
         // HBox.setHgrow(dateToday, Priority.ALWAYS);
         // StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);

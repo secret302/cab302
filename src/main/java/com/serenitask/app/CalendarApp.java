@@ -222,11 +222,10 @@ public class CalendarApp extends Application {
             primaryStage.setTitle("SereniTask");
             primaryStage.setResizable(false);
             primaryStage.setScene(scene);
-            primaryStage.setWidth(1920);
-            primaryStage.setHeight(1080);
+            primaryStage.setWidth(1700);
+            primaryStage.setHeight(1000);
             primaryStage.centerOnScreen();
             primaryStage.show();
-            primaryStage.setMaximized(true);
             primaryStage.setOnCloseRequest(event -> {
                 // Consume the event to prevent the application from closing
                 if (goalController.loadSimpleGoal().toString() == "[]") {
