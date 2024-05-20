@@ -3,62 +3,62 @@ package com.serenitask.model;
 import java.time.LocalTime;
 
 /**
- * Class representing a window of time. A window of time has an open and a close time.
+ * Represents a window of time defined by its opening and closing times.
+ * Ensures that the opening time is always before the closing time.
  */
 public class TimeWindow {
-    // Private parameters
+
+    /** The time at which the window opens. */
     private LocalTime windowOpen;
+    /** The time at which the window closes. */
     private LocalTime windowClose;
 
     /**
-     * Constructor for TimeWindow. Takes in a LocalTime object for open and close and sets the fields.
+     * Constructor to create a TimeWindow object.
      *
-     * @param open  LocalTime Object representing the start time of window
-     * @param close LocalTime Object representing the end time of window
-     * @throws IllegalArgumentException Open Time cannot appear after Close time
+     * @param open  The opening time of the window.
+     * @param close The closing time of the window.
+     * @throws IllegalArgumentException If the opening time is not before the closing time.
      */
     public TimeWindow(LocalTime open, LocalTime close) {
-        if(open.isAfter(close)) {
+        // Validate that the opening time is before the closing time
+        if (open.isAfter(close)) {
             throw new IllegalArgumentException("The Open time cannot appear after Close time");
         }
-        windowOpen = open;
-        windowClose = close;
+        // Set the opening and closing times
+        this.windowOpen = open;
+        this.windowClose = close;
     }
 
     /**
-     * Getter for WindowOpen Parameter
-     *
-     * @return LocalTime object representing the start time of the window
+     * Gets the opening time of the window.
+     * @return The time at which the window opens.
      */
     public LocalTime getWindowOpen() {
         return windowOpen;
     }
 
     /**
-     * Setter for WindowOpen parameter
-     *
-     * @param windowOpen LocalTime object used to set WindowOpen
+     * Sets the opening time of the window.
+     * @param windowOpen The new opening time for the window.
      */
     public void setWindowOpen(LocalTime windowOpen) {
         this.windowOpen = windowOpen;
     }
 
     /**
-     * Getter for WindowClose Parameter
-     *
-     * @return LocalTime object representing the end time of the window
+     * Gets the closing time of the window.
+     * @return The time at which the window closes.
      */
     public LocalTime getWindowClose() {
         return windowClose;
     }
 
     /**
-     * Setter for WindowClose Parameter
-     *
-     * @param windowClose LocalTime object used to set WindowOpen
+     * Sets the closing time of the window.
+     * @param windowClose The new closing time for the window.
      */
     public void setWindowClose(LocalTime windowClose) {
         this.windowClose = windowClose;
     }
-
 }
