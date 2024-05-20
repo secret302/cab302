@@ -2,6 +2,7 @@ package com.serenitask.util.DatabaseManager;
 
 import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
+import com.serenitask.util.ErrorHandler;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -28,12 +29,9 @@ public class EventDAO {
         connection = SqliteConnection.getConnection();
         // Create table if it doesn't exist
         createTable();
-        // Used for debugging
-        // addSampleEntries();
     }
 
 
-    // Private (Maybe to be moved to a utility class)
     /**
      * Reconstructs an Interval object from its string representation stored in the database.
      *
@@ -73,8 +71,29 @@ public class EventDAO {
             statement.execute(query);
         } catch (Exception e) {
             // Print error if table creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
+    }
+
+    /**
+     * Constructs an Event object from a ResultSet obtained from the database.
+     *
+     * @param resultSet The ResultSet containing data for an event.
+     * @return The constructed Event object.
+     * @throws SQLException If an error occurs while processing the ResultSet.
+     */
+    private Event constructEventFromResultSet(ResultSet resultSet) throws SQLException {
+        String id = resultSet.getString("id");
+        String title = resultSet.getString("title");
+        String location = resultSet.getString("location");
+        Interval interval = reloadInterval(resultSet.getString("interval"));
+        boolean fullDay = resultSet.getBoolean("fullDay");
+        boolean staticPos = resultSet.getBoolean("staticPos");
+        String calendar = resultSet.getString("calendar");
+        String recurrenceRules = resultSet.getString("recurrenceRules");
+        LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
+
+        return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
     }
 
     /**
@@ -116,7 +135,7 @@ public class EventDAO {
             return event.getId();
         } catch (Exception e) {
             // Print error if event creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return null if event wasn't created
         return null;
@@ -160,7 +179,7 @@ public class EventDAO {
             return true;
         } catch (Exception e) {
             // Print error if event update fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return false if update fails
         return false;
@@ -187,7 +206,7 @@ public class EventDAO {
             return rowsDeleted > 0;
         } catch (Exception e) {
             // Print error if event deletion fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return false if delete fails
         return false;
@@ -215,7 +234,7 @@ public class EventDAO {
             }
         } catch (Exception e) {
             // Print error if event retrieval fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return null if event not found
         return null;
@@ -245,30 +264,9 @@ public class EventDAO {
             }
         } catch (SQLException e) {
             // Print error if event retrieval fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return list of events (regardless of none found)
         return events;
-    }
-
-    /**
-     * Constructs an Event object from a ResultSet obtained from the database.
-     *
-     * @param resultSet The ResultSet containing data for an event.
-     * @return The constructed Event object.
-     * @throws SQLException If an error occurs while processing the ResultSet.
-     */
-    private Event constructEventFromResultSet(ResultSet resultSet) throws SQLException {
-        String id = resultSet.getString("id");
-        String title = resultSet.getString("title");
-        String location = resultSet.getString("location");
-        Interval interval = reloadInterval(resultSet.getString("interval"));
-        boolean fullDay = resultSet.getBoolean("fullDay");
-        boolean staticPos = resultSet.getBoolean("staticPos");
-        String calendar = resultSet.getString("calendar");
-        String recurrenceRules = resultSet.getString("recurrenceRules");
-        LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
-
-        return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
     }
 }
