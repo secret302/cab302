@@ -125,7 +125,7 @@ public class CalendarApp extends Application {
             agenda.setEnableTimeZoneSupport(true);
             agenda.getCalendarSources().setAll(mainCalendarSource);
             agenda.setRequestedTime(LocalTime.now());
-            agenda.lookAheadPeriodInDaysProperty().set(3);
+            agenda.lookAheadPeriodInDaysProperty().set(0);
             agenda.setPadding(new Insets(10));
 
             VBox rightPanel = new VBox();
