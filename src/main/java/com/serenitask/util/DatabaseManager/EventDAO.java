@@ -69,7 +69,7 @@ public class EventDAO {
             // Create and execute statement
             Statement statement = connection.createStatement();
             statement.execute(query);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if table creation fails
             ErrorHandler.handleException(e);
         }
@@ -133,7 +133,7 @@ public class EventDAO {
 
             // Return the ID of the event if successful
             return event.getId();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event creation fails
             ErrorHandler.handleException(e);
         }
@@ -177,7 +177,7 @@ public class EventDAO {
 
             // If success
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event update fails
             ErrorHandler.handleException(e);
         }
@@ -204,7 +204,7 @@ public class EventDAO {
 
             // Return if goal was deleted
             return rowsDeleted > 0;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event deletion fails
             ErrorHandler.handleException(e);
         }
@@ -232,7 +232,7 @@ public class EventDAO {
                     return constructEventFromResultSet(resultSet);
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event retrieval fails
             ErrorHandler.handleException(e);
         }

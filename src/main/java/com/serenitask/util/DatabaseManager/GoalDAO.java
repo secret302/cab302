@@ -186,7 +186,7 @@ public class GoalDAO {
             }
         } catch (SQLException e) {
             // Print error if goal not found
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // Return null if goal not found
         return null;
