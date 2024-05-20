@@ -91,7 +91,7 @@ public class GoalTrackingDAO {
             PreparedStatement statement = connection.prepareStatement(query);
             // Update row with values from Goal Tracking
             statement.setInt(1, goalTracking.getId());
-            statement.setDate(2, java.sql.Date.valueOf(goalTracking.getGoalDate());
+            statement.setDate(2, java.sql.Date.valueOf(goalTracking.getGoalDate()));
             statement.setBoolean(3, goalTracking.getCompleted());
             // Execute update
             statement.executeUpdate();
