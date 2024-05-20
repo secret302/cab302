@@ -106,7 +106,6 @@ public class CalendarApp extends Application {
             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
             HBox dateTodayPanel = new HBox();
             VBox actionsPanel = new VBox();
-            Region spacer = new Region();
             NavigationBar navigationBar = new NavigationBar();
             NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView, calendarWeekView);
             CalendarViewComponent.calendarView(dateTodayPanel, navigateDateView);
@@ -116,10 +115,6 @@ public class CalendarApp extends Application {
             leftPanel.setMinHeight(700);
 
             VBox dailygoals = new VBox();
-            TextField goalTextField = new TextField();
-            Button createGoalButton = new Button("Create Goal");
-            //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
-
             YearMonthView heatmap = new YearMonthView();
             heatmap.getCalendarSources().setAll(mainCalendarSource);
             heatmap.setRequestedTime(LocalTime.now());
@@ -133,77 +128,44 @@ public class CalendarApp extends Application {
             agenda.lookAheadPeriodInDaysProperty().set(3);
             agenda.setPadding(new Insets(10));
 
-            VBox rightPanel = new VBox();//for end (sus)
-            VBox rightPanelObjects = new VBox(); // new one good
+            VBox rightPanel = new VBox();
+            VBox rightPanelObjects = new VBox();
             rightPanelObjects.setPadding(new Insets(20, 20, 20, 19));
 
-            // Switch Right Panel Button
-            // StackPane panelSwitchButton = new StackPane();
-            // Rectangle panelSwitchViewBox = new Rectangle(120, 50);
-            // VBox switches = new VBox();
-            // Text leftButtonPanelText = new Text("Actions");
-            // Text rightButtonPanelText = new Text("Goals");
-            // Rectangle leftButtonPanelSwitchViewBox = new Rectangle(50, 40);
-            // Rectangle rightButtonPanelSwitchViewBox = new Rectangle(50, 40);
-            // leftButtonPanelSwitchViewBox.setFill(Color.RED);
-            // rightButtonPanelSwitchViewBox.setFill(Color.BLUE);
+            StackPane panelSwitchButton = new StackPane();
+            Rectangle panelSwitchViewBox = new Rectangle(212, 46);
+            panelSwitchViewBox.setFill(Color.WHITE);
+            panelSwitchViewBox.setArcWidth(10);
+            panelSwitchViewBox.setArcHeight(10);
 
+            Rectangle leftButtonPanelSwitchViewBox = new Rectangle(100, 40);
+            Rectangle rightButtonPanelSwitchViewBox = new Rectangle(100, 40);
+            leftButtonPanelSwitchViewBox.setFill(Color.web("#e84d3e"));
+            rightButtonPanelSwitchViewBox.setFill(Color.web("#b2b3b7"));
+            leftButtonPanelSwitchViewBox.setArcWidth(10);
+            leftButtonPanelSwitchViewBox.setArcHeight(10);
+            rightButtonPanelSwitchViewBox.setArcWidth(10);
+            rightButtonPanelSwitchViewBox.setArcHeight(10);
+            Text leftButtonPanelText = new Text("Actions");
+            Text rightButtonPanelText = new Text("Goals");
+            leftButtonPanelText.setFont(Font.font(20));
+            rightButtonPanelText.setFont(Font.font(20));
+            leftButtonPanelText.setFill(Color.WHITE);
+            rightButtonPanelText.setFill(Color.BLACK);
 
-                    // Switch Right Panel Button
-        StackPane panelSwitchButton = new StackPane();
-        Rectangle panelSwitchViewBox = new Rectangle(212, 46);
-        panelSwitchViewBox.setFill(Color.WHITE); // Adding a background color for visibility
-        panelSwitchViewBox.setArcWidth(10);
-        panelSwitchViewBox.setArcHeight(10);
+            StackPane leftButton = new StackPane();
+            leftButton.getChildren().addAll(leftButtonPanelSwitchViewBox, leftButtonPanelText);
+            leftButton.setAlignment(Pos.CENTER);
 
-        // Create rectangles for left and right buttons
-        Rectangle leftButtonPanelSwitchViewBox = new Rectangle(100, 40);
-        Rectangle rightButtonPanelSwitchViewBox = new Rectangle(100, 40);
-        leftButtonPanelSwitchViewBox.setFill(Color.web("#e84d3e")); // Light red
-        rightButtonPanelSwitchViewBox.setFill(Color.web("#b2b3b7")); // Light gray
-        leftButtonPanelSwitchViewBox.setArcWidth(10);
-        leftButtonPanelSwitchViewBox.setArcHeight(10);
-        rightButtonPanelSwitchViewBox.setArcWidth(10);
-        rightButtonPanelSwitchViewBox.setArcHeight(10);
+            StackPane rightButton = new StackPane();
+            rightButton.getChildren().addAll(rightButtonPanelSwitchViewBox, rightButtonPanelText);
+            rightButton.setAlignment(Pos.CENTER);
+            HBox switches = new HBox(6, leftButton, rightButton);
+            switches.setAlignment(Pos.CENTER);
 
-        // Text for the buttons
-        Text leftButtonPanelText = new Text("Actions");
-        Text rightButtonPanelText = new Text("Goals");
-        leftButtonPanelText.setFont(Font.font(20));
-        rightButtonPanelText.setFont(Font.font(20));
-        leftButtonPanelText.setFill(Color.WHITE);
-        rightButtonPanelText.setFill(Color.BLACK);
-
-        // Create StackPane for each button to contain the rectangle and the text
-        StackPane leftButton = new StackPane();
-        leftButton.getChildren().addAll(leftButtonPanelSwitchViewBox, leftButtonPanelText);
-        leftButton.setAlignment(Pos.CENTER);
-
-        StackPane rightButton = new StackPane();
-        rightButton.getChildren().addAll(rightButtonPanelSwitchViewBox, rightButtonPanelText);
-        rightButton.setAlignment(Pos.CENTER);
-
-        // Create HBox to hold the left and right StackPanes
-        HBox switches = new HBox(6, leftButton, rightButton);
-        switches.setAlignment(Pos.CENTER);
-
-        // Add panelSwitchViewBox and switches to the StackPane
-        panelSwitchButton.getChildren().addAll(panelSwitchViewBox, switches);
-
-            
-
-            // leftButtonPanelSwitch.setOnMouseClicked(event -> {
-            //     RightPanelComponent.addEventClick(mainCalendarSource);
-            // });
-            // rightButtonPanelSwitch.setOnMouseClicked(event -> {
-            //     RightPanelComponent.addEventClick(mainCalendarSource);
-            // });
-
-            //Button switchRightPanelButton = new Button("Goals / Actions");
+            panelSwitchButton.getChildren().addAll(panelSwitchViewBox, switches);
             HBox rightPanelButton = new HBox(panelSwitchButton);
-
             rightPanelButton.setPadding(new Insets(40, 0, 40, 0));
-            //switchRightPanelButton.minWidth(100.0);
             rightPanelButton.setAlignment(Pos.CENTER);
 
             AtomicBoolean isActionsView = new AtomicBoolean(false);
@@ -228,10 +190,6 @@ public class CalendarApp extends Application {
             rightPanel.setAlignment(Pos.TOP_CENTER);
             rightPanel.setMinHeight(700);
             rightPanel.setMinWidth(260);
-
-            // panelSwitchButton.setOnMouseClicked(event -> {
-            //     RightPanelComponent.switchRightPanel(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton);
-            // });
 
             leftButton.setOnMouseClicked(event -> {
                 RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText);
@@ -274,8 +232,6 @@ public class CalendarApp extends Application {
             StackPane taskPopup = new StackPane();
             Button noButton = new Button("No");
             Button yesButton = new Button("Yes");
-
-            //EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
 
             calendar.getChildren().addAll(calendarDisplay);
 
