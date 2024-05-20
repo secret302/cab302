@@ -1,24 +1,25 @@
 package com.serenitask.util.DatabaseManager;
 
 import com.serenitask.model.Goal;
+import com.serenitask.util.ErrorHandler;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GoalDAO class is used to interact with the database for goals
+ * GoalDAO (Data Access Object) class for interacting with the 'goals' table in the database.
+ * Handles CRUD operations for Goal objects, converting between Goal model and database representation.
  */
 public class GoalDAO {
-    // Connection to the database
-    private Connection connection;
+
+    /** Database connection object. */
+    private final Connection connection;
 
     /**
-     * GoalDAO constructor
+     * Constructor for GoalDAO.
+     * Initializes the database connection and creates the 'goals' table if it doesn't exist.
      */
     public GoalDAO() {
         // Get connection to the database
@@ -31,7 +32,8 @@ public class GoalDAO {
 
     // Private
     /**
-     * Create Goals SQLite table if it doesn't exist
+     * Creates the 'goals' table in the database if it doesn't exist.
+     * Defines the table schema with columns for goal attributes.
      */
     private void createTable() {
         try {
@@ -49,14 +51,15 @@ public class GoalDAO {
             statement.execute(query);
         } catch (Exception e) {
             // Print error if table creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
     }
 
     /**
-     * Add a goal to the database
-     * @param goal Goal to add
-     * @return ID of the new goal, -1 if failed
+     * Adds a new Goal to the database.
+     *
+     * @param goal The Goal object to be added to the database.
+     * @return The ID of the newly added Goal, or -1 if the operation fails.
      */
     public int addGoal(Goal goal) {
         try {
@@ -88,9 +91,9 @@ public class GoalDAO {
                 goal.setId(generatedKeys.getInt(1));
                 return goal.getId();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if goal creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return -1 if goal wasn't created
         return -1;
@@ -99,9 +102,10 @@ public class GoalDAO {
     // Add goal simple to be brought back if required.
 
     /**
-     * Update a goal in the database
-     * @param goal Goal to update
-     * @return True if successful, false otherwise
+     * Updates an existing Goal in the database.
+     *
+     * @param goal The Goal object with updated information.
+     * @return True if the update was successful, false otherwise.
      */
     public boolean updateGoal(Goal goal) {
         try {
@@ -129,7 +133,7 @@ public class GoalDAO {
 
             // If success
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if update fails
             e.printStackTrace();
         }
@@ -138,11 +142,12 @@ public class GoalDAO {
     }
 
     /**
-     * Delete a goal from the database
-     * @param id ID of the goal to delete
-     * @return True if successful, false otherwise
+     * Deletes a Goal from the database.
+     *
+     * @param id The ID of the Goal to be deleted.
+     * @return True if the deletion was successful, false otherwise.
      */
-    public Boolean deleteGoal(int id) {
+    public boolean deleteGoal(int id) {
         try {
             // Create delete query
             String query = "DELETE FROM goals WHERE id = ?";
@@ -155,9 +160,9 @@ public class GoalDAO {
 
             // Return if goal was deleted
             return rowsDeleted > 0;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if delete fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // Return false if delete fails
         return false;
@@ -165,9 +170,10 @@ public class GoalDAO {
 
 
     /**
-     * Get a goal from the database by ID
-     * @param id ID of the goal to get
-     * @return Goal object, null if not found
+     * Retrieves a Goal from the database by its ID.
+     *
+     * @param id The ID of the Goal to be retrieved.
+     * @return The Goal object if found, or null if no matching goal is found.
      */
     public Goal getGoalById(int id) {
         try {
@@ -182,22 +188,9 @@ public class GoalDAO {
 
             // If found, return goal
             if (resultSet.next()) {
-                int goalId = resultSet.getInt("id");
-                String title = resultSet.getString("title");
-                int goalTargetAmount = resultSet.getInt("goalTargetAmount");
-                int minChunk = resultSet.getInt("min_chunk");
-                int maxChunk = resultSet.getInt("max_chunk");
-                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
-                int daysOutstanding = resultSet.getInt("daysOutstanding");
-
-                // Create new Goal object
-                Goal goal = new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
-                goal.setId(goalId);
-
-                // Return goal
-                return goal;
+                return constructGoalFromResultSet(resultSet);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if goal not found
             e.printStackTrace();
         }
@@ -206,8 +199,9 @@ public class GoalDAO {
     }
 
     /**
-     * Get all goals from the database
-     * @return List of all goals
+     * Retrieves all Goals from the database.
+     *
+     * @return A list of all Goal objects stored in the database.
      */
     public List<Goal> getAllGoals() {
         // Create empty list of events to return
@@ -221,28 +215,36 @@ public class GoalDAO {
             // Execute query
             ResultSet resultSet = statement.executeQuery(query);
 
-            // For each event in the result set
+            // Add each event in the result set
             while (resultSet.next()) {
-                // Retrieve data from the result set
-                int id = resultSet.getInt("id");
-                String title = resultSet.getString("title");
-                int goalTargetAmount = resultSet.getInt("goalTargetAmount");
-                int minChunk = resultSet.getInt("min_chunk");
-                int maxChunk = resultSet.getInt("max_chunk");
-                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
-                int daysOutstanding = resultSet.getInt("daysOutstanding");
-
-                // Create a new goal object
-                Goal goal = new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
-                goal.setId(id); // IMPORTANT: Set the ID of the goal
-                // Add event to list
-                goals.add(goal);
+                goals.add(constructGoalFromResultSet(resultSet));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event retrieval fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return list of events (regardless of none found)
         return goals;
+    }
+
+    /**
+     * Constructs a Goal object from a ResultSet obtained from the database.
+     *
+     * @param resultSet The ResultSet containing data for a goal.
+     * @return The constructed Goal object.
+     * @throws SQLException If an error occurs while processing the ResultSet.
+     */
+    private Goal constructGoalFromResultSet(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        String title = resultSet.getString("title");
+        int goalTargetAmount = resultSet.getInt("goalTargetAmount");
+        int minChunk = resultSet.getInt("min_chunk");
+        int maxChunk = resultSet.getInt("max_chunk");
+        LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
+        int daysOutstanding = resultSet.getInt("daysOutstanding");
+
+        Goal goal = new Goal(title, goalTargetAmount, minChunk, maxChunk, allocatedUntil, daysOutstanding);
+        goal.setId(id);
+        return goal;
     }
 }
