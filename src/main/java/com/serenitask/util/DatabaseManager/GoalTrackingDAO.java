@@ -127,7 +127,8 @@ public class GoalTrackingDAO {
             return true;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // Handle SQL errors
+            ErrorHandler.handleException(e);
         }
         return false;
     }
