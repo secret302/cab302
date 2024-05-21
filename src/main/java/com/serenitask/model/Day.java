@@ -37,11 +37,14 @@ public class Day {
 
     /**
      * Flag indicating whether the date has been set for the day.
+     * @param set to true if date has been set for day
+     * @param false if it has not, default value
      */
     private boolean dateSet;
 
     /**
      * Start date of the day.
+     * @param
      */
     private LocalDate startDate;
 
@@ -52,6 +55,7 @@ public class Day {
 
     /**
      * The largest time window available for the day.
+     * @param largest window of blank space in a day
      */
     private TimeWindow biggestWindow;
 
@@ -246,29 +250,6 @@ public class Day {
      * @return TimeWindow object representing the largest window of the day
      */
     private TimeWindow findBiggestWindow() {
-//        System.out.println("Windows in day: " + timeWindows.size());
-//        int maxDiff = 0;
-//        TimeWindow maxWindow = null;
-//        int index = 0;
-//        int indexer = 0;
-//
-//        for (TimeWindow window : timeWindows) {
-//            Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-//            System.out.println("duration REEEEE: " + duration);
-//            int diff = (int) duration.getSeconds();
-//            if (diff > maxDiff) {
-//                index = indexer;
-//                maxDiff = diff;
-//                maxWindow = window;
-//            }
-//            indexer++;
-//        }
-//        if (!timeWindows.isEmpty()) {
-//            timeWindows.remove(index);
-//            return maxWindow;
-//        } else {
-//            return new TimeWindow(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0));
-//        }
         TimeWindow maxWindow = null;
         long maxDuration = 0;
         int maxIndex = -1;
