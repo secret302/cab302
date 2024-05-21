@@ -25,14 +25,14 @@ import javafx.stage.Stage;
 
 
 /**
- * Provides a user interface component for adding a new goal.
- * This class is responsible for rendering a pop-up window where users can enter details about a new goal they wish to achieve.
+ * Provides a user interface component for settings.
+ * This class is responsible for rendering a pop-up window where users can enter settings.
  */
 
 public class Settings {
     /**
-     * Displays a modal window for adding a new goal, allowing the user to input goal details such as duration and frequency.
-     * The window contains form inputs for the goal description, hours and minutes of effort, and the recurrence period.
+     * Displays a modal window for settings, allowing the user to input settings.
+     * The window contains form inputs for the day start, end, allocate ahead, select date, and select calendar.
      */
     public static void displaySettingsView() {
         Stage popOutStage = new Stage();
