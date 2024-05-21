@@ -17,7 +17,9 @@ import java.util.List;
  */
 public class EventDAO {
 
-    /** Database connection object. */
+    /**
+     * Database connection object.
+     */
     private final Connection connection;
 
     /**
