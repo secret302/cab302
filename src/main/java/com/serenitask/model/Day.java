@@ -91,24 +91,7 @@ public class Day {
         TimeWindow newWindow = new TimeWindow(open, close);
         timeWindows.add(newWindow);
         // Calculate the free time for the day
-        // freeTime = calculateFreeTime(); // Paused for now
-        freeTime += (int) MINUTES.between(open, close); // Does this work?
-    }
-
-    /**
-     * Calculates the total free time for the day. Cycles through all time windows and sums their differences
-     * !! This method is not currently used, but may be used in the future !!
-     * @return integer sum of total free time for day
-     */
-    private int calculateFreeTime() {
-        int sum = 0;
-        if (freeTime < 0) {
-            freeTime++;
-        }
-        for (TimeWindow window : timeWindows) {
-            sum += MINUTES.between(window.getWindowOpen(), window.getWindowClose());
-        }
-        return sum;
+        freeTime = timeWindows.stream().mapToInt(window -> (int) MINUTES.between(window.getWindowOpen(), window.getWindowClose())).sum();
     }
 
     /**
