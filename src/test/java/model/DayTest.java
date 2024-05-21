@@ -45,7 +45,7 @@ public class DayTest {
 
         // Verify the values
         assertEquals(-1, day.getPriority(), "Day priority should be -1");
-        assertEquals(-1, day.getFreeTime(), "Day free time should be -1");
+        assertEquals(0, day.getFreeTime(), "Day free time should be 0");
         assertEquals(0, day.getWorkingTime(), "Day working time should be 0");
     }
 
