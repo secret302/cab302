@@ -8,9 +8,13 @@ import java.time.LocalTime;
  */
 public class TimeWindow {
 
-    /** The time at which the window opens. */
+    /**
+     * The time at which the window opens.
+     */
     private LocalTime windowOpen;
-    /** The time at which the window closes. */
+    /**
+     * The time at which the window closes.
+      */
     private LocalTime windowClose;
 
     /**

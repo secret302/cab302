@@ -12,7 +12,9 @@ import java.sql.SQLException;
  */
 public class SqliteConnection {
 
-    /** The singleton instance of the database connection. */
+    /**
+     * The singleton instance of the database connection.
+     */
     private static Connection instance;
 
     /**
