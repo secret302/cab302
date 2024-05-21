@@ -8,19 +8,33 @@ import java.time.LocalDate;
  */
 public class Goal {
 
-    /** Unique identifier for the goal. */
+    /**
+     * Unique identifier for the goal.
+     */
     private int id;
-    /** Title or name of the goal. */
+    /**
+     * Title or name of the goal.
+     */
     private String title;
-    /** Target amount or quantity to achieve for the goal (e.g., hours per week). */
+    /**
+     * Target amount or quantity to achieve for the goal (e.g., hours per week).
+     */
     private int targetAmount;
-    /** Minimum duration in minutes for a single allocation chunk of the goal. */
+    /**
+     * Minimum duration in minutes for a single allocation chunk of the goal.
+     */
     private int minChunk;
-    /** Maximum duration in minutes for a single allocation chunk of the goal. */
+    /**
+     * Maximum duration in minutes for a single allocation chunk of the goal. *
+     */
     private int maxChunk;
-    /** Date until which the goal has been allocated in the calendar. */
+    /**
+     * Date until which the goal has been allocated in the calendar.
+     */
     private LocalDate allocatedUntil;
-    /** Number of days remaining for which the goal needs to be allocated. */
+    /**
+     * Number of days remaining for which the goal needs to be allocated.
+     */
     private int daysOutstanding;
 
     /**
