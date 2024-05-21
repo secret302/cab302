@@ -286,6 +286,7 @@ public class CalendarApp extends Application {
             e.printStackTrace();
         }
     }
+    
 
     /**
      * Main method for the Calendar Application. This method is responsible for starting the application
