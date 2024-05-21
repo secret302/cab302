@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class GoalDAO {
 
-    /** Database connection object. */
+    /**
+     * Database connection object.
+     */
     private final Connection connection;
 
     /**

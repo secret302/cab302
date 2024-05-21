@@ -23,11 +23,29 @@ import java.util.Random;
  */
 public class RoutineOneController {
 
-    // Dummy value of 7, will be replaced with 28 for 1 month or ~4 weeks
+    /**
+     * The minimum threshold for allocation.
+     */
     private final int allocationThreshold;
+
+    /**
+     * The size of each block in the allocation process, set to 7 by default.
+     */
     private final int blockSize = 7;
+
+    /**
+     * The start time of the day for goal allocation.
+     */
     private final LocalTime DayStart;
+
+    /**
+     * The end time of the day for goal allocation.
+     */
     private final LocalTime DayEnd;
+
+    /**
+     * The name of the target calendar for goal allocation, set to "Goals" by default.
+     */
     private final String TargetCalendar = "Goals";
 
 
@@ -48,6 +66,7 @@ public class RoutineOneController {
     /**
      * Simple execution function that executes routine 1 of the optimizer.
      * This routine handles the allocation of goals that require x time per repeating period y.
+     * @param mainSource the Calendar Source that provides access to the calendars main source.
      */
     public void runRoutine(CalendarSource mainSource) {
         try {
@@ -121,6 +140,7 @@ public class RoutineOneController {
      * Allocates goals based on their required time per period. Accounts for partial and full allocation periods.
      *
      * @param goal      A goal object that requires calendar entry allocations
+     * @param goalCalendar is the Calendar object that holds all goals.
      * @param eventList A list containing all events draw from the database to be parsed.
      */
     private void allocateGoal(Goal goal, List<Event> eventList, Calendar goalCalendar) {
