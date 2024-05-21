@@ -115,6 +115,9 @@ public class CalendarApp extends Application {
             leftPanel.setMinHeight(700);
 
             VBox dailygoals = new VBox();
+            TextField goalTextField = new TextField();
+            Button createGoalButton = new Button("Create Goal");
+            //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
             YearMonthView heatmap = new YearMonthView();
             heatmap.getCalendarSources().setAll(mainCalendarSource);
             heatmap.setRequestedTime(LocalTime.now());
@@ -186,17 +189,22 @@ public class CalendarApp extends Application {
                     addEventText,
                     addEventViewBox);
 
-            rightPanel.getChildren().addAll(heatmap, rightPanelButton, rightPanelObjects, agenda);
+            rightPanel.getChildren().addAll(heatmap, rightPanelButton, rightPanelObjects, agenda, dailygoals);
             rightPanel.setAlignment(Pos.TOP_CENTER);
             rightPanel.setMinHeight(700);
             rightPanel.setMinWidth(260);
 
-            leftButton.setOnMouseClicked(event -> {
-                RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText);
-            });
+            VBox staticgoals = new VBox();
+            staticgoals.getChildren().add(DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton));
 
+            leftButton.setOnMouseClicked(event -> {
+                RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                dailygoals, goalTextField, createGoalButton, staticgoals);
+            });
+            
             rightButton.setOnMouseClicked(event -> {
-                RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText);
+                RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                dailygoals, goalTextField, createGoalButton, staticgoals);
             });
 
             // Load the daily goals

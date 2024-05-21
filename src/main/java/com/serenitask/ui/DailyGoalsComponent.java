@@ -1,11 +1,18 @@
 package com.serenitask.ui;
 
+import java.util.List;
+
 import com.serenitask.controller.GoalController;
+import com.serenitask.model.Goal;
+import com.serenitask.util.DatabaseManager.GoalDAO;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 /**
  * Provides static utility methods to manage and display the daily goals component in the user interface.
@@ -20,26 +27,32 @@ public class DailyGoalsComponent {
      * @param goalTextField    The TextField where users enter their goals.
      * @param createGoalButton The Button that users click to submit their goals.
      */
-    public static void goalView(VBox dailygoals, TextField goalTextField, Button createGoalButton) {
+    public static VBox goalView(VBox dailygoals, TextField goalTextField, Button createGoalButton) {
         dailygoals.setSpacing(10);
         dailygoals.setPadding(new Insets(10));
 
-        goalTextField.setPromptText("Enter your goal here");
 
-        // Create button for goals container
+  GoalDAO goalDAO = new GoalDAO();
+  List<Goal> goals = goalDAO.getAllGoals();
 
-        createGoalButton.setOnAction(event -> {
-            String goal = goalTextField.getText().trim();
-            if (!goal.isEmpty()) {
-                dailygoals.getChildren().add(new javafx.scene.control.Label(goal));
-                goalTextField.clear();
-            }
-            // Commit goal to database
-            GoalController goalController = new GoalController();
-            goalController.controlSimpleGoal(goal);
-        });
+  for (Goal goal : goals) {
+    HBox goalContainer = new HBox();
 
-        // Setup right hand side Vbox elements
-        dailygoals.getChildren().addAll(new javafx.scene.control.Label("I want to"), goalTextField, createGoalButton);
+    Label goalLabel = new Label(goal.getTitle());
+    Label deleteLabel = new Label(" (X)");
+
+    deleteLabel.setTextFill(Color.RED);
+    deleteLabel.setStyle("-fx-alignment: center-right;");
+
+    int goalId = goal.getId();
+    deleteLabel.setOnMouseClicked(e -> {
+      dailygoals.getChildren().remove(goalContainer);
+      goalDAO.deleteGoal(goalId);
+    });
+
+    goalContainer.getChildren().addAll(goalLabel, deleteLabel);
+    dailygoals.getChildren().add(goalContainer);
+  }
+  return dailygoals;
     }
 }
