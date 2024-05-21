@@ -6,11 +6,17 @@ package com.serenitask.model;
  */
 public class GoalTracking {
 
-    /** Unique identifier of the goal being tracked. */
+    /**
+     * Unique identifier of the goal being tracked.
+     */
     private int goalId;
-    /** Date for which the goal completion is being tracked. */
+    /**
+     * Date for which the goal completion is being tracked.
+     */
     private String goalDate;
-    /** Flag indicating whether the goal was completed on the specified date. */
+    /**
+     * Flag indicating whether the goal was completed on the specified date.
+     */
     private Boolean completed;
 
     /**

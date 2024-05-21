@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class GoalTrackingDAO {
 
-    /** Database connection object. */
+    /**
+     * Database connection object.
+     */
     private final Connection connection;
 
     /**
@@ -225,7 +227,6 @@ public class GoalTrackingDAO {
 
     /**
      * Retrieves all GoalTracking records from the database.
-     *
      * @return A list of GoalTracking objects representing all goal tracking information stored in the database.
      */
     public List<GoalTracking> getAllGoalTrackingRecords() {
@@ -266,112 +267,3 @@ public class GoalTrackingDAO {
         return new GoalTracking(goalId, goalDate, completed);
     }
 }
-
-/* Original Code, kept in case of requiring fazed out methods
-private List<Integer> getIdList(List<GoalTracking> unsorted)
-{
-    List<Integer> goalIds = new ArrayList<>();
-    for (GoalTracking goal : unsorted)
-    {
-        int id = goal.getId();
-        if(goalIds.contains(id) == false)
-        {
-            goalIds.add(id);
-        }
-    }
-    return goalIds;
-}
-
-private List<List<GoalTracking>> sortTrackedGoals(List<GoalTracking> unsorted)
-{
-    // Setup return list and list of unique IDs
-    List<List<GoalTracking>> AllGoals = new ArrayList<>();
-    List<Integer> IdList = getIdList(unsorted);
-
-    // For each unique ID, add all entries to a list and append to the AllGoals List
-    for (Integer ID : IdList)
-    {
-        List<GoalTracking> goalTracked = new ArrayList<>();
-
-        for (GoalTracking goal : unsorted)
-        {
-            if(ID == goal.getId())
-            {
-                goalTracked.add(goal);
-            }
-        }
-
-        AllGoals.add(goalTracked);
-    }
-
-    // Return list of lists
-    return AllGoals;
-}
-
-public List<GoalTracking> getTrackedGoalById(int id) {
-    List<GoalTracking> goals = new ArrayList<>();
-    try {
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM goal_tracking WHERE id = ? ");
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            // Retrieve data from the result set
-            int goal_id = resultSet.getInt("goal_id");
-            String goal_date = resultSet.getString("goal_date");
-            Boolean completed = resultSet.getBoolean("completed");
-            // Create a new event object
-            GoalTracking goalTracking = new GoalTracking(goal_id, goal_date, completed);
-            goals.add(goalTracking);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return goals;
-}
-
-public List<GoalTracking> getTrackedGoalByDate(String date) {
-    List<GoalTracking> goals = new ArrayList<>();
-    try {
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM goal_tracking WHERE goal_date = ? ");
-        statement.setString(1, date);
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            // Retrieve data from the result set
-            int goal_id = resultSet.getInt("goal_id");
-            String goal_date = resultSet.getString("goal_date");
-            Boolean completed = resultSet.getBoolean("completed");
-            // Create a new event object
-            GoalTracking goalTracking = new GoalTracking(goal_id, goal_date, completed);
-            goals.add(goalTracking);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return goals;
-}
-
-public List<List<GoalTracking>> getAllTrackedGoals() {
-    List<List<GoalTracking>> AllGoals = new ArrayList<>();
-    List<GoalTracking> unsorted = new ArrayList<>();
-    try {
-        Statement statement = connection.createStatement();
-        String query = "SELECT * FROM goal_tracking";
-        ResultSet resultSet = statement.executeQuery(query);
-        while (resultSet.next()) {
-            // Retrieve data from the result set
-            int goal_id = resultSet.getInt("goal_id");
-            String goal_date = resultSet.getString("goal_date");
-            Boolean completed = resultSet.getBoolean("completed");
-            // Create a new event object
-            GoalTracking goalTracking = new GoalTracking(goal_id, goal_date, completed);
-            unsorted.add(goalTracking);
-        }
-        AllGoals = sortTrackedGoals(unsorted);
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return AllGoals;
-}
-*/
