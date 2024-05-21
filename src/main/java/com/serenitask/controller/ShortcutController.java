@@ -28,6 +28,13 @@ public class ShortcutController {
      * Creates listeners to handle key press events and attaches them to the scene.
      * @param scene Current scene contained in Stage of javaFx
      * @param mainCalendarSource Object containing all calendars
+     * @param isWeeklyView indicates what view is being shown on calendar.
+     * @param dailyText Text that swaps between daily and weekly views
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     * @param leftPanel The left panel in the UI layout
+     * @param switchViewButton Button that toggles the view between daily and weekly
+     * @param weeklyText Text that swaps between daily and weekly views
      */
     public static void setupShortcuts(Scene scene, CalendarSource mainCalendarSource, AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
                                       VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
