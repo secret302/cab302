@@ -57,9 +57,7 @@ public class EventDAOTest {
                 new Interval(startTime, startTime.plusHours(2)),
                 false,
                 false,
-                "testing",
-                "",
-                startTime.toLocalDate()
+                "testing"
         );
     }
 
@@ -81,8 +79,6 @@ public class EventDAOTest {
         assertEquals(false, event.getFullDay(), "Event full day should match");
         assertEquals(false, event.getStaticPos(), "Event static position should match");
         assertEquals("testing", event.getCalendar(), "Event calendar should match");
-        // recurrenceRules to be removed
-        // allocatedUntil to be removed
 
         // Delete the event after testing
         eventDAO.deleteEvent(eventId);
@@ -105,8 +101,6 @@ public class EventDAOTest {
         event.setFullDay(true);
         event.setStaticPos(true);
         event.setCalendar("updated");
-        // recurrenceRules to be removed
-        // allocatedUntil to be removed
 
         // Update the event
         boolean success = eventDAO.updateEvent(event);
@@ -122,8 +116,6 @@ public class EventDAOTest {
         assertEquals(true, event.getFullDay(), "Event full day should match");
         assertEquals(true, event.getStaticPos(), "Event static position should match");
         assertEquals("updated", event.getCalendar(), "Event calendar should match");
-        // recurrenceRules to be removed
-        // allocatedUntil to be removed
 
         // Delete the event after testing
         eventDAO.deleteEvent(eventId);

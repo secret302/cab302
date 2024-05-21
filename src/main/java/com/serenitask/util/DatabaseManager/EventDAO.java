@@ -65,9 +65,7 @@ public class EventDAO {
                     + "interval         STRING,     "
                     + "fullDay          BOOLEAN     NOT NULL DEFAULT (false),"
                     + "staticPos        BOOLEAN     NOT NULL DEFAULT (false),"
-                    + "calendar         TEXT        NOT NULL DEFAULT 'default',"
-                    + "recurrenceRules  TEXT,       "
-                    + "allocatedUntil   DATE        );";
+                    + "calendar         TEXT        NOT NULL DEFAULT 'default');";
             // Create and execute statement
             Statement statement = connection.createStatement();
             statement.execute(query);
@@ -92,10 +90,8 @@ public class EventDAO {
         boolean fullDay = resultSet.getBoolean("fullDay");
         boolean staticPos = resultSet.getBoolean("staticPos");
         String calendar = resultSet.getString("calendar");
-        String recurrenceRules = resultSet.getString("recurrenceRules");
-        LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
 
-        return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+        return new Event(id, title, location, interval, fullDay, staticPos, calendar);
     }
 
     /**
@@ -114,10 +110,8 @@ public class EventDAO {
                     + "interval,"
                     + "fullDay,"
                     + "staticPos,"
-                    + "calendar,"
-                    + "recurrenceRules,"
-                    + "allocatedUntil)"
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "calendar)"
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
             // Insert values from event
@@ -128,8 +122,6 @@ public class EventDAO {
             statement.setBoolean(5, event.getFullDay());
             statement.setBoolean(6, event.getStaticPos());
             statement.setString(7, event.getCalendar());
-            statement.setString(8, event.getRecurrenceRules());
-            statement.setDate(9, java.sql.Date.valueOf(event.getAllocatedUntil()));
             // Execute update
             statement.executeUpdate();
 
@@ -158,9 +150,7 @@ public class EventDAO {
                     + "interval           = ?,"
                     + "fullDay            = ?,"
                     + "staticPos          = ?,"
-                    + "calendar           = ?,"
-                    + "recurrenceRules    = ?,"
-                    + "allocatedUntil     = ? "
+                    + "calendar           = ?"
                     + "WHERE id           = ?";
             // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
@@ -171,9 +161,7 @@ public class EventDAO {
             statement.setBoolean(4, event.getFullDay());
             statement.setBoolean(5, event.getStaticPos());
             statement.setString(6, event.getCalendar());
-            statement.setString(7, event.getRecurrenceRules());
-            statement.setDate(8, java.sql.Date.valueOf(event.getAllocatedUntil()));
-            statement.setString(9, event.getId());
+            statement.setString(7, event.getId());
             // Execute update
             statement.executeUpdate();
 

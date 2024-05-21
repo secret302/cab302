@@ -97,11 +97,8 @@ public class EventListener {
         Boolean fullDay = entry.isFullDay();
         Boolean staticPos = false;
         String calendar = entry.getCalendar().getName();
-        String recurrenceRules = entry.getRecurrenceRule();
-        LocalDate allocatedUntil = LocalDate.now().plusDays(7); // entry.getRecurrenceRule(); This is a temporary solution until recurrence end can be grabbed from the String saved recurrence rules
 
-
-        Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+        Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar);
         return event;
     }
 

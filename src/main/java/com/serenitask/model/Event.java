@@ -5,7 +5,7 @@ import com.calendarfx.model.Interval;
 import java.time.LocalDate;
 
 /**
- * Represents a calendar event with properties like title, location, time interval, recurrence rules, and more.
+ * Represents a calendar event with the properties of a title, location, time interval, full-day status, static status, and calendar name.
  * This class enforces data integrity through input validation within its methods.
  */
 public class Event {
@@ -38,14 +38,6 @@ public class Event {
      * Name of the calendar to which the event belongs.
      */
     private String calendar;
-    /** Recurrence rules specifying how the event repeats.
-     *
-     */
-    private String recurrenceRules;
-    /** Date until which the event's recurrence is valid.
-     *
-     */
-    private LocalDate allocatedUntil;
 
     /**
      * Default constructor for creating an empty Event object.
@@ -62,8 +54,6 @@ public class Event {
      * @param fullDay         Indicates if the event spans the entire day.
      * @param staticPos       Indicates if the event has a fixed position (not yet implemented).
      * @param calendar        Name of the calendar the event belongs to.
-     * @param recurrenceRules Rules for event recurrence.
-     * @param allocatedUntil  Date until which the recurrence is valid.
      * @throws IllegalArgumentException If id or title are null or empty.
      */
     public Event(
@@ -73,9 +63,7 @@ public class Event {
             Interval interval,
             Boolean fullDay,
             Boolean staticPos,
-            String calendar,
-            String recurrenceRules,
-            LocalDate allocatedUntil
+            String calendar
     ) {
         // Validate input
         if (id == null || id.isEmpty()) {
@@ -92,8 +80,6 @@ public class Event {
         this.fullDay = fullDay;
         this.staticPos = staticPos;
         this.calendar = calendar;
-        this.recurrenceRules = recurrenceRules;
-        this.allocatedUntil = allocatedUntil;
     }
 
     /**
@@ -218,30 +204,5 @@ public class Event {
      */
     public void setCalendar(String calendar) {
         this.calendar = calendar;
-    }
-
-    /**
-     * Gets the recurrence rules for this event.
-     * @return The event's recurrence rules.
-     */
-    public String getRecurrenceRules() {
-        return recurrenceRules;
-    }
-
-
-    /**
-     * Gets the date until which the event's recurrence is valid.
-     * @return The date until which the event recurs.
-     */
-    public LocalDate getAllocatedUntil() {
-        return allocatedUntil;
-    }
-
-    /**
-     * Sets the date until which the event's recurrence is valid.
-     * @param allocatedUntil The new date until which the event recurs.
-     */
-    public void setAllocatedUntil(LocalDate allocatedUntil) {
-        this.allocatedUntil = allocatedUntil;
     }
 }

@@ -67,7 +67,6 @@ public class EventLoader {
         //newEntry.setInterval(new Interval(event.getStartDate(), startTime.toLocalTime(), event.getEndDate(), endTime.toLocalTime()));
 
         newEntry.setFullDay(event.getFullDay());
-        newEntry.setRecurrenceRule(event.getRecurrenceRules());
         return newEntry;
     }
 

@@ -90,9 +90,6 @@ public class AddEvent {
             event.setStaticPos(true);
             event.setCalendar(calendarName);
 
-            // REFACTOR OUT
-            event.setAllocatedUntil(endDate);
-
             Entry<?> entry = new Entry<>(event.getTitle());
             entry.setInterval(new Interval(startDate, startTime, endDate, endTime));
             entry.setFullDay(fullDay);
