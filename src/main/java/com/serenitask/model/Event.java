@@ -10,23 +10,41 @@ import java.time.LocalDate;
  */
 public class Event {
 
-    /** Unique identifier of the event. */
+    /**
+     * Unique identifier of the event.
+     */
     private String id;
-    /** Title or name of the event. */
+    /**
+     * Title or name of the event.
+     * */
     private String title;
-    /** Location where the event takes place. */
+    /**
+     * Location where the event takes place.
+     */
     private String location;
-    /** Time interval during which the event occurs. */
+    /**
+     * Time interval during which the event occurs.
+     */
     private Interval interval;
-    /** Flag indicating if the event spans the entire day. */
+    /**
+     * Flag indicating if the event spans the entire day.
+     */
     private Boolean fullDay;
-    /** Flag indicating if the event has a fixed position (not yet implemented). */
+    /**
+     * Flag indicating if the event has a fixed position (not yet implemented).
+     */
     private Boolean staticPos;
-    /** Name of the calendar to which the event belongs. */
+    /**
+     * Name of the calendar to which the event belongs.
+     */
     private String calendar;
-    /** Recurrence rules specifying how the event repeats. */
+    /** Recurrence rules specifying how the event repeats.
+     *
+     */
     private String recurrenceRules;
-    /** Date until which the event's recurrence is valid. */
+    /** Date until which the event's recurrence is valid.
+     *
+     */
     private LocalDate allocatedUntil;
 
     /**
