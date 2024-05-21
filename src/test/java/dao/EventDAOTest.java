@@ -88,8 +88,7 @@ public class EventDAOTest {
         eventDAO.deleteEvent(eventId);
 
         // Try to add a null event
-        eventId = eventDAO.addEvent(null);
-        assertNull(eventId, "Adding a null event should fail");
+        assertThrows(NullPointerException.class, () -> eventDAO.addEvent(null), "Adding a null event should fail");
     }
 
     @Test // Test the updateEvent method
@@ -130,8 +129,7 @@ public class EventDAOTest {
         eventDAO.deleteEvent(eventId);
 
         // Try to update a null event
-        success = eventDAO.updateEvent(null);
-        assertFalse(success, "Updating a null event should fail");
+        assertThrows(NullPointerException.class, () -> eventDAO.updateEvent(null), "Updating a null event should fail");
     }
 
     @Test // Test the deleteEvent method
