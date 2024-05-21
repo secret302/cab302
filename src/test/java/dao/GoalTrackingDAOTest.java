@@ -14,7 +14,7 @@ import com.serenitask.util.DatabaseManager.GoalTrackingDAO;
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 
-/* File is incomplete due to needing to datetime formats now being decided yet.
+/* Tests are disabled as GoalTrackingDAO is not implemented yet and or may not be implemented at all
 
 public class GoalTrackingDAOTest {
     private final GoalTrackingDAO goalTrackingDAO = new GoalTrackingDAO(); // Assuming constructor exists
