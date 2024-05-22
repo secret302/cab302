@@ -28,7 +28,7 @@ public class CalendarViewComponent {
      * Configures the main display for showing the current date on the calendar view.
      *
      * @param dateTodayPanel   An HBox that holds the date display.
-     * @param navigateDateView
+     * @param navigateDateView Changes the view of the date display.
      */
     public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 

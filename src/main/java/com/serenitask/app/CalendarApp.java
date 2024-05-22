@@ -202,7 +202,7 @@ public class CalendarApp extends Application {
                 RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
                 dailygoals, goalTextField, createGoalButton, staticgoals);
             });
-            
+
             rightButton.setOnMouseClicked(event -> {
                 RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
                 dailygoals, goalTextField, createGoalButton, staticgoals);
@@ -295,7 +295,7 @@ public class CalendarApp extends Application {
             e.printStackTrace();
         }
     }
-    
+
 
     /**
      * Main method for the Calendar Application. This method is responsible for starting the application

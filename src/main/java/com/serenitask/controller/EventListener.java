@@ -11,7 +11,6 @@ import com.calendarfx.model.Entry;
 import javafx.event.EventHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Class responsible for managing calendar events and interfacing with the EventDAO for database operations.
@@ -72,7 +71,7 @@ public class EventListener {
 
                     }
                 } catch(Exception e) {
-                    System.err.println("An Error has Occured:" + e.getMessage());
+                    System.err.println("An Error has Occurred:" + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -89,7 +88,7 @@ public class EventListener {
      */
     private Event convertToEventModel(Entry<?> entry) {
 
-        // This needs to turn from an entry to an Event class and retreive ID if it is not stored;
+        // This needs to turn from an entry to an Event class and retrieve ID if it is not stored;
 
         String id = entry.getId();
         String title = entry.getTitle();
@@ -98,11 +97,8 @@ public class EventListener {
         Boolean fullDay = entry.isFullDay();
         Boolean staticPos = false;
         String calendar = entry.getCalendar().getName();
-        String recurrenceRules = entry.getRecurrenceRule();
-        LocalDate allocatedUntil = LocalDate.now().plusDays(7); // entry.getRecurrenceRule(); This is a temporary solution until recurrence end can be grabbed from the String saved recurrence rules
 
-
-        Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+        Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar);
         return event;
     }
 

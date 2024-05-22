@@ -1,62 +1,44 @@
 package com.serenitask.util.DatabaseManager;
+
 import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
+import com.serenitask.util.ErrorHandler;
+
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EventDAO class is used to interact with the database for events
+ * EventDAO (Data Access Object) class for interacting with the 'events' table in the database.
+ * Handles CRUD operations for Event objects, converting between Event model and database representation.
  */
 public class EventDAO {
-    // Connection to the database
-    private Connection connection;
 
     /**
-     * EventDAO constructor
+     * Database connection object.
+     */
+    private final Connection connection;
+
+    /**
+     * Constructor for EventDAO.
+     * Initializes the database connection and creates the 'events' table if it doesn't exist.
      */
     public EventDAO() {
         // Get connection to the database
         connection = SqliteConnection.getConnection();
         // Create table if it doesn't exist
         createTable();
-        // Used for debugging
-        // addSampleEntries();
     }
 
-    // Private
-    /**
-     * Add sample entries to the database
-     */
-    private void addSampleEntries() {
-        try {
-            // Create and execute clear statement
-            Statement clearStatement = connection.createStatement();
-            String clearQuery = "DELETE FROM events";
-            clearStatement.execute(clearQuery);
-            // Create and execute insert statement
-            Statement insertStatement = connection.createStatement();
-            String insertQuery = "INSERT INTO events "
-                    + "(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil) VALUES "
-                    + "('sha256-1', 'Event 1', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(1)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-2', 'Event 2', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(2)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + "),"
-                    + "('sha256-3', 'Event 3', 'Earth C-137'," + new Interval(LocalDateTime.now(), LocalDateTime.now().plusHours(3)) + ", '2 hours', FALSE, TRUE, 'main cal','recurr string', " + new Date(System.currentTimeMillis()) + ")";
-            insertStatement.execute(insertQuery);
-        } catch (Exception e) {
-            // Print error if sample entries fail
-            e.printStackTrace();
-        }
-    }
 
-    // Private (Maybe to be moved to a utility class)
     /**
-     * Re-loads an interval saved as a string back to an Interval object
-     * @param intervalString Interval saved as a string
-     * @return Interval object
+     * Reconstructs an Interval object from its string representation stored in the database.
+     *
+     * @param intervalString The string representation of the Interval as stored in the database.
+     * @return The reconstructed Interval object.
      */
     private static Interval reloadInterval(String intervalString) {
         String[] parts = intervalString.replace("Interval [", "").replace("]", "").split(", ");
@@ -70,7 +52,8 @@ public class EventDAO {
 
     // Private
     /**
-     * Create Events SQLite table if it doesn't exist
+     * Creates the 'events' table in the database if it doesn't exist.
+     * Defines the table schema with columns for event attributes.
      */
     private void createTable() {
         try {
@@ -82,22 +65,40 @@ public class EventDAO {
                     + "interval         STRING,     "
                     + "fullDay          BOOLEAN     NOT NULL DEFAULT (false),"
                     + "staticPos        BOOLEAN     NOT NULL DEFAULT (false),"
-                    + "calendar         TEXT        NOT NULL DEFAULT 'default',"
-                    + "recurrenceRules  TEXT,       "
-                    + "allocatedUntil   DATE        );";
+                    + "calendar         TEXT        NOT NULL DEFAULT 'default');";
             // Create and execute statement
             Statement statement = connection.createStatement();
             statement.execute(query);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if table creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
     }
 
     /**
-     * Add event to the database
-     * @param event Event to add
-     * @return Event ID, null if failed
+     * Constructs an Event object from a ResultSet obtained from the database.
+     *
+     * @param resultSet The ResultSet containing data for an event.
+     * @return The constructed Event object.
+     * @throws SQLException If an error occurs while processing the ResultSet.
+     */
+    private Event constructEventFromResultSet(ResultSet resultSet) throws SQLException {
+        String id = resultSet.getString("id");
+        String title = resultSet.getString("title");
+        String location = resultSet.getString("location");
+        Interval interval = reloadInterval(resultSet.getString("interval"));
+        boolean fullDay = resultSet.getBoolean("fullDay");
+        boolean staticPos = resultSet.getBoolean("staticPos");
+        String calendar = resultSet.getString("calendar");
+
+        return new Event(id, title, location, interval, fullDay, staticPos, calendar);
+    }
+
+    /**
+     * Adds a new Event to the database.
+     *
+     * @param event The Event object to be added to the database.
+     * @return The ID of the newly added event, or null if the operation fails.
      */
     public String addEvent(Event event) {
         try {
@@ -109,10 +110,8 @@ public class EventDAO {
                     + "interval,"
                     + "fullDay,"
                     + "staticPos,"
-                    + "calendar,"
-                    + "recurrenceRules,"
-                    + "allocatedUntil)"
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "calendar)"
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
             // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
             // Insert values from event
@@ -123,25 +122,24 @@ public class EventDAO {
             statement.setBoolean(5, event.getFullDay());
             statement.setBoolean(6, event.getStaticPos());
             statement.setString(7, event.getCalendar());
-            statement.setString(8, event.getRecurrenceRules());
-            statement.setDate(9, java.sql.Date.valueOf(event.getAllocatedUntil()));
             // Execute update
             statement.executeUpdate();
 
             // Return the ID of the event if successful
             return event.getId();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event creation fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return null if event wasn't created
         return null;
     }
 
     /**
-     * Update event in the database
-     * @param event Event to update
-     * @return True if successful, false otherwise
+     * Updates an existing Event in the database.
+     *
+     * @param event The Event object with updated information.
+     * @return True if the update was successful, false otherwise.
      */
     public boolean updateEvent(Event event) {
         try {
@@ -152,9 +150,7 @@ public class EventDAO {
                     + "interval           = ?,"
                     + "fullDay            = ?,"
                     + "staticPos          = ?,"
-                    + "calendar           = ?,"
-                    + "recurrenceRules    = ?,"
-                    + "allocatedUntil     = ? "
+                    + "calendar           = ?"
                     + "WHERE id           = ?";
             // Create prepared statement
             PreparedStatement statement = connection.prepareStatement(query);
@@ -165,26 +161,25 @@ public class EventDAO {
             statement.setBoolean(4, event.getFullDay());
             statement.setBoolean(5, event.getStaticPos());
             statement.setString(6, event.getCalendar());
-            statement.setString(7, event.getRecurrenceRules());
-            statement.setDate(8, java.sql.Date.valueOf(event.getAllocatedUntil()));
-            statement.setString(9, event.getId());
+            statement.setString(7, event.getId());
             // Execute update
             statement.executeUpdate();
 
             // If success
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event update fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return false if update fails
         return false;
     }
 
     /**
-     * Delete event from the database
-     * @param id Event ID
-     * @return True if successful, false otherwise
+     * Deletes an Event from the database.
+     *
+     * @param id The ID of the Event to be deleted.
+     * @return True if the deletion was successful, false otherwise.
      */
     public boolean deleteEvent(String id) {
         try {
@@ -199,19 +194,19 @@ public class EventDAO {
 
             // Return if goal was deleted
             return rowsDeleted > 0;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event deletion fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return false if delete fails
         return false;
     }
 
-
     /**
-     * Retrieve event from the database by ID
-     * @param id Event ID
-     * @return Event object, null if not found
+     * Retrieves an Event from the database by its ID.
+     *
+     * @param id The ID of the Event to be retrieved.
+     * @return The Event object if found, or null if no matching event is found.
      */
     public Event getEventById(String id) {
         try {
@@ -222,33 +217,23 @@ public class EventDAO {
             // Insert ID into statement
             statement.setString(1, id);
             // Execute Query
-            ResultSet resultSet = statement.executeQuery();
-
-            // If found, return event
-            if (resultSet.next()) {
-                String title = resultSet.getString("title");
-                String location = resultSet.getString("location");
-                Interval interval = reloadInterval(resultSet.getString("interval"));
-                Boolean fullDay = resultSet.getBoolean("fullDay");
-                Boolean staticPos = resultSet.getBoolean("staticPos");
-                String calendar = resultSet.getString("calendar");
-                String recurrenceRules = resultSet.getString("recurrenceRules");
-                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
-
-                // Return new event object
-                return new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return constructEventFromResultSet(resultSet);
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event retrieval fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return null if event not found
         return null;
     }
 
     /**
-     * Retrieve all events from the database
-     * @return List of events
+     * Retrieves all Events from the database.
+     *
+     * @return A list of all Event objects stored in the database.
      */
     public List<Event> getAllEvents() {
         // Create empty list of events to return
@@ -265,24 +250,11 @@ public class EventDAO {
             // For each event in the result set
             while (resultSet.next()) {
                 // Retrieve data from the result set
-                String id = resultSet.getString("id");
-                String title = resultSet.getString("title");
-                String location = resultSet.getString("location");
-                Interval interval = reloadInterval(resultSet.getString("interval"));
-                Boolean fullDay = resultSet.getBoolean("fullDay");
-                Boolean staticPos = resultSet.getBoolean("staticPos");
-                String calendar = resultSet.getString("calendar");
-                String recurrenceRules = resultSet.getString("recurrenceRules");
-                LocalDate allocatedUntil = resultSet.getDate("allocatedUntil").toLocalDate();
-
-                // Create a new event object
-                Event event = new Event(id, title, location, interval, fullDay, staticPos, calendar, recurrenceRules, allocatedUntil);
-                // Add event to list
-                events.add(event);
+                events.add(constructEventFromResultSet(resultSet));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             // Print error if event retrieval fails
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // return list of events (regardless of none found)
         return events;

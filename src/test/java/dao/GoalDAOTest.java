@@ -72,8 +72,7 @@ public class GoalDAOTest {
         goalDAO.deleteGoal(goalId);
 
         // Try to add a null goal
-        goalId = goalDAO.addGoal(null);
-        assertEquals(-1, goalId, "Adding a null goal should fail");
+        assertThrows(NullPointerException.class, () -> goalDAO.addGoal(null), "Adding a null goal should throw an exception");
     }
 
     @Test // Test the updateGoal method
@@ -110,8 +109,7 @@ public class GoalDAOTest {
         goalDAO.deleteGoal(goalId);
 
         // Try to update a null goal
-        success = goalDAO.updateGoal(null);
-        assertFalse(success, "Updating a null goal should fail");
+        assertThrows(NullPointerException.class, () -> goalDAO.updateGoal(null), "Updating a null goal should throw an exception");
     }
 
     @Test // Test the deleteGoal method
