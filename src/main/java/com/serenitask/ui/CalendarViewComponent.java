@@ -4,13 +4,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
+import com.serenitask.ui.WindowComponents.Settings;
 
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -26,10 +32,24 @@ public class CalendarViewComponent {
      */
     public static void calendarView(HBox dateTodayPanel, NavigateDateView navigateDateView) {
 
-        dateTodayPanel.getChildren().addAll(navigateDateView);
-        dateTodayPanel.setPadding(new Insets(30, 0, 0, 0));
-        dateTodayPanel.setMinWidth(1650);
+        Text settingsText = new Text("Settings");
+        settingsText.setFont(Font.font(20));
+        Rectangle settingsBox = new Rectangle(100,40);
+        settingsBox.setFill(Color.web("#a9a9a9"));
+        settingsBox.setArcWidth(10);
+        settingsBox.setArcHeight(10);
+        StackPane settings = new StackPane(settingsBox, settingsText);
+        settings.setPadding(new Insets(0,0,0,10));
+        settings.setOnMouseClicked(event -> {
+            Settings.displaySettingsView();
+        });
+        dateTodayPanel.getChildren().addAll(navigateDateView, settings);
+        dateTodayPanel.setPadding(new Insets(30, 0, 0, 20));
+        dateTodayPanel.setMaxWidth(1000);
         dateTodayPanel.setAlignment(Pos.CENTER_LEFT);
+        // HBox.setHgrow(dateToday, Priority.ALWAYS);
+        // StackPane.setAlignment(dateToday, Pos.CENTER_LEFT);
+        // spacer.setMinWidth(700);
     }
 
     /**

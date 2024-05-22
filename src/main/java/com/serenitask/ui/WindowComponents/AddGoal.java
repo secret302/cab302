@@ -8,7 +8,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,24 +31,36 @@ public class AddGoal {
         popOutStage.initModality(Modality.APPLICATION_MODAL);
         popOutStage.setTitle("Add Goal");
         Label wantLabel = new Label("I want to do:");
+        wantLabel.setFont(Font.font(30));
         TextField wantInput = new TextField();
+        wantInput.setMaxWidth(150);
+        wantInput.setStyle("-fx-text-alignment: center");
+        
 
         Label forLabel = new Label("For");
+        forLabel.setFont(Font.font(30));
         TextField hourInput = new TextField();
+        hourInput.setMaxWidth(100);
         Label hourLabel = new Label("Hours");
+        hourLabel.setFont(Font.font(30));
         Label perLabel = new Label("Per");
+        perLabel.setFont(Font.font(30));
 
         Label minChunkLabel = new Label("Minimum amount of time for a goal occurrence:");
         TextField minChunkInput = new TextField();
+        minChunkInput.setMaxWidth(200);
 
         Label maxChunkLabel = new Label("Maximum amount of time for a goal occurrence:");
         TextField maxChunkInput = new TextField();
+        maxChunkInput.setMaxWidth(200);
 
         ComboBox<String> periodInput = new ComboBox<>();
+        periodInput.setStyle("-fx-text-alignment: center");
         // REFACTOR THIS
         periodInput.getItems().addAll("Week");
 
         Button saveButton = new Button("Save");
+        saveButton.setStyle("-fx-background-color: lightgreen; -fx-font-size: 20");
         saveButton.setOnAction(e -> {
             String title = wantInput.getText();
             int minChunk = Integer.parseInt(minChunkInput.getText());
@@ -63,14 +77,19 @@ public class AddGoal {
 
             popOutStage.close();
         });
-
+        
         Button backButton = new Button("Back");
+        backButton.setStyle("-fx-background-color: #ff5f56; -fx-font-size: 20");
         backButton.setOnAction(e -> popOutStage.close());
 
+        HBox buttonBox = new HBox(10);
+        buttonBox.getChildren().addAll(backButton, saveButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
         VBox layout = new VBox(10);
-        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel, perLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, backButton, saveButton);
-        layout.setAlignment(Pos.BASELINE_LEFT);
-        Scene popOutScene = new Scene(layout, 500, 500);
+        layout.getChildren().addAll(wantLabel, wantInput, forLabel, hourInput, hourLabel, perLabel, periodInput, minChunkLabel, minChunkInput, maxChunkLabel, maxChunkInput, buttonBox);
+        layout.setAlignment(Pos.CENTER);
+        Scene popOutScene = new Scene(layout, 500, 550);
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
 

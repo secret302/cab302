@@ -10,6 +10,9 @@ import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.model.Optimiser;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -85,7 +88,7 @@ public class RightPanelComponent {
         addGoalButton.getChildren().addAll(addGoalViewBox, addGoalText);
         addEventButton.getChildren().addAll(addEventViewBox, addEventText);
 
-        rightPanelObjects.getChildren().addAll(switchViewButton, optimiseButton, addGoalButton, addEventButton);
+        rightPanelObjects.getChildren().addAll(switchViewButton, addEventButton, optimiseButton);
         rightPanelObjects.setSpacing(20);
     }
 
@@ -97,19 +100,57 @@ public class RightPanelComponent {
      * @param rightPanel        The main right panel VBox that switches between displaying actions and agenda/daily goals.
      * @param agenda            The AgendaView component.
      */
-    public static void switchRightPanel(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda) {
-        isActionsView.set(!isActionsView.get());
+    public static void switchRight(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
+    VBox dailygoals, TextField goalTextField, Button createGoalButton, VBox staticgoals) {
+        boolean added = false;
+        //VBox goals = DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+        
 
-        if (isActionsView.get()) {
-            rightPanel.getChildren().remove(agenda);
-            // rightPanel.getChildren().remove(dailyGoals);
-            rightPanel.getChildren().add(2, rightPanelObjects);
-        } else {
-            rightPanel.getChildren().remove(rightPanelObjects);
-            rightPanel.getChildren().add(2, agenda);
-            // rightPanel.getChildren().add(3, dailyGoals);
+        if(!isActionsView.get()){
+            isActionsView.set(!isActionsView.get());
+            leftButtonPanelSwitchViewBox.setFill(Color.web("#b2b3b7")); // Light red
+            rightButtonPanelSwitchViewBox.setFill(Color.web("#e84d3e")); // Light gray
+            rightButtonPanelText.setFill(Color.WHITE);
+            leftButtonPanelText.setFill(Color.BLACK);
+
+
+                rightPanel.getChildren().remove(rightPanelObjects);
+                rightPanel.getChildren().remove(agenda);
+                rightPanel.getChildren().add(2, addGoalButton);
+                rightPanel.getChildren().add(3, staticgoals);
+                
+            }
         }
-    }
+
+        
+    
+
+    public static void switchLeft(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
+    VBox dailygoals, TextField goalTextField, Button createGoalButton, VBox staticgoals) {
+
+        //VBox goals = DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
+
+        if(isActionsView.get()){
+            isActionsView.set(!isActionsView.get());
+            leftButtonPanelSwitchViewBox.setFill(Color.web("#e84d3e")); // Light red
+            rightButtonPanelSwitchViewBox.setFill(Color.web("#b2b3b7")); // Light gray
+            rightButtonPanelText.setFill(Color.BLACK);
+            leftButtonPanelText.setFill(Color.WHITE);
+            rightPanel.getChildren().remove(addGoalButton);
+            rightPanel.getChildren().remove(staticgoals);
+            rightPanel.getChildren().add(2, rightPanelObjects);
+            rightPanel.getChildren().add(3, agenda);
+            }
+        }
+
+        
+    
+
+
+
+            //
+            
+
 
     /**
      * Handles the click event for the "Add Goal" button.

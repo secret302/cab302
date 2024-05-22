@@ -7,7 +7,9 @@ import com.calendarfx.model.Interval;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -36,29 +38,40 @@ public class AddEvent {
         popOutStage.initModality(Modality.APPLICATION_MODAL);
         popOutStage.setTitle("Add Event");
 
-        Label titleLabel = new Label("Title:");
+        Label titleLabel = new Label("Title");
+        titleLabel.setFont(Font.font(30));
         TextField titleInput = new TextField();
+        titleInput.setMaxWidth(250);
 
-        Label startDateLabel = new Label("Start Date:");
+        Label startDateLabel = new Label("Start Date");
         DatePicker startDateInput = new DatePicker(LocalDate.now());
+        startDateLabel.setFont(Font.font(30));
 
-        Label endDateLabel = new Label("End Date:");
+        Label endDateLabel = new Label("End Date");
         DatePicker endDateInput = new DatePicker(LocalDate.now());
+        endDateLabel.setFont(Font.font(30));
 
         CheckBox allDayCheckBox = new CheckBox("All Day Event");
 
-        Label startTimeLabel = new Label("Start Time:");
+        Label startTimeLabel = new Label("Start Time");
         ComboBox<String> startTimeInput = createTimeComboBox();
+        startTimeLabel.setFont(Font.font(30));
+        startDateInput.setMaxWidth(150);
 
-        Label endTimeLabel = new Label("End Time:");
+        Label endTimeLabel = new Label("End Time");
         ComboBox<String> endTimeInput = createTimeComboBox();
+        endTimeLabel.setFont(Font.font(30));
+        endDateInput.setMaxWidth(150);
 
         Label calendarSelectLabel = new Label("Select Calendar");
+        calendarSelectLabel.setFont(Font.font(30));
         ComboBox<String> calendarSelectInput = new ComboBox<>();
+        calendarSelectInput.setMaxWidth(150);
         // PLACEHOLDER CALENDARS
         calendarSelectInput.getItems().addAll("Personal Events", "Health", "Goals");
 
         Button saveButton = new Button("Save");
+        saveButton.setStyle("-fx-background-color: lightgreen; -fx-font-size: 20");
         saveButton.setOnAction(e -> {
             String title = titleInput.getText();
             LocalDate startDate = startDateInput.getValue();
@@ -100,15 +113,41 @@ public class AddEvent {
         });
 
         Button backButton = new Button("Back");
+        backButton.setStyle("-fx-background-color: #ff5f56; -fx-font-size: 20");
         backButton.setOnAction(e -> popOutStage.close());
 
-        VBox layout = new VBox(10);
-        layout.getChildren().addAll(titleLabel, titleInput, startDateLabel, startDateInput, endDateLabel,
-                endDateInput, startTimeLabel, startTimeInput, endTimeLabel, endTimeInput, allDayCheckBox,
-                calendarSelectLabel, calendarSelectInput, saveButton, backButton);
-        layout.setAlignment(Pos.BASELINE_LEFT);
+        HBox buttonBox = new HBox(10);
+        buttonBox.getChildren().addAll(backButton, saveButton);
+        buttonBox.setAlignment(Pos.CENTER);
 
-        Scene popOutScene = new Scene(layout, 500, 500);
+        VBox startDateVBox = new VBox(15);
+        startDateVBox.getChildren().addAll(startDateLabel, startDateInput);
+        startDateVBox.setAlignment(Pos.CENTER);
+        VBox endDateVBox = new VBox(15);
+        endDateVBox.getChildren().addAll(endDateLabel, endDateInput);
+        endDateVBox.setAlignment(Pos.CENTER);
+
+        VBox startTimeVBox = new VBox(15);
+        startTimeVBox.getChildren().addAll(startTimeLabel, startTimeInput);
+        startTimeVBox.setAlignment(Pos.CENTER);
+        VBox endTimeVBox = new VBox(15);
+        endTimeVBox.getChildren().addAll(endTimeLabel, endTimeInput);
+        endTimeVBox.setAlignment(Pos.CENTER);
+
+        HBox dateHBox = new HBox(20);
+        dateHBox.getChildren().addAll(startDateVBox, endDateVBox);
+        dateHBox.setAlignment(Pos.CENTER);
+    
+        HBox timeHBox = new HBox(20);
+        timeHBox.getChildren().addAll(startTimeVBox, endTimeVBox);
+        timeHBox.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(20);
+        layout.getChildren().addAll(titleLabel, titleInput, dateHBox, timeHBox, allDayCheckBox,
+                calendarSelectLabel, calendarSelectInput, buttonBox);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene popOutScene = new Scene(layout, 500, 550);
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
     }
