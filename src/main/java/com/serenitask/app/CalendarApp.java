@@ -68,6 +68,7 @@ public class CalendarApp extends Application {
             // Create the main views for the application
             DetailedDayView calendarDayView = new DetailedDayView();
             DetailedWeekView calendarWeekView = new DetailedWeekView();
+            VBox dailygoals = new VBox();
             calendarWeekView.setWeekFields(WeekFields.of(DayOfWeek.MONDAY, 1));
             // Load events from the database
             EventLoader eventLoader = new EventLoader();
@@ -93,7 +94,7 @@ public class CalendarApp extends Application {
             StackPane addGoalButton = new StackPane();
             Rectangle addGoalViewBox = new Rectangle(120, 50);
             addGoalButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addGoalClick();
+                RightPanelComponent.addGoalClick(dailygoals);
             });
             // Add Event Button
             Text addEventText = new Text("Add Event");
@@ -114,7 +115,7 @@ public class CalendarApp extends Application {
             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
             leftPanel.setMinHeight(700);
 
-            VBox dailygoals = new VBox();
+            
             TextField goalTextField = new TextField();
             Button createGoalButton = new Button("Create Goal");
             //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
@@ -252,7 +253,7 @@ public class CalendarApp extends Application {
             CSSFX.start(scene);
 
             // Calls the ShortcutController to allow Shortcuts to be used
-            ShortcutController.setupShortcuts(scene, mainCalendarSource, isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
+            ShortcutController.setupShortcuts(scene, mainCalendarSource, isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView, dailygoals);
 
             // Set the application parameters
             primaryStage.setTitle("SereniTask");

@@ -11,6 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -27,7 +28,7 @@ public class AddGoal {
      * Displays a modal window for adding a new goal, allowing the user to input goal details such as duration and frequency.
      * The window contains form inputs for the goal description, hours and minutes of effort, and the recurrence period.
      */
-    public static void displayAddGoalView() {
+    public static void displayAddGoalView(VBox dailygoals) {
         Stage popOutStage = new Stage();
         popOutStage.initModality(Modality.APPLICATION_MODAL);
         popOutStage.setTitle("Add Goal");
@@ -78,6 +79,20 @@ public class AddGoal {
             Goal goal = new Goal(title, targetAmount, minChunk, maxChunk, allocatedUntil);
             GoalDAO goalDAO = new GoalDAO();
             goalDAO.addGoal(goal);
+
+            // updating goal in dailygoals list
+            HBox goalContainer = new HBox();
+            Label goalLabel = new Label(goal.getTitle());
+            Label deleteLabel = new Label(" (X)");
+            deleteLabel.setTextFill(Color.RED);
+            deleteLabel.setStyle("-fx-alignment: center-right;");
+            int goalId = goal.getId();
+            deleteLabel.setOnMouseClicked(event -> {
+            dailygoals.getChildren().remove(goalContainer);
+            goalDAO.deleteGoal(goalId);
+            });
+            goalContainer.getChildren().addAll(goalLabel, deleteLabel);
+            dailygoals.getChildren().add(goalContainer);
 
             popOutStage.close();
         });

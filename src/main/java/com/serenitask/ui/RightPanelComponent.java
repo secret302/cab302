@@ -156,8 +156,8 @@ public class RightPanelComponent {
      * Handles the click event for the "Add Goal" button.
      * This method displays the interface for adding a new goal.
      */
-    public static void addGoalClick() {
-        AddGoal.displayAddGoalView();
+    public static void addGoalClick(VBox dailygoals) {
+        AddGoal.displayAddGoalView(dailygoals);
     }
 
     /**
