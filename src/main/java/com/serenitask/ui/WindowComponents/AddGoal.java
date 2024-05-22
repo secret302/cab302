@@ -1,17 +1,21 @@
 package com.serenitask.ui.WindowComponents;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import com.serenitask.model.Goal;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -81,18 +85,51 @@ public class AddGoal {
             goalDAO.addGoal(goal);
 
             // updating goal in dailygoals list
-            HBox goalContainer = new HBox();
-            Label goalLabel = new Label(goal.getTitle());
-            Label deleteLabel = new Label(" (X)");
-            deleteLabel.setTextFill(Color.RED);
-            deleteLabel.setStyle("-fx-alignment: center-right;");
-            int goalId = goal.getId();
-            deleteLabel.setOnMouseClicked(event -> {
+
+            
+                    dailygoals.setSpacing(10);
+        dailygoals.setPadding(new Insets(10));
+
+        StackPane goalContainer = new StackPane();
+        Rectangle addGoalViewBox = new Rectangle(160, 30);
+        addGoalViewBox.setFill(Color.web("#94b7fd"));
+        Label goalLabel = new Label(goal.getTitle());
+        goalLabel.setFont(Font.font(15));
+        goalLabel.setAlignment(Pos.CENTER);
+
+        StackPane deleteLabel = new StackPane();
+        Rectangle deleteLabelBox = new Rectangle(30, 30);
+        Label deleteLabelText = new Label("X");
+        deleteLabelText.setPadding(new Insets(0,7,0,0));
+        deleteLabelText.setAlignment(Pos.CENTER);
+        deleteLabel.getChildren().addAll(deleteLabelBox, deleteLabelText);
+        deleteLabelText.setFont(Font.font(24));
+        deleteLabel.setMaxWidth(160);
+        deleteLabelText.setTextFill(Color.WHITE);
+        deleteLabelBox.setFill(Color.RED);
+        deleteLabel.setVisible(false);
+        deleteLabel.setAlignment(Pos.CENTER_RIGHT);
+
+        goalContainer.getChildren().addAll(addGoalViewBox, goalLabel);
+
+        goalContainer.setOnMouseEntered(event -> deleteLabel.setVisible(true));
+        goalContainer.setOnMouseExited(event -> deleteLabel.setVisible(false));
+
+        int goalId = goal.getId();
+        deleteLabelBox.setOnMouseClicked(event -> {
             dailygoals.getChildren().remove(goalContainer);
             goalDAO.deleteGoal(goalId);
-            });
-            goalContainer.getChildren().addAll(goalLabel, deleteLabel);
-            dailygoals.getChildren().add(goalContainer);
+        });
+
+        deleteLabelText.setOnMouseClicked(event -> {
+        dailygoals.getChildren().remove(goalContainer);
+        goalDAO.deleteGoal(goalId);
+    });
+
+
+        goalContainer.getChildren().add(deleteLabel);
+        dailygoals.getChildren().add(goalContainer);
+  
 
             popOutStage.close();
         });
