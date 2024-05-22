@@ -77,8 +77,8 @@ public class CalendarApp extends Application {
 
             // Create the main buttons for the application
             Text dateToday = new Text(LocalDate.now().toString());
-            Text dailyText = new Text("Daily");
-            Text weeklyText = new Text("Weekly");
+            Text dailyText = new Text("Weekly");
+            Text weeklyText = new Text("Daily");
             StackPane switchViewButton = new StackPane();
             Rectangle switchViewBox = new Rectangle(120, 50);
             // Add Optimise button
