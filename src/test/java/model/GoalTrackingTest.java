@@ -8,7 +8,7 @@ import com.serenitask.model.Goal;
 import java.time.LocalDate;
 import java.util.Date;
 
-/* File is incomplete due to needing to datetime formats now being decided yet.
+/* Tests are disabled as GoalTracking is not implemented yet and or may not be implemented at all
 
 public class GoalTrackingTest {
     public Goal createTestGoal() {

@@ -1,41 +1,58 @@
 package com.serenitask.model;
+
 import com.calendarfx.model.Interval;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-
 /**
- * Event class represents an event in the calendar
+ * Represents a calendar event with the properties of a title, location, time interval, full-day status, static status, and calendar name.
+ * This class enforces data integrity through input validation within its methods.
  */
 public class Event {
-    // Private Event attributes
-    private String id; // Event ID
-    private String title; // Title of the event
-    private String location; // Location of the event
-    private Interval interval; // Interval of the event (stores start and end date/time)
-    private Boolean fullDay; // If the event is full day
-    private Boolean staticPos; // If the event is static
-    private String calendar; // Calendar the event belongs to
-    private String recurrenceRules; // Recurrence rules for the event
-    private LocalDate allocatedUntil; // Date until the events recurrence ends
 
     /**
-     * Event constructor for an empty event
+     * Unique identifier of the event.
+     */
+    private String id;
+    /**
+     * Title or name of the event.
+     * */
+    private String title;
+    /**
+     * Location where the event takes place.
+     */
+    private String location;
+    /**
+     * Time interval during which the event occurs.
+     */
+    private Interval interval;
+    /**
+     * Flag indicating if the event spans the entire day.
+     */
+    private Boolean fullDay;
+    /**
+     * Flag indicating if the event has a fixed position (not yet implemented).
+     */
+    private Boolean staticPos;
+    /**
+     * Name of the calendar to which the event belongs.
+     */
+    private String calendar;
+
+    /**
+     * Default constructor for creating an empty Event object.
      */
     public Event() {}
 
     /**
-     * Main Event constructor
-     * @param id Event ID
-     * @param title Title of the event
-     * @param location Location of the event
-     * @param interval Interval of the event
-     * @param fullDay Boolean value to check if the event is full day
-     * @param staticPos Boolean value to check if the event is static
-     * @param calendar Calendar the event belongs to
-     * @param recurrenceRules Recurrence rules for the event
-     * @param allocatedUntil Date until the events recurrence ends
+     * Constructor to create an Event object with all its properties.
+     *
+     * @param id              Unique identifier for the event. Cannot be null or empty.
+     * @param title           Title of the event. Cannot be null or empty.
+     * @param location        Location of the event.
+     * @param interval        Time interval of the event.
+     * @param fullDay         Indicates if the event spans the entire day.
+     * @param staticPos       Indicates if the event has a fixed position (not yet implemented).
+     * @param calendar        Name of the calendar the event belongs to.
+     * @throws IllegalArgumentException If id or title are null or empty.
      */
     public Event(
             String id,
@@ -44,14 +61,16 @@ public class Event {
             Interval interval,
             Boolean fullDay,
             Boolean staticPos,
-            String calendar,
-            String recurrenceRules,
-            LocalDate allocatedUntil
+            String calendar
     ) {
-        // Validate values
-        if (id == null || id.isEmpty()) throw new IllegalArgumentException("ID cannot be null or empty");
-        if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be null or empty");
-        // Set values
+        // Validate input
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be null or empty");
+        }
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be null or empty");
+        }
+        // Set properties
         this.id = id;
         this.title = title;
         this.location = location;
@@ -59,157 +78,129 @@ public class Event {
         this.fullDay = fullDay;
         this.staticPos = staticPos;
         this.calendar = calendar;
-        this.recurrenceRules = recurrenceRules;
-        this.allocatedUntil = allocatedUntil;
     }
 
     /**
-     * Retrieves the event ID
-     * @return Event ID
+     * Gets the unique identifier of the event.
+     * @return The event ID.
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets the event ID
-     * @param id Event ID
+     * Sets the unique identifier of the event.
+     * @param id The new ID for the event. Cannot be null or empty.
+     * @throws IllegalArgumentException If the provided ID is null or empty.
      */
     public void setId(String id) {
-        // Validate ID
-        if (id == null || id.isEmpty()) throw new IllegalArgumentException("ID cannot be empty or null");
+        // Validate input
+        if (id == null || id.isEmpty()) {
+            throw new IllegalArgumentException("ID cannot be empty or null");
+        }
+        // Set the ID
         this.id = id;
     }
 
     /**
-     * Retrieves the event title
-     * @return Event title
+     * Gets the title of the event.
+     * @return The event title.
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Sets the event title
-     * @param title Event title
+     * Sets the title of the event.
+     * @param title The new title for the event. Cannot be null or empty.
+     * @throws IllegalArgumentException If the provided title is null or empty.
      */
     public void setTitle(String title) {
-        // Validate title
-        if (title == null || title.isEmpty()) throw new IllegalArgumentException("Title cannot be empty or null");
+        // Validate input
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("Title cannot be empty or null");
+        }
+        // Set the title
         this.title = title;
     }
 
     /**
-     * Retrieves the event location
-     * @return Event location
+     * Gets the location of the event.
+     * @return The event location.
      */
     public String getLocation() {
         return location;
     }
 
     /**
-     * Sets the event location
-     * @param location Event location
+     * Sets the location of the event.
+     * @param location The new location for the event.
      */
     public void setLocation(String location) {
         this.location = location;
     }
 
     /**
-     * Retrieves the event interval
-     * @return Event interval
+     * Gets the time interval of the event.
+     * @return The event's time interval.
      */
     public Interval getInterval() {
         return interval;
     }
 
     /**
-     * Sets the event interval
-     * @param interval Event interval
+     * Sets the time interval of the event.
+     * @param interval The new time interval for the event.
      */
     public void setInterval(Interval interval) {
         this.interval = interval;
     }
 
     /**
-     * Retrieves the full day status of the event
-     * @return Event full day status
+     * Checks if the event spans the whole day.
+     * @return True if the event is a full-day event, false otherwise.
      */
     public Boolean getFullDay() {
         return fullDay;
     }
 
     /**
-     * Sets the full day status of the event
-     * @param fullDay Event full day status
+     * Sets the full-day status of the event.
+     * @param fullDay The new full-day status for the event.
      */
     public void setFullDay(Boolean fullDay) {
         this.fullDay = fullDay;
     }
 
     /**
-     * Retrieves the static position status of the event
-     * @return Event static position status
+     * Checks if the event has a static position.
+     * @return True if the event has a static position, false otherwise.
      */
     public Boolean getStaticPos() {
         return staticPos;
     }
 
     /**
-     * Sets the static position status of the event
-     * @param staticPos Event static position status
+     * Sets the static position status of the event.
+     * @param staticPos The new static position status for the event.
      */
     public void setStaticPos(Boolean staticPos) {
         this.staticPos = staticPos;
     }
 
     /**
-     * Retrieves the calendar the event belongs to
-     * @return Event calendar
+     * Gets the name of the calendar this event belongs to.
+     * @return The name of the event's calendar.
      */
     public String getCalendar() {
         return calendar;
     }
 
     /**
-     * Sets the calendar the event belongs to
-     * @param calendar Event calendar
+     * Sets the calendar to which this event belongs.
+     * @param calendar The new calendar name for the event.
      */
     public void setCalendar(String calendar) {
         this.calendar = calendar;
-    }
-
-    /**
-     * Retrieves the recurrence rules for the event
-     * @return Event recurrence rules
-     */
-    public String getRecurrenceRules() {
-        return recurrenceRules;
-    }
-
-    /**
-     * Sets the recurrence rules for the event
-     * @param recurrenceRules Event recurrence rules
-     */
-    public void setRecurrenceRules(String recurrenceRules) {
-        // Validate recurrence rules. To be implemented
-        this.recurrenceRules = recurrenceRules;
-    }
-
-    /**
-     * Retrieves the date until the events recurrence ends
-     * @return Event allocated until date
-     */
-    public LocalDate getAllocatedUntil() {
-        return allocatedUntil;
-    }
-
-    /**
-     * Sets the date until the events recurrence ends
-     * @param allocatedUntil Event allocated until date
-     */
-    public void setAllocatedUntil(LocalDate allocatedUntil) {
-        // Validate allocated until. To be implemented
-        this.allocatedUntil = allocatedUntil;
     }
 }

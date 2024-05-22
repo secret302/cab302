@@ -45,9 +45,7 @@ public class EventLoaderTest {
                 new Interval(startTime, startTime.plusHours(2)),
                 false,
                 false,
-                "Personal Events",
-                "",
-                startTime.toLocalDate()
+                "Personal Events"
         );
     }
 

@@ -21,10 +21,6 @@ import java.time.LocalDateTime;
     setStaticPos(boolean staticPos)
     getCalendar()
     setCalendar(String calendar)
-    getRecurrenceRules() - TO BE REMOVED?
-    setRecurrenceRules(String recurrenceRules) - TO BE REMOVED?
-    getAllocatedUntil() - TO BE REMOVED?
-    setAllocatedUntil(LocalDate allocatedUntil) - TO BE REMOVED?
  */
 
 /* Test Cases:
@@ -51,9 +47,7 @@ public class EventTest {
                 new Interval(startTime, startTime.plusHours(2)),
                 false,
                 false,
-                "testing",
-                "",
-                startTime.toLocalDate()
+                "testing"
         );
     }
 
@@ -80,9 +74,7 @@ public class EventTest {
                     new Interval(testTime, testTime.plusHours(2)),
                     false,
                     false,
-                    "testing",
-                    "",
-                    testTime.toLocalDate()
+                    "testing"
             );
         }, "Title cannot be empty");
 
@@ -95,9 +87,7 @@ public class EventTest {
                     new Interval(testTime, testTime.plusHours(2)),
                     false,
                     false,
-                    "testing",
-                    "",
-                    testTime.toLocalDate()
+                    "testing"
             );
         }, "ID cannot be null");
 

@@ -39,9 +39,7 @@ public class RoutineTwoController {
      */
     private final LocalTime DayEnd;
     /**
-     * Integer representing the maximum amount of time a health based event can be in minutes
-     */
-    private final int maxChunk = 30;
+
 
     /**
      * Constructor for RoutineTwo, Represents the complex routine used for allocating balanced health focused habits.
@@ -59,7 +57,7 @@ public class RoutineTwoController {
      * This routine handles the minimum ratio required for work:health is above the required amount.
      * For every 4 hours of work there must be 30 minutes of health based activity.
      *
-     * @param mainSource CalandarSource Object containing all calendars
+     * @param mainSource Calendar Source Object containing all calendars
      */
     public void runRoutine(CalendarSource mainSource) {
         try {
@@ -99,7 +97,7 @@ public class RoutineTwoController {
         List<Entry<?>> entriesToAdd = new ArrayList<>();
         Random random = new Random();
 
-        boolean hasWindows = false;
+        boolean hasWindows;
         for (Day day : days) {
             System.out.println("improveDays: Day test");
             while (checkRatio(day)) {
@@ -201,8 +199,8 @@ public class RoutineTwoController {
     }
 
     /**
-     * Computes the ratio between work and health based activies. For every 4 hours of work,
-     * there should be 30 minutes of health based activies
+     * Computes the ratio between work and health based activities. For every 4 hours of work,
+     * there should be 30 minutes of health based activities
      *
      * @param day Day object representing a single day
      * @return Boolean, true if day needs more health activities, false if balanced.
@@ -221,8 +219,8 @@ public class RoutineTwoController {
         {
             return true;
         }
-        else if ((int)(work / health) > healthRatio) {
-            int ratio = (int) (work/health);
+        else if ((work / health) > healthRatio) {
+            int ratio = (work/health);
             System.out.println("healthTime test: " + ratio);
             return true;
         }

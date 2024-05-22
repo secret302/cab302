@@ -23,11 +23,29 @@ import java.util.Random;
  */
 public class RoutineOneController {
 
-    // Dummy value of 7, will be replaced with 28 for 1 month or ~4 weeks
+    /**
+     * The minimum threshold for allocation.
+     */
     private final int allocationThreshold;
+
+    /**
+     * The size of each block in the allocation process, set to 7 by default.
+     */
     private final int blockSize = 7;
+
+    /**
+     * The start time of the day for goal allocation.
+     */
     private final LocalTime DayStart;
+
+    /**
+     * The end time of the day for goal allocation.
+     */
     private final LocalTime DayEnd;
+
+    /**
+     * The name of the target calendar for goal allocation, set to "Goals" by default.
+     */
     private final String TargetCalendar = "Goals";
 
 
@@ -48,6 +66,7 @@ public class RoutineOneController {
     /**
      * Simple execution function that executes routine 1 of the optimizer.
      * This routine handles the allocation of goals that require x time per repeating period y.
+     * @param mainSource the Calendar Source that provides access to the calendars main source.
      */
     public void runRoutine(CalendarSource mainSource) {
         try {
@@ -74,7 +93,7 @@ public class RoutineOneController {
 
 
     // 1. Pull list of time base-based goals
-    // NOT IMPLEMENTED AS OF YET
+    // NOT IMPLEMENTED AS YET
 
     /**
      * Extracts all goals from the database and returns them as a list. Goals extracted are of the type:
@@ -121,6 +140,7 @@ public class RoutineOneController {
      * Allocates goals based on their required time per period. Accounts for partial and full allocation periods.
      *
      * @param goal      A goal object that requires calendar entry allocations
+     * @param goalCalendar is the Calendar object that holds all goals.
      * @param eventList A list containing all events draw from the database to be parsed.
      */
     private void allocateGoal(Goal goal, List<Event> eventList, Calendar goalCalendar) {
@@ -202,7 +222,6 @@ public class RoutineOneController {
         while (blockTarget > buffer) {
             boolean hasWindows = false;
             for (Day day : prioritizedDays) {
-                Random random = new Random();
                 System.out.println("BlockTarget Loop Start: Setup; Date: " + day.getStartDate());
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
@@ -294,7 +313,7 @@ public class RoutineOneController {
      * Takes in an unsorted List of day objects and sorts them based on the amount of unallocated time. returns a sorted
      * list of days from most free time to least. Additionally, assigns priority to the day objects based on ordering.
      *
-     * @param rawDays Raw day objects in list form. Unsorted, unprioritized.
+     * @param rawDays Raw day objects in list form. Unsorted, unprioritied.
      * @return Sorted Day List, from most free time to least.
      */
     private List<Day> prioritizeDays(List<Day> rawDays) {

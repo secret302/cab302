@@ -4,6 +4,7 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.Entry;
 import com.serenitask.model.Day;
 import com.serenitask.model.Event;
+import com.serenitask.util.ErrorHandler;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,13 +26,17 @@ public class OptimizerUtil {
      */
     public static void commitEntries(List<Entry<?>> entries, Calendar goalCalendar) {
         try {
+            // Add all entries to the goal calendar
             for (Entry<?> entry : entries) {
-                goalCalendar.addEntry(entry);
+                if (entry != null) {
+                    goalCalendar.addEntry(entry);
+                }
             }
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error occurred while committing entries: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
     }
 
@@ -43,16 +48,20 @@ public class OptimizerUtil {
      */
     public static LocalDate getNextSunday(LocalDate startDate) {
         try {
+            // Get the start date
             LocalDate sunday = startDate;
 
+            // While the day of the week is not Sunday, increment the date
             while (sunday.getDayOfWeek().getValue() != 7) {
                 sunday = sunday.plusDays(1);
             }
+            // Return the nearest Sunday
             return sunday;
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error occurred while returning the nearest Sunday: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns startDate if the sunday is not retrievable
         return startDate;
@@ -68,27 +77,31 @@ public class OptimizerUtil {
      * @return List of Lists. Splits all events into lists of lists
      */
     public static List<List<Event>> splitDays(LocalDate start, LocalDate end, List<Event> eventList) {
-        System.out.println("Split Days Start");
         try {
+            // Create a list of lists to store events
             List<List<Event>> dayLists = new ArrayList<>();
 
+            // While the end date is greater than the start date
             while (end.compareTo(start) > 0) {
                 List<Event> dayList = new ArrayList<>();
                 for (Event event : eventList) {
-                    // What if a day
+                    // If the event is on the start date, add it to the day list
                     if (event.getInterval().getStartDate().isEqual(start) || event.getInterval().getEndDate().isEqual(start)) {
                         dayList.add(event);
                     }
                 }
+                // Increment the start date and add the day list to the list of lists
                 start = start.plusDays(1);
                 dayLists.add(dayList);
 
             }
+            // Return the list of lists
             return dayLists;
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error occurred while trying to split days: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns null if days cannot be split
         return null;
@@ -103,15 +116,19 @@ public class OptimizerUtil {
      */
     public static Calendar getGoalCalendar(List<Calendar> calendars, String Target) {
         try {
+            // Iterate through the list of calendars
             for (Calendar calendar : calendars) {
+                // If the calendar name is Goals, return the calendar
                 if (Objects.equals(calendar.getName(), Target)) {
                     return calendar;
                 }
             }
+            // Return a new calendar if the calendar name is not found
             return new Calendar("Unknown");
         } catch(Exception e){
+            // Handle exceptions
             System.err.println("An error has occurred while trying to get Goal calendars: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns null if no calendar with the name Goals exists
         return null;
@@ -124,20 +141,20 @@ public class OptimizerUtil {
      * @return Chronologically sorted list of events
      */
     public static List<Event> getSortedList(List<Event> unsortedlist) {
-        System.out.println("getSortedList Start");
-
         try {
+            // Create a new list to store the sorted events
             List<Event> sorted = new ArrayList<>();
 
-
+            // While the unsorted list is not empty
             while (!unsortedlist.isEmpty()) {
                 int index = 0;
                 int indexRemove = 0;
                 LocalTime minTime = LocalTime.of(23, 59);
                 Event earliestEvent = new Event();
 
+                // Iterate through the unsorted list to find the earliest event
                 for (Event event : unsortedlist) {
-
+                    // If the event start time is earlier than the current minimum time, update the minimum time
                     if (event.getInterval().getStartTime().compareTo(minTime) < 0) {
                         minTime = event.getInterval().getStartTime();
                         earliestEvent = event;
@@ -149,13 +166,13 @@ public class OptimizerUtil {
                 sorted.add(earliestEvent);
                 unsortedlist.remove(indexRemove);
             }
-            System.out.println("getSortedList End");
-
+            // Return the sorted list
             return sorted;
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error has occurred while trying to return a sorted list: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns the unsorted list if the list cannot be sorted
         return unsortedlist;
@@ -211,8 +228,9 @@ public class OptimizerUtil {
             return newDay;
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error has occurred while trying to create a day object to allocate free windows of time in the day: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns null if a day object cannot be created
         return null;
@@ -231,8 +249,9 @@ public class OptimizerUtil {
             return OptimizerUtil.getNextSunday(targetDate);
         }
         catch(Exception e){
+            // Handle exceptions
             System.err.println("An error has occurred while trying to get the current date and return a future date based on the allocationThreshold parameter: " + e.getMessage());
-            e.printStackTrace();
+            ErrorHandler.handleException(e);
         }
         // returns null if the future date cannot be returned
         return null;

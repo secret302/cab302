@@ -28,9 +28,16 @@ public class ShortcutController {
      * Creates listeners to handle key press events and attaches them to the scene.
      * @param scene Current scene contained in Stage of javaFx
      * @param mainCalendarSource Object containing all calendars
+     * @param isWeeklyView indicates what view is being shown on calendar.
+     * @param dailyText Text that swaps between daily and weekly views
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     * @param leftPanel The left panel in the UI layout
+     * @param switchViewButton Button that toggles the view between daily and weekly
+     * @param weeklyText Text that swaps between daily and weekly views
      */
     public static void setupShortcuts(Scene scene, CalendarSource mainCalendarSource, AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
-                                      VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
+                                      VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView, VBox dailygoals) {
 
         KeyCombination goalCombo = new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN);
         KeyCombination eventCombo = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
@@ -43,7 +50,7 @@ public class ShortcutController {
 
         scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (goalCombo.match(event)) {
-                openGoalAddMenu();
+                openGoalAddMenu(dailygoals);
                 event.consume();
 
             } else if (eventCombo.match(event)) {
@@ -76,8 +83,8 @@ public class ShortcutController {
     /**
      * Shortcut event action that opens the Add Goal menu
      */
-    private static void openGoalAddMenu() {
-        AddGoal.displayAddGoalView();
+    private static void openGoalAddMenu(VBox dailygoals) {
+        AddGoal.displayAddGoalView(dailygoals);
     }
 
     /**
@@ -100,19 +107,48 @@ public class ShortcutController {
         Optimiser.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
     }
 
+    /**
+     * Toggles the view between daily and weekly views in the calendar.
+     *
+     * @param isWeeklyView Indicates if the current view is weekly
+     * @param dailyText Text element for the daily view
+     * @param weeklyText Text element for the weekly view
+     * @param switchViewButton Button to switch the view
+     * @param leftPanel The left panel in the UI layout
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     */
     private static void changeViewToggle(AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
                                          VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
     }
 
+    /**
+     * Toggles the calendar view to the previous period (day or week).
+     *
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     */
     public static void goBackToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         CalendarNavigation.goBack(calendarDayView, calendarWeekView);
     }
 
+    /**
+     * Toggles the calendar view to the current day.
+     *
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     */
     public static void goTodayToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         CalendarNavigation.goToday(calendarDayView, calendarWeekView);
     }
 
+    /**
+     * Toggles the calendar view to the next period (day or week).
+     *
+     * @param calendarDayView The view component for displaying daily calendar
+     * @param calendarWeekView The view component for displaying weekly calendar
+     */
     public static void goForwardToggle(DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
         CalendarNavigation.goForward(calendarDayView, calendarWeekView);
     }
