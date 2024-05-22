@@ -2,8 +2,6 @@ package com.serenitask.model;
 
 import com.calendarfx.model.Interval;
 
-import java.time.LocalDate;
-
 /**
  * Represents a calendar event with the properties of a title, location, time interval, full-day status, static status, and calendar name.
  * This class enforces data integrity through input validation within its methods.

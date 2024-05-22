@@ -37,14 +37,11 @@ public class Day {
 
     /**
      * Flag indicating whether the date has been set for the day.
-     * @param set to true if date has been set for day
-     * @param false if it has not, default value
      */
     private boolean dateSet;
 
     /**
      * Start date of the day.
-     * @param
      */
     private LocalDate startDate;
 
@@ -55,7 +52,6 @@ public class Day {
 
     /**
      * The largest time window available for the day.
-     * @param largest window of blank space in a day
      */
     private TimeWindow biggestWindow;
 
