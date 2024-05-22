@@ -37,7 +37,7 @@ public class ShortcutController {
      * @param weeklyText Text that swaps between daily and weekly views
      */
     public static void setupShortcuts(Scene scene, CalendarSource mainCalendarSource, AtomicBoolean isWeeklyView, Text dailyText, Text weeklyText, StackPane switchViewButton,
-                                      VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView) {
+                                      VBox leftPanel, DetailedDayView calendarDayView, DetailedWeekView calendarWeekView, VBox dailygoals) {
 
         KeyCombination goalCombo = new KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN);
         KeyCombination eventCombo = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
@@ -50,7 +50,7 @@ public class ShortcutController {
 
         scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (goalCombo.match(event)) {
-                openGoalAddMenu();
+                openGoalAddMenu(dailygoals);
                 event.consume();
 
             } else if (eventCombo.match(event)) {
@@ -83,8 +83,8 @@ public class ShortcutController {
     /**
      * Shortcut event action that opens the Add Goal menu
      */
-    private static void openGoalAddMenu() {
-        AddGoal.displayAddGoalView();
+    private static void openGoalAddMenu(VBox dailygoals) {
+        AddGoal.displayAddGoalView(dailygoals);
     }
 
     /**
