@@ -40,6 +40,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -105,7 +106,6 @@ public class CalendarApp extends Application {
             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
             HBox dateTodayPanel = new HBox();
             VBox actionsPanel = new VBox();
-            Region spacer = new Region();
             NavigationBar navigationBar = new NavigationBar();
             NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView, calendarWeekView);
             CalendarViewComponent.calendarView(dateTodayPanel, navigateDateView);
@@ -114,11 +114,10 @@ public class CalendarApp extends Application {
             leftPanel.getChildren().addAll(dateTodayPanel, calendarDayView);
             leftPanel.setMinHeight(700);
 
-            //VBox dailygoals = new VBox();
-            //TextField goalTextField = new TextField();
-            //Button createGoalButton = new Button("Create Goal");
+            VBox dailygoals = new VBox();
+            TextField goalTextField = new TextField();
+            Button createGoalButton = new Button("Create Goal");
             //DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
-
             YearMonthView heatmap = new YearMonthView();
             heatmap.getCalendarSources().setAll(mainCalendarSource);
             heatmap.setRequestedTime(LocalTime.now());
@@ -129,17 +128,47 @@ public class CalendarApp extends Application {
             agenda.setEnableTimeZoneSupport(true);
             agenda.getCalendarSources().setAll(mainCalendarSource);
             agenda.setRequestedTime(LocalTime.now());
-            agenda.lookAheadPeriodInDaysProperty().set(3);
+            agenda.lookAheadPeriodInDaysProperty().set(0);
             agenda.setPadding(new Insets(10));
 
-            VBox rightPanel = new VBox();//for end (sus)
-            VBox rightPanelObjects = new VBox(); // new one good
+            VBox rightPanel = new VBox();
+            VBox rightPanelObjects = new VBox();
             rightPanelObjects.setPadding(new Insets(20, 20, 20, 19));
-            Button switchRightPanelButton = new Button("Goals / Actions");
-            HBox rightPanelButton = new HBox(switchRightPanelButton);
 
+            StackPane panelSwitchButton = new StackPane();
+            Rectangle panelSwitchViewBox = new Rectangle(212, 46);
+            panelSwitchViewBox.setFill(Color.WHITE);
+            panelSwitchViewBox.setArcWidth(10);
+            panelSwitchViewBox.setArcHeight(10);
+
+            Rectangle leftButtonPanelSwitchViewBox = new Rectangle(100, 40);
+            Rectangle rightButtonPanelSwitchViewBox = new Rectangle(100, 40);
+            leftButtonPanelSwitchViewBox.setFill(Color.web("#e84d3e"));
+            rightButtonPanelSwitchViewBox.setFill(Color.web("#b2b3b7"));
+            leftButtonPanelSwitchViewBox.setArcWidth(10);
+            leftButtonPanelSwitchViewBox.setArcHeight(10);
+            rightButtonPanelSwitchViewBox.setArcWidth(10);
+            rightButtonPanelSwitchViewBox.setArcHeight(10);
+            Text leftButtonPanelText = new Text("Actions");
+            Text rightButtonPanelText = new Text("Goals");
+            leftButtonPanelText.setFont(Font.font(20));
+            rightButtonPanelText.setFont(Font.font(20));
+            leftButtonPanelText.setFill(Color.WHITE);
+            rightButtonPanelText.setFill(Color.BLACK);
+
+            StackPane leftButton = new StackPane();
+            leftButton.getChildren().addAll(leftButtonPanelSwitchViewBox, leftButtonPanelText);
+            leftButton.setAlignment(Pos.CENTER);
+
+            StackPane rightButton = new StackPane();
+            rightButton.getChildren().addAll(rightButtonPanelSwitchViewBox, rightButtonPanelText);
+            rightButton.setAlignment(Pos.CENTER);
+            HBox switches = new HBox(6, leftButton, rightButton);
+            switches.setAlignment(Pos.CENTER);
+
+            panelSwitchButton.getChildren().addAll(panelSwitchViewBox, switches);
+            HBox rightPanelButton = new HBox(panelSwitchButton);
             rightPanelButton.setPadding(new Insets(40, 0, 40, 0));
-            switchRightPanelButton.minWidth(100.0);
             rightPanelButton.setAlignment(Pos.CENTER);
 
             AtomicBoolean isActionsView = new AtomicBoolean(false);
@@ -160,13 +189,22 @@ public class CalendarApp extends Application {
                     addEventText,
                     addEventViewBox);
 
-            rightPanel.getChildren().addAll(heatmap, rightPanelButton, agenda);
+            rightPanel.getChildren().addAll(heatmap, rightPanelButton, rightPanelObjects, agenda, dailygoals);
             rightPanel.setAlignment(Pos.TOP_CENTER);
             rightPanel.setMinHeight(700);
-            rightPanel.setMaxWidth(800);
+            rightPanel.setMinWidth(260);
 
-            switchRightPanelButton.setOnMouseClicked(event -> {
-                RightPanelComponent.switchRightPanel(rightPanelObjects, isActionsView, rightPanel, agenda);
+            VBox staticgoals = new VBox();
+            staticgoals.getChildren().add(DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton));
+
+            leftButton.setOnMouseClicked(event -> {
+                RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                dailygoals, goalTextField, createGoalButton, staticgoals);
+            });
+            
+            rightButton.setOnMouseClicked(event -> {
+                RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                dailygoals, goalTextField, createGoalButton, staticgoals);
             });
 
             // Load the daily goals
@@ -203,8 +241,6 @@ public class CalendarApp extends Application {
             Button noButton = new Button("No");
             Button yesButton = new Button("Yes");
 
-            //EndOfDayComponent.EndOfDayPopup(goalText, calendar, goalController, dailygoals, shadowPanel, taskPopupPanel, contentVBox, buttonBox, taskPopup, noButton, yesButton);
-
             calendar.getChildren().addAll(calendarDisplay);
 
             // Update Clock
@@ -222,35 +258,35 @@ public class CalendarApp extends Application {
             primaryStage.setTitle("SereniTask");
             primaryStage.setResizable(false);
             primaryStage.setScene(scene);
-            primaryStage.setWidth(1920);
-            primaryStage.setHeight(1080);
+            primaryStage.setWidth(1700);
+            primaryStage.setHeight(1000);
             primaryStage.centerOnScreen();
             primaryStage.show();
-            primaryStage.setMaximized(true);
             primaryStage.setOnCloseRequest(event -> {
-                // Consume the event to prevent the application from closing
-                if (goalController.loadSimpleGoal().toString() == "[]") {
-                    primaryStage.close();
-                } else {
-                    event.consume();
+                // primaryStage.close();
+                // // Consume the event to prevent the application from closing
+                // if (goalController.loadSimpleGoal().toString() == "[]") {
+                //     primaryStage.close();
+                // } else {
+                //     event.consume();
 
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Did you complete all your goals today?\nGoals: " + goalController.loadSimpleGoal().toString());
-                    ButtonType buttonYes = new ButtonType("Yes");
-                    ButtonType buttonNo = new ButtonType("No");
-                    ButtonType buttonCancel = new ButtonType("Cancel");
-                    alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
-                    alert.showAndWait().ifPresent(response -> {
-                        if (response == buttonYes) {
-                            GoalDAO goalDAO = new GoalDAO();
-                            for (Goal goal : goalDAO.getAllGoals()) {
-                                goalController.deleteGoal(goal.getId());
-                            }
-                            primaryStage.close();
-                        } else if (response == buttonNo) {
-                            primaryStage.close();
-                        }
-                    });
-                }
+                //     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Did you complete all your goals today?\nGoals: " + goalController.loadSimpleGoal().toString());
+                //     ButtonType buttonYes = new ButtonType("Yes");
+                //     ButtonType buttonNo = new ButtonType("No");
+                //     ButtonType buttonCancel = new ButtonType("Cancel");
+                //     alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
+                //     alert.showAndWait().ifPresent(response -> {
+                //         if (response == buttonYes) {
+                //             GoalDAO goalDAO = new GoalDAO();
+                //             for (Goal goal : goalDAO.getAllGoals()) {
+                //                 goalController.deleteGoal(goal.getId());
+                //             }
+                //             primaryStage.close();
+                //         } else if (response == buttonNo) {
+                //             primaryStage.close();
+                //         }
+                //     });
+                // }
             });
         } catch (Exception e) {
             // If an error occurs, print the error message
@@ -258,6 +294,7 @@ public class CalendarApp extends Application {
             e.printStackTrace();
         }
     }
+    
 
     /**
      * Main method for the Calendar Application. This method is responsible for starting the application
