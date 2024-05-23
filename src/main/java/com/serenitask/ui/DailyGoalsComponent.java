@@ -8,7 +8,9 @@ import com.serenitask.util.DatabaseManager.GoalDAO;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -67,16 +69,49 @@ public class DailyGoalsComponent {
     goalContainer.setOnMouseEntered(e -> deleteLabel.setVisible(true));
     goalContainer.setOnMouseExited(e -> deleteLabel.setVisible(false));
 
+
+                
+
     int goalId = goal.getId();
     deleteLabelBox.setOnMouseClicked(e -> {
-        dailygoals.getChildren().remove(goalContainer);
-        goalDAO.deleteGoal(goalId);
+
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete all planned events for this goal?");
+      ButtonType buttonYes = new ButtonType("Yes");
+      ButtonType buttonNo = new ButtonType("No");
+      ButtonType buttonCancel = new ButtonType("Cancel");
+      alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
+      alert.showAndWait().ifPresent(response -> {
+          if (response == buttonYes) {
+              dailygoals.getChildren().remove(goalContainer);
+              // enter backend for deleting multiple
+              alert.close();
+          } else if (response == buttonNo) {
+              dailygoals.getChildren().remove(goalContainer);
+              goalDAO.deleteGoal(goalId);
+              alert.close();
+          }
+      });
     });
 
     deleteLabelText.setOnMouseClicked(e -> {
-      dailygoals.getChildren().remove(goalContainer);
-      goalDAO.deleteGoal(goalId);
-  });
+
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete all planned events for this goal?");
+      ButtonType buttonYes = new ButtonType("Yes");
+      ButtonType buttonNo = new ButtonType("No");
+      ButtonType buttonCancel = new ButtonType("Cancel");
+      alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
+      alert.showAndWait().ifPresent(response -> {
+          if (response == buttonYes) {
+              dailygoals.getChildren().remove(goalContainer);
+              // enter backend for deleting multiple
+              alert.close();
+          } else if (response == buttonNo) {
+              dailygoals.getChildren().remove(goalContainer);
+              goalDAO.deleteGoal(goalId);
+              alert.close();
+          }
+      });
+    });
 
 
     goalContainer.getChildren().add(deleteLabel);
