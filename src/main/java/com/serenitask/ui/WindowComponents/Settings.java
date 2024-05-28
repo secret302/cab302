@@ -37,7 +37,7 @@ public class Settings {
         addSetting("Day Start", "time", "09:00", layout);
         addSetting("Day End", "time", "18:00", layout);
         addSetting("Allocate Ahead (Days)", "number", "7", layout);
-        addSetting("Selected Calendar", "choice", "Personal", layout);
+        addSetting("Selected Calendar", "choice", "Personal,Work,Goals", layout);
         addSetting("Enable Notifications", "boolean", "true", layout);
 
         // Buttons for saving and discarding changes.

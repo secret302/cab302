@@ -150,10 +150,7 @@ public class SettingsController {
                 case "Spinner":
                     return ((Spinner<?>) control).getValue().toString();
                 case "ComboBox":
-                    // TODO: Fix this
-//                    return ((ComboBox<?>) control).getValue();
-                    // Temp return empty string
-                    return "";
+                    return (String) ((ComboBox<?>) control).getValue();
                 case "CheckBox":
                     return String.valueOf(((CheckBox) control).isSelected());
             }
