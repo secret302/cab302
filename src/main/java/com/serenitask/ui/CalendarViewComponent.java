@@ -4,14 +4,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
-import com.serenitask.ui.WindowComponents.Settings;
+import com.serenitask.ui.WindowComponents.SettingsComp;
 
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -41,7 +39,7 @@ public class CalendarViewComponent {
         StackPane settings = new StackPane(settingsBox, settingsText);
         settings.setPadding(new Insets(0,0,0,10));
         settings.setOnMouseClicked(event -> {
-            Settings.displaySettingsView();
+            SettingsComp.displaySettingsView();
         });
         dateTodayPanel.getChildren().addAll(navigateDateView, settings);
         dateTodayPanel.setPadding(new Insets(30, 0, 0, 20));

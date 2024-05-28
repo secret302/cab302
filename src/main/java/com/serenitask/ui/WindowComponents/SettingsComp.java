@@ -1,19 +1,9 @@
 package com.serenitask.ui.WindowComponents;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
-import com.calendarfx.model.Calendar;
-import com.calendarfx.model.Entry;
-import com.calendarfx.model.Interval;
-import com.serenitask.model.Event;
-import com.serenitask.model.Goal;
-import com.serenitask.util.DatabaseManager.GoalDAO;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -29,7 +19,7 @@ import javafx.stage.Stage;
  * This class is responsible for rendering a pop-up window where users can enter settings.
  */
 
-public class Settings {
+public class SettingsComp {
     /**
      * Displays a modal window for settings, allowing the user to input settings.
      * The window contains form inputs for the day start, end, allocate ahead, select date, and select calendar.
