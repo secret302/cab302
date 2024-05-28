@@ -2,6 +2,7 @@ package com.serenitask.controller;
 
 import com.serenitask.util.DatabaseManager.SettingsDAO;
 import javafx.collections.FXCollections;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -55,6 +56,7 @@ public class SettingsController {
         settingBox.getChildren().addAll(label, inputControl);
         HBox.setHgrow(inputControl, Priority.ALWAYS);
         parent.getChildren().add(settingBox);
+        settingBox.setAlignment(Pos.CENTER);
 
         // Store a reference to the control for later access (e.g., retrieving the value).
         settingControls.put(title, inputControl);
