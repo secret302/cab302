@@ -38,7 +38,12 @@ public class RoutineTwoController {
      * LocalTime object representing users end of day
      */
     private final LocalTime DayEnd;
+
     /**
+     * The minimum threshold for allocation.
+     */
+    private final int allocationThreshold;
+
 
 
     /**
@@ -47,7 +52,8 @@ public class RoutineTwoController {
      * @param dayStart            LocalTime object representing the Start of users day
      * @param dayEnd              LocalTime object representing the End of users day
      */
-    public RoutineTwoController(LocalTime dayStart, LocalTime dayEnd) {
+    public RoutineTwoController(LocalTime dayStart, LocalTime dayEnd, int allocationThreshold) {
+        this.allocationThreshold = allocationThreshold;
         this.DayStart = dayStart;
         this.DayEnd = dayEnd;
     }
@@ -67,12 +73,9 @@ public class RoutineTwoController {
             List<Event> eventList = eventDAO.getAllEvents();
 
             LocalDate allocationStart = LocalDate.now();
-            LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart);
-
+            LocalDate allocationEnd = OptimizerUtil.getTargetDate(allocationThreshold);
             List<List<Event>> rawDaysLists = OptimizerUtil.splitDays(allocationStart, allocationEnd, eventList);
-            System.out.println("run test: rawList size: " + rawDaysLists.size());
             List<Day> preparedDays = prepareDays(rawDaysLists,allocationStart);
-            System.out.println("run test: preparedDays size: " + preparedDays.size());
             List<Entry<?>> entriesToAdd = improveDays(preparedDays);
 
             OptimizerUtil.commitEntries(entriesToAdd, healthCalendar);
@@ -92,16 +95,13 @@ public class RoutineTwoController {
      * @return List of entries to be added to calendar
      */
     private List<Entry<?>> improveDays(List<Day> days) {
-        System.out.println("improveDays: Days size: " + days.size());
-        System.out.println("improveDays Start");
+        int minAllocation = 15;
         List<Entry<?>> entriesToAdd = new ArrayList<>();
         Random random = new Random();
 
         boolean hasWindows;
         for (Day day : days) {
-            System.out.println("improveDays: Day test");
             while (checkRatio(day)) {
-                System.out.println("improveDays: Ratio test");
                 int targetChange = day.getHealthNeeded(healthRatio);
                 if (targetChange > 30) {
                     targetChange = 30;
@@ -111,7 +111,6 @@ public class RoutineTwoController {
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
                 int windowMins = (int) (duration.getSeconds() / 60);
 
-                System.out.println("windowMins test: " + windowMins);
                 if (windowMins > 0) {
                     hasWindows = true;
                 }
@@ -128,10 +127,9 @@ public class RoutineTwoController {
                         LocalTime startTime = window.getWindowOpen();
                         if(startTime.equals(DayStart))
                         {
-                            int eventOffsetValue = OptimizerUtil.calcOffsetMins(windowMins, 30);
-                            startTime = window.getWindowOpen().plusMinutes(eventOffsetValue);
-                            LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange+eventOffsetValue);
-                            day.addWindow(endTime, window.getWindowClose());
+                            startTime = window.getWindowClose().minusMinutes(targetChange);
+                            LocalTime endTime = window.getWindowClose();
+                            day.addWindow(DayStart, startTime);
                             day.addHealth(targetChange);
                             Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
                             newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
@@ -159,10 +157,8 @@ public class RoutineTwoController {
                 }
             }
         }
-        System.out.println("improveDays End");
         return entriesToAdd;
     }
-
 
     /**
      * Draws a random health based event from a list of possible events.
@@ -209,9 +205,6 @@ public class RoutineTwoController {
         int work = day.getWorkingTime();
         int health = day.getHealthTime();
 
-        System.out.println("work test: " + work);
-        System.out.println("health test: " + health);
-
         if (work == 0 ) {
             return false;
         }
@@ -221,7 +214,6 @@ public class RoutineTwoController {
         }
         else if ((work / health) > healthRatio) {
             int ratio = (work/health);
-            System.out.println("healthTime test: " + ratio);
             return true;
         }
         return false;
@@ -237,9 +229,7 @@ public class RoutineTwoController {
      * @return List of Day objects
      */
     private List<Day> prepareDays(List<List<Event>> rawDaysLists, LocalDate date) {
-        System.out.println("Days List Start");
         List<Day> daysList = new ArrayList<>();
-
 
         for (List<Event> list : rawDaysLists) {
             List<Event> createList = new ArrayList<>(list);
@@ -247,7 +237,6 @@ public class RoutineTwoController {
             newDay = appendEvents(newDay, list);
             daysList.add(newDay);
         }
-        System.out.println("Days List End");
         return daysList;
     }
 
@@ -259,13 +248,11 @@ public class RoutineTwoController {
      * @return Returns updated Day object
      */
     private Day appendEvents(Day day, List<Event> events) {
-        System.out.println("Day - List Size: " + events.size());
+
         for (Event event : events) {
             if (event.getCalendar().equals("Health")) {
-                System.out.println("Day - Added health: " + (int) event.getInterval().getDuration().toMinutes());
                 day.addHealth((int) event.getInterval().getDuration().toMinutes());
             } else {
-                System.out.println("Day - Added work: " + (int) event.getInterval().getDuration().toMinutes());
                 day.addWork((int) event.getInterval().getDuration().toMinutes());
             }
         }
