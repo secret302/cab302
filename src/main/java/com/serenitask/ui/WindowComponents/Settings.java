@@ -1,5 +1,6 @@
 package com.serenitask.ui.WindowComponents;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -23,12 +24,14 @@ public class Settings {
      */
 
     public static void displaySettingsView() {
+        // Create a new stage for the settings dialog
         Stage popOutStage = new Stage();
         popOutStage.initModality(Modality.APPLICATION_MODAL);
         popOutStage.setTitle("Settings");
 
+        // Create a vertical layout for the settings dialog
         VBox layout = new VBox(20);
-        // TODO: Add padding to the layout
+        layout.setPadding(new Insets(10));
 
         // Add application settings to the dialog
         addSetting("Day Start", "time", "09:00", layout);
@@ -54,6 +57,7 @@ public class Settings {
         buttonBox.setAlignment(Pos.CENTER);
         layout.getChildren().add(buttonBox);
 
+        // Create a new scene with the layout and display the settings dialog
         Scene popOutScene = new Scene(layout, 500, 550);
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();

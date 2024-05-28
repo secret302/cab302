@@ -89,6 +89,7 @@ public class SettingsDAO {
             if (settingExists(key)) {
                 // Update the existing setting
                 String updateQuery = "UPDATE settings SET setting_value = ? WHERE setting_key = ?";
+                // Create prepared statement
                 PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
                 updateStatement.setString(1, value);
                 updateStatement.setString(2, key);
@@ -97,6 +98,7 @@ public class SettingsDAO {
             } else {
                 // Insert a new setting
                 String insertQuery = "INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)";
+                // Create prepared statement
                 PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
                 insertStatement.setString(1, key);
                 insertStatement.setString(2, value);

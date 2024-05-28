@@ -60,7 +60,6 @@ public class SettingsController {
         settingControls.put(title, inputControl);
     }
 
-    // TODO: Maybe add a separate method for adding event listeners?
     /**
      * Creates and configures the appropriate UI control based on the setting type.
      *
@@ -71,17 +70,15 @@ public class SettingsController {
      * @throws IllegalArgumentException if the setting type is invalid.
      */
     private static Control createInputControl(String type, String settingValue, String title) {
+        // Create empty control to return
+        Control control = null;
         // Create the appropriate UI control based on the setting type.
         switch (type) {
             case "text":
-                // Create a text field for text settings
-                TextField textField = new TextField(settingValue);
-                // Add an event listener to save the setting value to the database when the text changes
-                if (enableLiveUpdates) {
-                    textField.textProperty().addListener((observable, oldValue, newValue) ->
-                            settingsDAO.saveSetting(title, newValue));
-                }
-                return textField;
+                // Create a text field for text settings, and set control
+                control = new TextField(settingValue);
+                break;
+
             case "number":
                 // Create a spinner for number settings
                 Spinner<Integer> spinner = new Spinner<>();
@@ -89,46 +86,48 @@ public class SettingsController {
                 SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                         Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.parseInt(settingValue));
                 spinner.setValueFactory(valueFactory);
-                // Add an event listener to save the setting value to the database when the value changes
-                if (enableLiveUpdates) {
-                    spinner.valueProperty().addListener((observable, oldValue, newValue) ->
-                            settingsDAO.saveSetting(title, String.valueOf(newValue)));
-                }
-                return spinner;
+                // Set control to spinner
+                control = spinner;
+                break;
+
             case "time":
-                // Create a ComboBox for time settings
-                ComboBox<String> timeComboBox = createTimeComboBox(settingValue);
-                // Add an event listener to save the setting value to the database when the value changes
-                if (enableLiveUpdates) {
-                    timeComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
-                            settingsDAO.saveSetting(title, newValue));
-                }
-                return timeComboBox;
+                // Create a ComboBox for time settings, and set control
+                control = createTimeComboBox(settingValue);
+                break;
+
             case "boolean":
                 // Create a CheckBox for boolean settings
                 CheckBox checkBox = new CheckBox();
                 checkBox.setSelected(Boolean.parseBoolean(settingValue));
-                // Add an event listener to save the setting value to the database when the value changes
-                if (enableLiveUpdates) {
-                    checkBox.selectedProperty().addListener((observable, oldValue, newValue) ->
-                            settingsDAO.saveSetting(title, String.valueOf(newValue)));
-                }
-                return checkBox;
+                // Set control to checkBox
+                control = checkBox;
+                break;
+
             case "choice":
                 // Create a ComboBox for choice settings
                 String[] choices = settingValue.split(",");
                 ComboBox<String> choiceComboBox = new ComboBox<>(FXCollections.observableArrayList(choices));
                 choiceComboBox.setValue(settingsDAO.getSetting(title, choices[0]));
-                // Add an event listener to save the setting value to the database when the value changes
-                if (enableLiveUpdates) {
-                    choiceComboBox.valueProperty().addListener((observable, oldValue, newValue) ->
-                            settingsDAO.saveSetting(title, newValue));
-                }
-                return choiceComboBox;
+                // Set control to choiceComboBox
+                control = choiceComboBox;
+                break;
+
             default:
                 // Throw an exception if the setting type is invalid, would not occur in production
                 throw new IllegalArgumentException("Invalid setting type: " + type);
         }
+        // Check if live updates are enabled
+        if (enableLiveUpdates) {
+            // Add an event listener to update the setting value in the database when the control value changes
+            control.setOnKeyReleased(e -> {
+                // Retrieve the value of the setting from the control
+                String value = getSettingValue(title);
+                // Save the setting value to the database
+                settingsDAO.saveSetting(title, value);
+            });
+        }
+        // Return the created and configured control
+        return control;
     }
 
     /**
@@ -162,7 +161,7 @@ public class SettingsController {
     }
 
     /**
-     * Save all settings to the database.
+     * Manually saves the settings to the database.
      */
     public static void saveSettings() {
         // Iterate over all setting controls and save their values to the database
