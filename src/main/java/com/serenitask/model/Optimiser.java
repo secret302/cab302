@@ -31,7 +31,7 @@ public class Optimiser {
     public static void optimize(CalendarSource calendarSource, LocalTime userDayStart, LocalTime userDayEnd, int allocateAhead) {
         try {
             RoutineOneController routineOne = new RoutineOneController(userDayStart, userDayEnd, allocateAhead);
-            RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd);
+            RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd, allocateAhead);
 
             routineOne.runRoutine(calendarSource);
             routineTwo.runRoutine(calendarSource);

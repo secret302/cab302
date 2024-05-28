@@ -51,20 +51,21 @@ public class OptimizerUtil {
             // Get the start date
             LocalDate sunday = startDate;
 
-            // While the day of the week is not Sunday, increment the date
+            // Check if the current day is Sunday. If not, find the next Sunday.
             while (sunday.getDayOfWeek().getValue() != 7) {
                 sunday = sunday.plusDays(1);
             }
-            // Return the nearest Sunday
+
+            // Return the nearest Sunday (or the same day if it's already Sunday)
             return sunday;
         }
-        catch(Exception e){
+        catch (Exception e) {
             // Handle exceptions
             System.err.println("An error occurred while returning the nearest Sunday: " + e.getMessage());
             ErrorHandler.handleException(e);
+            // Return startDate if the Sunday is not retrievable
+            return startDate;
         }
-        // returns startDate if the sunday is not retrievable
-        return startDate;
     }
 
     /**
@@ -81,19 +82,19 @@ public class OptimizerUtil {
             // Create a list of lists to store events
             List<List<Event>> dayLists = new ArrayList<>();
 
-            // While the end date is greater than the start date
-            while (end.compareTo(start) > 0) {
+            // Loop from start date to end date inclusive
+            while (!start.isAfter(end)) {
                 List<Event> dayList = new ArrayList<>();
                 for (Event event : eventList) {
-                    // If the event is on the start date, add it to the day list
+                    // Check if the event starts or ends on the current start date
                     if (event.getInterval().getStartDate().isEqual(start) || event.getInterval().getEndDate().isEqual(start)) {
                         dayList.add(event);
                     }
                 }
-                // Increment the start date and add the day list to the list of lists
-                start = start.plusDays(1);
+                // Add the day list to the list of lists
                 dayLists.add(dayList);
-
+                // Increment the start date
+                start = start.plusDays(1);
             }
             // Return the list of lists
             return dayLists;
@@ -194,7 +195,6 @@ public class OptimizerUtil {
             List<Event> sortedList = OptimizerUtil.getSortedList(list);
             LocalTime windowStart = dayStart;
 
-            System.out.println("sortedList size: " + sortedList.size());
             if(sortedList.isEmpty())
             {
 
@@ -216,7 +216,7 @@ public class OptimizerUtil {
                 }
                 if (!newDay.isDateSet()) {
                     newDay.setStartDate(event.getInterval().getStartDate());
-                    newDay.setEndDate(event.getInterval().getEndDate());
+                    newDay.setEndDate(event.getInterval().getStartDate());
                     newDay.setDateSet(true);
                 }
             }}

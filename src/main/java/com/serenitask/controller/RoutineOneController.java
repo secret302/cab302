@@ -1,5 +1,8 @@
 package com.serenitask.controller;
 
+import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Comparator;
 import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
@@ -72,15 +75,15 @@ public class RoutineOneController {
         try {
             EventDAO eventDAO = new EventDAO();
 
+            // Get and prepare goal lists
             List<Goal> goalList = getGoalList();
             List<Goal> parsedList = parseGoalList(goalList);
-
             Calendar goalCalendar = OptimizerUtil.getGoalCalendar(mainSource.getCalendars(), TargetCalendar);
 
+            // Allocate each goal in parsed list.
             for (Goal goal : parsedList) {
-                List<Event> eventList = eventDAO.getAllEvents();
-                System.out.println("eventList size: " + eventList.size());
                 System.out.println("Starting goal " + goal.getTitle());
+                List<Event> eventList = eventDAO.getAllEvents();
                 allocateGoal(goal, eventList, goalCalendar);
             }
         }
@@ -120,18 +123,19 @@ public class RoutineOneController {
         LocalDate targetDate = OptimizerUtil.getTargetDate(allocationThreshold);
         List<Goal> parsedList = new ArrayList<>();
 
-
-        // only add goals that need allocating, drop the rest
         for (Goal goal : goalList) {
-            // If difference between targetDate and allocated is positive
-            // then there are unallocated days
-            int difference = targetDate.compareTo(goal.getAllocatedUntil());
-            if (difference > 0) {
+            if (goal == null || goal.getAllocatedUntil() == null) continue; // Skip goals with missing data
+
+            LocalDate allocationStart = calcAllocatedUntil(goal);
+            // Calculate the number of days until the target date
+            long daysUntilTarget = ChronoUnit.DAYS.between(allocationStart, targetDate)+1;
+
+            // If the target date is after the allocated date, include the goal
+            if (daysUntilTarget > 0) {
+                goal.setDaysOutstanding((int) daysUntilTarget);
                 parsedList.add(goal);
-                goal.setDaysOutstanding(difference);
             }
         }
-        System.out.println("Goal List Parsed ");
         return parsedList;
     }
 
@@ -144,44 +148,57 @@ public class RoutineOneController {
      * @param eventList A list containing all events draw from the database to be parsed.
      */
     private void allocateGoal(Goal goal, List<Event> eventList, Calendar goalCalendar) {
-        System.out.println("\nStarting goal Allocation ");
 
         int firstBlock = getDifferenceSunday(goal.getAllocatedUntil());
         GoalDAO goalDAO = new GoalDAO();
 
 
+
         List<Entry<?>> entries;
 
-        System.out.println("Partial Block Start ");
         if (firstBlock != blockSize) {
             int blockTarget = (int) Math.floor(goal.getTargetAmount() * ((double) firstBlock / blockSize));
-            System.out.println("Partial Block target: " + blockTarget);
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(firstBlock);
-            System.out.println("Partial Entries: " + entries.size());
             OptimizerUtil.commitEntries(entries, goalCalendar);
-            goal.setAllocatedUntil(calcAllocatedUntil(goal));
+            LocalDate blockStart = calcAllocatedUntil(goal);
+            goal.setAllocatedUntil(blockStart.plusDays(getDifferenceSunday(blockStart)-1));
             goalDAO.updateGoal(goal);
         }
-        System.out.println("Partial Block Complete \n");
-        System.out.println("Full Block Complete ");
-        while (goal.getDaysOutstanding() > blockSize) {
+
+
+        while (goal.getDaysOutstanding() >= blockSize) {
             int blockTarget = goal.getTargetAmount();
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(blockSize);
             OptimizerUtil.commitEntries(entries, goalCalendar);
-            System.out.println("Full Entries: " + entries.size());
-            System.out.println("Full Block Lap Complete ");
-            goal.setAllocatedUntil(calcAllocatedUntil(goal));
+            goal.setAllocatedUntil(calcAllocatedUntil(goal).plusDays(getDifferenceSunday(goal.getAllocatedUntil())));
             goalDAO.updateGoal(goal);
         }
 
     }
 
+    /**
+     * Calculates the next date for allocation based on the current allocatedUntil value of a goal.
+     *
+     * @param goal The goal for which the next allocation date is calculated.
+     * @return The next allocation date. If the allocatedUntil date is in the past or today,
+     *         returns tomorrow's date. If allocatedUntil is in the future, returns allocatedUntil plus one day.
+     */
     private LocalDate calcAllocatedUntil(Goal goal)
     {
-        return OptimizerUtil.getNextSunday(goal.getAllocatedUntil());
+        LocalDate today = LocalDate.now();
+        LocalDate allocatedUntil = goal.getAllocatedUntil();
+
+        if (!allocatedUntil.isAfter(today)) {
+            // If allocatedUntil is today or in the past, return tomorrow's date
+            return today.plusDays(1);
+        } else {
+            // If allocatedUntil is in the future, return allocatedUntil plus one day
+            return allocatedUntil.plusDays(1);
+        }
     }
+
 
 
     /**
@@ -195,48 +212,38 @@ public class RoutineOneController {
      * @return returns a list of entries to be added to calendar
      */
     private List<Entry<?>> allocateBlock(int blockTarget, Goal goal, List<Event> eventList) {
-        System.out.println("\nAllocate Block Start");
+        int minAllocation = 15;
         int buffer = 5;
-        LocalDate allocationStart = goal.getAllocatedUntil().plusDays(1); //!! dummy currently !!
-        LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart).plusDays(1);
+
+        System.out.println("AllocateBlock Start");
+        LocalDate allocationStart = calcAllocatedUntil(goal);
+        LocalDate allocationEnd = OptimizerUtil.getNextSunday(allocationStart);
 
         System.out.println("Allocate Block date range: " + allocationStart + " to " + allocationEnd);
 
         List<List<Event>> rawDaysLists = OptimizerUtil.splitDays(allocationStart, allocationEnd, eventList);
-
-        System.out.println("Raw Day List loaded");
-
         List<Day> orderedDays = getDaysList(rawDaysLists, allocationStart);
         List<Day> prioritizedDays = prioritizeDays(orderedDays);
 
-        System.out.println("Days Validation Start\n");
-        for (Day day : prioritizedDays) {
-            day.validate();
-        }
-        System.out.println("Days Validation End\n");
-
-        System.out.println("Days Prioritized\n");
 
         List<Entry<?>> entriesToAdd = new ArrayList<>();
 
         while (blockTarget > buffer) {
             boolean hasWindows = false;
             for (Day day : prioritizedDays) {
-                System.out.println("BlockTarget Loop Start: Setup; Date: " + day.getStartDate());
+
                 TimeWindow window = day.getBiggestWindow();
                 Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
                 int windowMins = (int) (duration.getSeconds() / 60);
-                System.out.println("windowMins: "+windowMins);
 
-                if (windowMins > 0 ) {
+                if (windowMins > 0  ) {
                     hasWindows = true;
                 }
-                System.out.println("BlockTarget Loop: Setup complete");
 
                 if (hasWindows) {
                     if (windowMins > goal.getMinChunk()) {
                         if (windowMins > goal.getMaxChunk()) {
-                            if(windowMins > goal.getMaxChunk() + 2*goal.getMinChunk())
+                            if(windowMins > goal.getMaxChunk() + 2*minAllocation)
                             {
                                 int eventOffsetValue = OptimizerUtil.calcOffsetMins(windowMins, goal.getMaxChunk());
                                 LocalTime startTime = window.getWindowOpen().plusMinutes(eventOffsetValue);
@@ -283,9 +290,8 @@ public class RoutineOneController {
         }
 
         return entriesToAdd;
-
-
     }
+
 
     /**
      * Takes in a List of Lists containing events sorted by day. Uses events per day to evaluate available TimeWindows
@@ -297,14 +303,13 @@ public class RoutineOneController {
      */
     private List<Day> getDaysList(List<List<Event>> rawDaysLists, LocalDate date) {
 
-        System.out.println("Days List Start");
         List<Day> daysList = new ArrayList<>();
+
         for (List<Event> list : rawDaysLists) {
             Day newDay = OptimizerUtil.createDay(list, DayStart, DayEnd,date);
             daysList.add(newDay);
             date = date.plusDays(1);
         }
-        System.out.println("Days List End");
         return daysList;
     }
 
@@ -318,57 +323,51 @@ public class RoutineOneController {
      */
     private List<Day> prioritizeDays(List<Day> rawDays) {
 
-        System.out.println("prioritizeDays Start");
-        // sorting by free time;
-        List<Day> sorted = new ArrayList<>();
-        int highestPrio = rawDays.size();
+        // Make a copy of the list
+        List<Day> sorted = new ArrayList<>(rawDays);
 
+        // Sort the list
+        sorted.sort(Comparator.comparingInt(Day::getFreeTime).reversed());
 
-        System.out.println("count of days: " + rawDays.size());
-
-        while (!rawDays.isEmpty()) {
-            int freeMinutes = 0;
-            int index = 0;
-            int indexRemove = 0;
-            Day newDay = new Day();
-
-            for (Day day : rawDays) {
-
-                if (day.getFreeTime() > freeMinutes) {
-                    newDay = day;
-                    indexRemove = index;
-                }
-                index++;
-            }
-
-            // set the priority for that day
-            newDay.setPriority(highestPrio);
-            highestPrio--;
-
-            // add to sorted and remove from unsortedlist
-            sorted.add(newDay);
-            rawDays.remove(indexRemove);
-
+        // Assign priority based on ordering, from most free time to least
+        for (int i = 0; i < sorted.size(); i++) {
+            sorted.get(i).setPriority(sorted.size() - i);
         }
+
         return sorted;
     }
 
 
     /**
-     * Takes in a LocalDate value and returns the integer difference between the date given
-     * and the closest following sunday.
+     * Takes in a LocalDate value, and returns the integer difference between the date given
+     * and the closest following sunday. If the given date is in the past, the present difference is calculated
      *
      * @param date any LocalDate object
      * @return int difference
      */
     private int getDifferenceSunday(LocalDate date) {
-        LocalDate targetDate = date;
 
-        while (targetDate.getDayOfWeek().getValue() != 7) {
+        // Start from tomorrow if the given date is today or in the past
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = (date.isBefore(today) || date.isEqual(today)) ? today.plusDays(1) : date;
+
+        // Get the next Sunday
+        int daysCount = 0; // Start counting from the next day or the given date
+
+        do {
+            // If it is Sunday, add 7 to ensure the full next week is included
+            if (targetDate.getDayOfWeek().getValue() == 7) {
+                if (daysCount == 0) { // If it's already Sunday when the method starts
+                    return 7; // Only count the 7 days of the next week
+                }
+                daysCount++;
+                break; // Otherwise, break as we found the next Sunday
+            }
             targetDate = targetDate.plusDays(1);
-        }
+            daysCount++;
+        } while (true);
 
-        return targetDate.compareTo(date);
+        return daysCount;
     }
 
 
