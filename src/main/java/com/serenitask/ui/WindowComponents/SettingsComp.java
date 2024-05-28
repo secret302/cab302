@@ -35,7 +35,7 @@ public class SettingsComp {
         popOutStage.setTitle("Settings");
 
         VBox layout = new VBox(20);
-        // HOw do I do padding here?
+        // TODO: Add padding to the layout
 
         // Add application settings to the dialog
         addSetting("Day Start", "time", "09:00", layout);
@@ -64,19 +64,5 @@ public class SettingsComp {
         Scene popOutScene = new Scene(layout, 500, 550);
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
-    }
-
-    private static ComboBox<String> createTimeComboBox() {
-        List<String> timeOptions = new ArrayList<>();
-        for (int hour = 0; hour < 24; hour++) {
-            for (int minute = 0; minute < 60; minute += 15) {
-                String time = String.format("%02d:%02d", hour, minute);
-                timeOptions.add(time);
-            }
-        }
-
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(timeOptions);
-        return comboBox;
     }
 }
