@@ -16,7 +16,7 @@ import static com.serenitask.controller.SettingsController.saveSettings;
  * This class is responsible for rendering a pop-up window where users can enter settings.
  */
 
-public class SettingsComp {
+public class Settings {
     /**
      * Displays a modal window for settings, allowing the user to input settings.
      * The window contains form inputs for the day start, end, allocate ahead, select date, and select calendar.
