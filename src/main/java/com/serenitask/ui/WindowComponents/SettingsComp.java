@@ -1,22 +1,15 @@
 package com.serenitask.ui.WindowComponents;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.serenitask.controller.SettingsController;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import static com.serenitask.controller.SettingsController.addSetting;
 import static com.serenitask.controller.SettingsController.saveSettings;
-
 
 /**
  * Provides a user interface component for settings.
