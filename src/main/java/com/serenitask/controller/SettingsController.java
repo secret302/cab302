@@ -109,7 +109,8 @@ public class SettingsController {
                 // Create a ComboBox for choice settings
                 String[] choices = settingValue.split(",");
                 ComboBox<String> choiceComboBox = new ComboBox<>(FXCollections.observableArrayList(choices));
-                choiceComboBox.setValue(settingsDAO.getSetting(title, choices[0]));
+                // Set the default value to the first choice (Works, but not visually?!?!)
+                choiceComboBox.setValue(choices[0]);
                 // Set control to choiceComboBox
                 control = choiceComboBox;
                 break;
