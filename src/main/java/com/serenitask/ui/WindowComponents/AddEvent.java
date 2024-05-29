@@ -41,6 +41,7 @@ public class AddEvent {
         Label titleLabel = new Label("Title");
         titleLabel.setFont(Font.font(30));
         TextField titleInput = new TextField();
+        titleInput.setPromptText("Your title here...");
         titleInput.setMaxWidth(250);
 
         Label startDateLabel = new Label("Start Date");
@@ -137,7 +138,7 @@ public class AddEvent {
         HBox dateHBox = new HBox(20);
         dateHBox.getChildren().addAll(startDateVBox, endDateVBox);
         dateHBox.setAlignment(Pos.CENTER);
-    
+
         HBox timeHBox = new HBox(20);
         timeHBox.getChildren().addAll(startTimeVBox, endTimeVBox);
         timeHBox.setAlignment(Pos.CENTER);
@@ -151,7 +152,7 @@ public class AddEvent {
         popOutStage.setScene(popOutScene);
         popOutStage.showAndWait();
     }
-    
+
     /**
      * Creates a ComboBox containing time options in 15-minute increments.
      * This method generates a list of times from 00:00 to 23:45 for user selection.
