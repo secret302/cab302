@@ -39,9 +39,10 @@ public class AddGoal {
         Label wantLabel = new Label("I want to do:");
         wantLabel.setFont(Font.font(30));
         TextField wantInput = new TextField();
+        wantInput.setPromptText("Write your Goal here...");
         wantInput.setMaxWidth(150);
         wantInput.setStyle("-fx-text-alignment: center");
-        
+
 
         Label forLabel = new Label("For");
         forLabel.setFont(Font.font(30));
@@ -52,12 +53,14 @@ public class AddGoal {
         Label perLabel = new Label("Per");
         perLabel.setFont(Font.font(30));
 
-        Label minChunkLabel = new Label("Minimum amount of time for a goal occurrance:");
+        Label minChunkLabel = new Label("Minimum allocated time for a goal in minutes:");
         TextField minChunkInput = new TextField();
+        minChunkInput.setPromptText("Time in minutes...");
         minChunkInput.setMaxWidth(200);
 
-        Label maxChunkLabel = new Label("Maximum amount of time for a goal occurrance:");
+        Label maxChunkLabel = new Label("Maximum allocated time for a goal in minutes:");
         TextField maxChunkInput = new TextField();
+        maxChunkInput.setPromptText("Time in minutes...");
         maxChunkInput.setMaxWidth(200);
 
         Label goalEndDateLabel = new Label("Enter the date you wish to complete your goal by:");
