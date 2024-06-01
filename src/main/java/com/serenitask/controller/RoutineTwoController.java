@@ -106,9 +106,9 @@ public class RoutineTwoController {
                 if (targetChange > 30) {
                     targetChange = 30;
                 }
-                if (targetChange < 15)
+                if (targetChange < minAllocation)
                 {
-                    targetChange = 15;
+                    targetChange = minAllocation;
                 }
 
                 TimeWindow window = day.getBiggestWindow();
@@ -222,11 +222,7 @@ public class RoutineTwoController {
         {
             return true;
         }
-        else if ((work / health) > healthRatio) {
-            int ratio = (work/health);
-            return true;
-        }
-        return false;
+        else return (work / health) > healthRatio;
     }
 
 
