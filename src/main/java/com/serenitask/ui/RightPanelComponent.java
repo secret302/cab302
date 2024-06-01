@@ -9,8 +9,6 @@ import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.model.Optimiser;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
