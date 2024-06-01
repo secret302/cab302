@@ -125,7 +125,7 @@ public class RoutineTwoController {
                     }
 
                     if (hasWindows) {
-                        int activityNumber = random.nextInt(10) + 1;
+                        int activityNumber = random.nextInt(21) + 1;
 
                         if (windowMins > targetChange) {
 
