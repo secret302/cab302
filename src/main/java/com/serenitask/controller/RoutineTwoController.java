@@ -106,54 +106,64 @@ public class RoutineTwoController {
                 if (targetChange > 30) {
                     targetChange = 30;
                 }
+                if (targetChange < 15)
+                {
+                    targetChange = 15;
+                }
 
                 TimeWindow window = day.getBiggestWindow();
-                Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-                int windowMins = (int) (duration.getSeconds() / 60);
+                if(window != null){
+                    Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
+                    int windowMins = (int) (duration.getSeconds() / 60);
 
-                if (windowMins > 0) {
-                    hasWindows = true;
-                }
-                else
-                {
-                    break;
-                }
+                    if (windowMins > 0) {
+                        hasWindows = true;
+                    }
+                    else
+                    {
+                        break;
+                    }
 
-                if (hasWindows) {
-                    int activityNumber = random.nextInt(10) + 1;
+                    if (hasWindows) {
+                        int activityNumber = random.nextInt(10) + 1;
 
-                    if (windowMins > targetChange) {
+                        if (windowMins > targetChange) {
 
-                        LocalTime startTime = window.getWindowOpen();
-                        if(startTime.equals(DayStart))
-                        {
-                            startTime = window.getWindowClose().minusMinutes(targetChange);
-                            LocalTime endTime = window.getWindowClose();
-                            day.addWindow(DayStart, startTime);
+                            LocalTime startTime = window.getWindowOpen();
+                            if(startTime.equals(DayStart))
+                            {
+                                startTime = window.getWindowClose().minusMinutes(targetChange);
+                                LocalTime endTime = window.getWindowClose();
+                                day.addWindow(DayStart, startTime);
+                                day.addHealth(targetChange);
+                                Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
+                                newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                                newEntry.setFullDay(false);
+                                entriesToAdd.add(newEntry);
+                            }
+                            else
+                            {
+                            LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
+                            day.addWindow(endTime, window.getWindowClose());
                             day.addHealth(targetChange);
                             Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
                             newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
                             newEntry.setFullDay(false);
                             entriesToAdd.add(newEntry);
+                            }
+                        } else {
+                            Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
+                            newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
+                            newEntry.setFullDay(false);
+                            int difference = (int) Duration.between(window.getWindowOpen(), window.getWindowClose()).toMinutes();
+                            day.addHealth(difference);
+                            entriesToAdd.add(newEntry);
                         }
-                        else
-                        {
-                        LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
-                        day.addWindow(endTime, window.getWindowClose());
-                        day.addHealth(targetChange);
-                        Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
-                        newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
-                        newEntry.setFullDay(false);
-                        entriesToAdd.add(newEntry);
-                        }
-                    } else {
-                        Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
-                        newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
-                        newEntry.setFullDay(false);
-                        int difference = (int) Duration.between(window.getWindowOpen(), window.getWindowClose()).toMinutes();
-                        day.addHealth(difference);
-                        entriesToAdd.add(newEntry);
                     }
+                }
+                else
+                {
+                    break;
                 }
             }
         }
