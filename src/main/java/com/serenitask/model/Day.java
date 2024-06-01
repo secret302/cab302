@@ -152,20 +152,16 @@ public class Day {
      * @return Largest time window.
      */
     public TimeWindow getBiggestWindow() {
-//        try {
-//            biggestWindow = findBiggestWindow();
-//            return biggestWindow;
-//        }
-//        catch(Exception e){
-//            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        // returns null if the calculations for the biggest window of the day cannot be completed
-//        return new TimeWindow(LocalTime.of(0,0),LocalTime.of(0,0));
-        if (biggestWindow == null) {
+        try {
             biggestWindow = findBiggestWindow();
+            return biggestWindow;
         }
-        return biggestWindow;
+        catch(Exception e){
+            System.err.println("An error occurred while trying to calculate the largest window of the day: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // returns null if the calculations for the biggest window of the day cannot be completed
+        return new TimeWindow(LocalTime.of(0,0),LocalTime.of(0,0));
     }
 
     /**
