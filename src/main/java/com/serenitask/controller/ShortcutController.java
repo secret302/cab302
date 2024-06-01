@@ -1,8 +1,10 @@
 package com.serenitask.controller;
 
+import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
+import com.serenitask.util.routine.OptimizerUtil;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -49,7 +51,7 @@ public class ShortcutController {
 
         scene.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (goalCombo.match(event)) {
-                openGoalAddMenu(dailygoals);
+                openGoalAddMenu(dailygoals, OptimizerUtil.getGoalCalendar(mainCalendarSource.getCalendars(),"Goals"));
                 event.consume();
 
             } else if (eventCombo.match(event)) {
@@ -82,8 +84,8 @@ public class ShortcutController {
     /**
      * Shortcut event action that opens the Add Goal menu
      */
-    private static void openGoalAddMenu(VBox dailygoals) {
-        AddGoal.displayAddGoalView(dailygoals);
+    private static void openGoalAddMenu(VBox dailygoals, Calendar eCal) {
+        AddGoal.displayAddGoalView(dailygoals, eCal);
     }
 
     /**

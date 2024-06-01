@@ -2,6 +2,7 @@ package com.serenitask.ui;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.AgendaView;
 
@@ -151,8 +152,8 @@ public class RightPanelComponent {
      * Handles the click event for the "Add Goal" button.
      * This method displays the interface for adding a new goal.
      */
-    public static void addGoalClick(VBox dailygoals) {
-        AddGoal.displayAddGoalView(dailygoals);
+    public static void addGoalClick(VBox dailygoals, Calendar Cal) {
+        AddGoal.displayAddGoalView(dailygoals, Cal);
     }
 
     /**
