@@ -17,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
