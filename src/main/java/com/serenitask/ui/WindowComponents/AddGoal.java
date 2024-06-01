@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.calendarfx.model.Calendar;
 import com.serenitask.model.Goal;
+import com.serenitask.util.DatabaseManager.EventDAO;
 import com.serenitask.util.DatabaseManager.GoalDAO;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,7 +34,7 @@ public class AddGoal {
      * Displays a modal window for adding a new goal, allowing the user to input goal details such as duration and frequency.
      * The window contains form inputs for the goal description, hours and minutes of effort, and the recurrence period.
      */
-    public static void displayAddGoalView(VBox dailygoals) {
+    public static void displayAddGoalView(VBox dailygoals, Calendar Cal) {
         Stage popOutStage = new Stage();
         popOutStage.initModality(Modality.APPLICATION_MODAL);
         popOutStage.setTitle("Add Goal");
@@ -119,45 +121,40 @@ public class AddGoal {
         goalContainer.setOnMouseExited(event -> deleteLabel.setVisible(false));
 
         int goalId = goal.getId();
-        
-        deleteLabelBox.setOnMouseClicked(event -> {
+        EventDAO eventDAO = new EventDAO();
+
+
+        deleteLabelText.setOnMouseClicked(event -> {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete all planned events for this goal?");
             ButtonType buttonYes = new ButtonType("Yes");
             ButtonType buttonNo = new ButtonType("No");
             ButtonType buttonCancel = new ButtonType("Cancel");
             alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
-            alert.showAndWait().ifPresent(response -> {
-                if (response == buttonYes) {
-                    dailygoals.getChildren().remove(goalContainer);
-                    // enter backend for deleting multiple
-                    alert.close();
-                } else if (response == buttonNo) {
-                    dailygoals.getChildren().remove(goalContainer);
-                    goalDAO.deleteGoal(goalId);
-                    alert.close();
-                }
-            });
-          });
-      
-          deleteLabelText.setOnMouseClicked(event -> {
-      
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to delete all planned events for this goal?");
-            ButtonType buttonYes = new ButtonType("Yes");
-            ButtonType buttonNo = new ButtonType("No");
-            ButtonType buttonCancel = new ButtonType("Cancel");
-            alert.getButtonTypes().setAll(buttonYes, buttonNo, buttonCancel);
-            alert.showAndWait().ifPresent(response -> {
-                if (response == buttonYes) {
-                    dailygoals.getChildren().remove(goalContainer);
-                    // enter backend for deleting multiple
-                    alert.close();
-                } else if (response == buttonNo) {
-                    dailygoals.getChildren().remove(goalContainer);
-                    goalDAO.deleteGoal(goalId);
-                    alert.close();
-                }
-            });
+              alert.showAndWait().ifPresent(response -> {
+                  if (response == buttonYes) {
+                      // User confirmed, delete goal and events
+                      goalDAO.deleteGoal(goalId);
+                      dailygoals.getChildren().remove(goalContainer);
+                      System.out.println("Deleted goal");
+
+                      // Assuming goal.getTitle() and LocalDate.now() are correctly fetching the required parameters
+                      eventDAO.deleteEventsByNameAndDate(goal.getTitle(), LocalDate.now().plusDays(1), Cal);
+                      System.out.println("Deleted associated events");
+
+                      alert.close();
+                  } else if (response == buttonNo) {
+                      goalDAO.deleteGoal(goalId);
+                      dailygoals.getChildren().remove(goalContainer);
+                      System.out.println("Deleted goal");
+                      // Just close the alert if user selects "No"
+                      alert.close();
+                  }else if (response == buttonCancel || response == null) {
+                      // If "Cancel" is clicked or the alert is closed without response
+                      System.out.println("Action canceled or alert closed without selection.");
+                      alert.close();
+                  }
+              });
           });
 
 

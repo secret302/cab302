@@ -1,5 +1,7 @@
 package com.serenitask.util.DatabaseManager;
 
+import com.calendarfx.model.Calendar;
+import com.calendarfx.model.Entry;
 import com.calendarfx.model.Interval;
 import com.serenitask.model.Event;
 import com.serenitask.util.ErrorHandler;
@@ -203,6 +205,87 @@ public class EventDAO {
     }
 
     /**
+     * Deletes all events with a specified name and a date greater than or equal to the given date.
+     *
+     * @param name The name of the events to delete.
+     * @param date The date from which to delete events (inclusive).
+     */
+    public void deleteEventsByNameAndDate(String name, LocalDate date, Calendar calendar) {
+        try {
+            List<Event> allEventsByTitle = getAllEventsByTitle(name);
+            List<String> idsToRemove = new ArrayList<>();
+
+            for (Event event : allEventsByTitle) {
+                // Check if the event date is strictly after the specified date
+                if (event.getInterval().getStartDate().isAfter(date)) {
+                    String idToDelete = event.getId();
+                    deleteEvent(idToDelete);
+                    idsToRemove.add(idToDelete);
+                }
+            }
+            removeEntriesById(calendar, idsToRemove);
+        } catch (Exception e) { // Catch any Exception type
+            System.err.println("SQL error: " + e.getMessage());
+        }
+    }
+
+
+
+
+    /**
+     * Retrieves all Events from the database with matching title.
+     *
+     * @param title title of event to be retrieved
+     * @return A list of all Event objects stored in the database.
+     */
+    public List<Event> getAllEventsByTitle(String title) {
+        // Create empty list of events to return
+        List<Event> events = new ArrayList<>();
+
+        try {
+            // Create Query
+            String query = "SELECT * FROM events WHERE title = ?";
+            // Create Search Statement
+            PreparedStatement statement = connection.prepareStatement(query);
+            // Insert ID into statement
+            statement.setString(1, title);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            // For each event in the result set
+            while (resultSet.next()) {
+                // Retrieve data from the result set
+                events.add(constructEventFromResultSet(resultSet));
+            }
+        } catch (Exception e) {
+            // Print error if event retrieval fails
+            ErrorHandler.handleException(e);
+        }
+        // return list of events (regardless of none found)
+        return events;
+    }
+
+    /**
+     * Removes calendar entries based on a list of IDs.
+     *
+     * @param calendar The calendar from which entries will be removed.
+     * @param entryIdsToRemove List of entry IDs targeted for removal.
+     */
+    public void removeEntriesById(Calendar calendar, List<String> entryIdsToRemove) {
+        List<Entry<?>> entries = new ArrayList<>(calendar.findEntries("")); // Retrieves all entries
+
+        entries.stream()
+                .filter(entry -> entryIdsToRemove.contains(entry.getId()))
+                .forEach(entry -> {
+                    calendar.removeEntry(entry);
+                });
+    }
+
+
+
+
+
+    /**
      * Retrieves an Event from the database by its ID.
      *
      * @param id The ID of the Event to be retrieved.
@@ -222,7 +305,7 @@ public class EventDAO {
                     return constructEventFromResultSet(resultSet);
                 }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             // Print error if event retrieval fails
             ErrorHandler.handleException(e);
         }
