@@ -151,8 +151,7 @@ public class RoutineOneController {
 
         int firstBlock = getDifferenceSunday(goal.getAllocatedUntil());
         GoalDAO goalDAO = new GoalDAO();
-
-
+        LocalDate blockStart = calcAllocatedUntil(goal);
 
         List<Entry<?>> entries;
 
@@ -161,18 +160,18 @@ public class RoutineOneController {
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(firstBlock);
             OptimizerUtil.commitEntries(entries, goalCalendar);
-            LocalDate blockStart = calcAllocatedUntil(goal);
             goal.setAllocatedUntil(blockStart.plusDays(getDifferenceSunday(blockStart)-1));
             goalDAO.updateGoal(goal);
         }
 
-
         while (goal.getDaysOutstanding() >= blockSize) {
+            System.out.println("beep");
+            LocalDate blockCurrent = calcAllocatedUntil(goal);
             int blockTarget = goal.getTargetAmount();
             entries = allocateBlock(blockTarget, goal, eventList);
             goal.subtractDaysOutstanding(blockSize);
             OptimizerUtil.commitEntries(entries, goalCalendar);
-            goal.setAllocatedUntil(calcAllocatedUntil(goal).plusDays(getDifferenceSunday(goal.getAllocatedUntil())));
+            goal.setAllocatedUntil(blockCurrent.plusDays(blockSize-1));
             goalDAO.updateGoal(goal);
         }
 
@@ -233,52 +232,55 @@ public class RoutineOneController {
             for (Day day : prioritizedDays) {
 
                 TimeWindow window = day.getBiggestWindow();
-                Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-                int windowMins = (int) (duration.getSeconds() / 60);
+                if (window != null) {
+                    Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
+                    int windowMins = (int) (duration.getSeconds() / 60);
 
-                if (windowMins > 0  ) {
-                    hasWindows = true;
-                }
+                    if (windowMins > 0  ) {
+                        hasWindows = true;
+                    }
 
-                if (hasWindows) {
-                    if (windowMins > goal.getMinChunk()) {
-                        if (windowMins > goal.getMaxChunk()) {
-                            if(windowMins > goal.getMaxChunk() + 2*minAllocation)
-                            {
-                                int eventOffsetValue = OptimizerUtil.calcOffsetMins(windowMins, goal.getMaxChunk());
-                                LocalTime startTime = window.getWindowOpen().plusMinutes(eventOffsetValue);
-                                LocalTime endTime = window.getWindowOpen().plusMinutes(goal.getMaxChunk()+eventOffsetValue);
-                                day.addWindow(endTime, window.getWindowClose());
+                    if (hasWindows) {
+                        if (windowMins > goal.getMinChunk()) {
+                            if (windowMins > goal.getMaxChunk()) {
+                                if(windowMins > goal.getMaxChunk() + 2*minAllocation)
+                                {
+                                    int eventOffsetValue = OptimizerUtil.calcOffsetMins(windowMins, goal.getMaxChunk());
+                                    LocalTime startTime = window.getWindowOpen().plusMinutes(eventOffsetValue);
+                                    LocalTime endTime = window.getWindowOpen().plusMinutes(goal.getMaxChunk()+eventOffsetValue);
+                                    day.addWindow(endTime, window.getWindowClose());
+                                    Entry<?> newEntry = new Entry<>(goal.getTitle());
+                                    newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                                    newEntry.setFullDay(false);
+                                    entriesToAdd.add(newEntry);
+                                }
+                                else
+                                {
+                                    LocalTime startTime = window.getWindowOpen();
+                                    LocalTime endTime = window.getWindowOpen().plusMinutes(goal.getMaxChunk());
+                                    day.addWindow(endTime, window.getWindowClose());
+                                    Entry<?> newEntry = new Entry<>(goal.getTitle());
+                                    newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                                    newEntry.setFullDay(false);
+                                    entriesToAdd.add(newEntry);
+                                }
+                                blockTarget -= goal.getMaxChunk();
+
+
+                            } else {
                                 Entry<?> newEntry = new Entry<>(goal.getTitle());
-                                newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                                newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
                                 newEntry.setFullDay(false);
                                 entriesToAdd.add(newEntry);
+                                blockTarget -= windowMins;
                             }
-                            else
-                            {
-                                LocalTime startTime = window.getWindowOpen();
-                                LocalTime endTime = window.getWindowOpen().plusMinutes(goal.getMaxChunk());
-                                day.addWindow(endTime, window.getWindowClose());
-                                Entry<?> newEntry = new Entry<>(goal.getTitle());
-                                newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
-                                newEntry.setFullDay(false);
-                                entriesToAdd.add(newEntry);
-                            }
-                            blockTarget -= goal.getMaxChunk();
-
-
-                        } else {
-                            Entry<?> newEntry = new Entry<>(goal.getTitle());
-                            newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
-                            newEntry.setFullDay(false);
-                            entriesToAdd.add(newEntry);
-                            blockTarget -= windowMins;
+                        }
+                        if (blockTarget <= buffer) {
+                            break;
                         }
                     }
-                    if (blockTarget <= buffer) {
-                        break;
-                    }
                 }
+
             }
 
             if (!hasWindows) {
@@ -358,7 +360,7 @@ public class RoutineOneController {
             // If it is Sunday, add 7 to ensure the full next week is included
             if (targetDate.getDayOfWeek().getValue() == 7) {
                 if (daysCount == 0) { // If it's already Sunday when the method starts
-                    return 7; // Only count the 7 days of the next week
+                    return 1; // Only count the 7 days of the next week
                 }
                 daysCount++;
                 break; // Otherwise, break as we found the next Sunday
