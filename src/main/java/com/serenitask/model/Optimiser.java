@@ -24,12 +24,15 @@ public class Optimiser {
      * </ul>
      *
      * @param calendarSource The CalendarSource object containing the calendars to be optimized.
-     * @param userDayStart  The start time of the user's workday.
-     * @param userDayEnd    The end time of the user's workday.
-     * @param allocateAhead The number of days to allocate goals ahead.
      */
-    public static void optimize(CalendarSource calendarSource, LocalTime userDayStart, LocalTime userDayEnd, int allocateAhead) {
+    public static void optimize(CalendarSource calendarSource) {
         try {
+
+            // SettingsDAO unfinished, Dummy values used as development time unavailable to make routines dynamic
+            LocalTime userDayStart = LocalTime.of(8, 0, 0);
+            LocalTime userDayEnd = LocalTime.of(18, 30, 0);
+            int allocateAhead = 7;
+
             RoutineOneController routineOne = new RoutineOneController(userDayStart, userDayEnd, allocateAhead);
             RoutineTwoController routineTwo = new RoutineTwoController(userDayStart, userDayEnd, allocateAhead);
 
