@@ -39,7 +39,6 @@ import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.concurrent.atomic.AtomicBoolean;
