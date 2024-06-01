@@ -169,11 +169,7 @@ public class RightPanelComponent {
     public static void addOptimiseClick(CalendarSource calendarSource) {
 
         try {
-            LocalTime userDayStart = LocalTime.of(8, 0, 0);
-            LocalTime userDayEnd = LocalTime.of(18, 30, 0);
-            int allocateAhead = 7;
-
-            Optimiser.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+            Optimiser.optimize(calendarSource);
         } catch (Exception e) {
             System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
             e.printStackTrace();
