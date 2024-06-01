@@ -17,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -100,11 +99,7 @@ public class ShortcutController {
      * @param calendarSource CalendarSource containing the calendars to be optimised
      */
     private static void openOptimiserMenu(CalendarSource calendarSource) {
-        // Gross duplicate dummy values in 2 areas. Make a database table or object to hold this.
-        LocalTime userDayStart = LocalTime.of(8, 0, 0);
-        LocalTime userDayEnd = LocalTime.of(18, 30, 0);
-        int allocateAhead = 7;
-        Optimiser.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+        Optimiser.optimize(calendarSource);
     }
 
     /**

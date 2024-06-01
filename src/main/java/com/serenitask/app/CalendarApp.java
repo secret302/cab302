@@ -22,17 +22,13 @@ import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.calendarfx.view.YearMonthView;
 
-import com.serenitask.model.Goal;
-import com.serenitask.util.DatabaseManager.GoalDAO;
 import fr.brouillard.oss.cssfx.CSSFX;
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -43,7 +39,6 @@ import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.WeekFields;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -77,7 +72,6 @@ public class CalendarApp extends Application {
             CalendarComponent.updateCalendar(calendarWeekView, calendarDayView, mainCalendarSource);
 
             // Create the main buttons for the application
-            Text dateToday = new Text(LocalDate.now().toString());
             Text dailyText = new Text("Weekly");
             Text weeklyText = new Text("Daily");
             StackPane switchViewButton = new StackPane();
@@ -86,27 +80,20 @@ public class CalendarApp extends Application {
             Text optimiseText = new Text("Optimise");
             StackPane optimiseButton = new StackPane();
             Rectangle optimiseViewBox = new Rectangle(120, 50);
-            optimiseButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addOptimiseClick(mainCalendarSource);
-            });
+            optimiseButton.setOnMouseClicked(event -> RightPanelComponent.addOptimiseClick(mainCalendarSource));
             // Add Goal Button
             Text addGoalText = new Text("Add Goal");
             StackPane addGoalButton = new StackPane();
             Rectangle addGoalViewBox = new Rectangle(120, 50);
-            addGoalButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addGoalClick(dailygoals);
-            });
+            addGoalButton.setOnMouseClicked(event -> RightPanelComponent.addGoalClick(dailygoals));
             // Add Event Button
             Text addEventText = new Text("Add Event");
             StackPane addEventButton = new StackPane();
             Rectangle addEventViewBox = new Rectangle(120, 50);
-            addEventButton.setOnMouseClicked(event -> {
-                RightPanelComponent.addEventClick(mainCalendarSource);
-            });
+            addEventButton.setOnMouseClicked(event -> RightPanelComponent.addEventClick(mainCalendarSource));
 
             AtomicBoolean isWeeklyView = new AtomicBoolean(false);
             HBox dateTodayPanel = new HBox();
-            VBox actionsPanel = new VBox();
             NavigationBar navigationBar = new NavigationBar();
             NavigateDateView navigateDateView = navigationBar.createButton(calendarDayView, calendarWeekView);
             CalendarViewComponent.calendarView(dateTodayPanel, navigateDateView);
@@ -179,7 +166,6 @@ public class CalendarApp extends Application {
                     switchViewBox,
                     switchViewButton,
                     isWeeklyView,
-                    actionsPanel,
                     optimiseButton,
                     optimiseText,
                     optimiseViewBox,
@@ -198,23 +184,17 @@ public class CalendarApp extends Application {
             VBox staticgoals = new VBox();
             staticgoals.getChildren().add(DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton));
 
-            leftButton.setOnMouseClicked(event -> {
-                RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
-                dailygoals, goalTextField, createGoalButton, staticgoals);
-            });
+            leftButton.setOnMouseClicked(event -> RightPanelComponent.switchLeft(rightPanelObjects, isActionsView, rightPanel, agenda, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                    staticgoals));
 
-            rightButton.setOnMouseClicked(event -> {
-                RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, dailygoals, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
-                dailygoals, goalTextField, createGoalButton, staticgoals);
-            });
+            rightButton.setOnMouseClicked(event -> RightPanelComponent.switchRight(rightPanelObjects, isActionsView, rightPanel, agenda, addGoalButton, leftButtonPanelSwitchViewBox, rightButtonPanelSwitchViewBox, leftButtonPanelText, rightButtonPanelText,
+                    staticgoals));
 
             // Load the daily goals
             GoalController goalController = new GoalController();
 
             // Switch between Day view and Week View
-            switchViewButton.setOnMouseClicked(event -> {
-                CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView);
-            });
+            switchViewButton.setOnMouseClicked(event -> CalendarViewComponent.switchView(isWeeklyView, dailyText, weeklyText, switchViewButton, leftPanel, calendarDayView, calendarWeekView));
 
             // Creates vertical box that can be clicked to change view
             HBox calendarDisplay = new HBox();
@@ -235,12 +215,8 @@ public class CalendarApp extends Application {
 
             StackPane calendar = new StackPane();
             Rectangle shadowPanel = new Rectangle();
-            Rectangle taskPopupPanel = new Rectangle();
-            VBox contentVBox = new VBox();
-            HBox buttonBox = new HBox();
             StackPane taskPopup = new StackPane();
-            Button noButton = new Button("No");
-            Button yesButton = new Button("Yes");
+
 
             calendar.getChildren().addAll(calendarDisplay);
 

@@ -1,6 +1,5 @@
 package com.serenitask.ui;
 
-import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.calendarfx.model.CalendarSource;
@@ -10,9 +9,6 @@ import com.serenitask.ui.WindowComponents.AddEvent;
 import com.serenitask.ui.WindowComponents.AddGoal;
 import com.serenitask.model.Optimiser;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -36,7 +32,6 @@ public class RightPanelComponent {
      * @param switchViewBox     Rectangle background for the switch view button.
      * @param switchViewButton  StackPane acting as the switch view button.
      * @param isWeeklyView      Flag indicating whether the weekly view is currently displayed.
-     * @param actionsPanel      The panel containing action buttons.
      * @param optimiseButton    StackPane acting as the optimise button.
      * @param optimiseText      Text displayed on the optimise button.
      * @param optimiseViewBox   Rectangle background for the optimise button.
@@ -47,7 +42,7 @@ public class RightPanelComponent {
      * @param addEventText      Text displayed on the add event button.
      * @param addEventViewBox   Rectangle background for the add event button.
      */
-    public static void actionsComponent(VBox rightPanelObjects, Text dailyText, Text weeklyText, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, VBox actionsPanel, StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox
+    public static void actionsComponent(VBox rightPanelObjects, Text dailyText, Text weeklyText, Rectangle switchViewBox, StackPane switchViewButton, AtomicBoolean isWeeklyView, StackPane optimiseButton, Text optimiseText, Rectangle optimiseViewBox, StackPane addGoalButton, Text addGoalText, Rectangle addGoalViewBox
             , StackPane addEventButton, Text addEventText, Rectangle addEventViewBox) {
         switchViewBox.setWidth(170.0);
         switchViewBox.setFill(Color.GREY);
@@ -100,9 +95,9 @@ public class RightPanelComponent {
      * @param rightPanel        The main right panel VBox that switches between displaying actions and agenda/daily goals.
      * @param agenda            The AgendaView component.
      */
-    public static void switchRight(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
-    VBox dailygoals, TextField goalTextField, Button createGoalButton, VBox staticgoals) {
-        boolean added = false;
+    public static void switchRight(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
+                                   VBox staticgoals) {
+        //boolean added = false;
         //VBox goals = DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
         
 
@@ -125,8 +120,8 @@ public class RightPanelComponent {
         
     
 
-    public static void switchLeft(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, VBox dailyGoals, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
-    VBox dailygoals, TextField goalTextField, Button createGoalButton, VBox staticgoals) {
+    public static void switchLeft(VBox rightPanelObjects, AtomicBoolean isActionsView, VBox rightPanel, AgendaView agenda, StackPane addGoalButton, Rectangle leftButtonPanelSwitchViewBox, Rectangle rightButtonPanelSwitchViewBox, Text leftButtonPanelText, Text rightButtonPanelText,
+                                  VBox staticgoals) {
 
         //VBox goals = DailyGoalsComponent.goalView(dailygoals, goalTextField, createGoalButton);
 
@@ -169,11 +164,7 @@ public class RightPanelComponent {
     public static void addOptimiseClick(CalendarSource calendarSource) {
 
         try {
-            LocalTime userDayStart = LocalTime.of(8, 0, 0);
-            LocalTime userDayEnd = LocalTime.of(18, 30, 0);
-            int allocateAhead = 7;
-
-            Optimiser.optimize(calendarSource, userDayStart, userDayEnd, allocateAhead);
+            Optimiser.optimize(calendarSource);
         } catch (Exception e) {
             System.err.println("An error occurred while trying to add a window of time to the day: " + e.getMessage());
             e.printStackTrace();

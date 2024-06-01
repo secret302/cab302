@@ -106,54 +106,64 @@ public class RoutineTwoController {
                 if (targetChange > 30) {
                     targetChange = 30;
                 }
+                if (targetChange < minAllocation)
+                {
+                    targetChange = minAllocation;
+                }
 
                 TimeWindow window = day.getBiggestWindow();
-                Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
-                int windowMins = (int) (duration.getSeconds() / 60);
+                if(window != null){
+                    Duration duration = Duration.between(window.getWindowOpen(), window.getWindowClose());
+                    int windowMins = (int) (duration.getSeconds() / 60);
 
-                if (windowMins > 0) {
-                    hasWindows = true;
-                }
-                else
-                {
-                    break;
-                }
+                    if (windowMins > 0) {
+                        hasWindows = true;
+                    }
+                    else
+                    {
+                        break;
+                    }
 
-                if (hasWindows) {
-                    int activityNumber = random.nextInt(10) + 1;
+                    if (hasWindows) {
+                        int activityNumber = random.nextInt(21) + 1;
 
-                    if (windowMins > targetChange) {
+                        if (windowMins > targetChange) {
 
-                        LocalTime startTime = window.getWindowOpen();
-                        if(startTime.equals(DayStart))
-                        {
-                            startTime = window.getWindowClose().minusMinutes(targetChange);
-                            LocalTime endTime = window.getWindowClose();
-                            day.addWindow(DayStart, startTime);
+                            LocalTime startTime = window.getWindowOpen();
+                            if(startTime.equals(DayStart))
+                            {
+                                startTime = window.getWindowClose().minusMinutes(targetChange);
+                                LocalTime endTime = window.getWindowClose();
+                                day.addWindow(DayStart, startTime);
+                                day.addHealth(targetChange);
+                                Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
+                                newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
+                                newEntry.setFullDay(false);
+                                entriesToAdd.add(newEntry);
+                            }
+                            else
+                            {
+                            LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
+                            day.addWindow(endTime, window.getWindowClose());
                             day.addHealth(targetChange);
                             Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
                             newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
                             newEntry.setFullDay(false);
                             entriesToAdd.add(newEntry);
+                            }
+                        } else {
+                            Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
+                            newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
+                            newEntry.setFullDay(false);
+                            int difference = (int) Duration.between(window.getWindowOpen(), window.getWindowClose()).toMinutes();
+                            day.addHealth(difference);
+                            entriesToAdd.add(newEntry);
                         }
-                        else
-                        {
-                        LocalTime endTime = window.getWindowOpen().plusMinutes(targetChange);
-                        day.addWindow(endTime, window.getWindowClose());
-                        day.addHealth(targetChange);
-                        Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
-                        newEntry.setInterval(new Interval(day.getStartDate(), startTime, day.getEndDate(), endTime));
-                        newEntry.setFullDay(false);
-                        entriesToAdd.add(newEntry);
-                        }
-                    } else {
-                        Entry<?> newEntry = new Entry<>(getHealthEvent(activityNumber));
-                        newEntry.setInterval(new Interval(day.getStartDate(), window.getWindowOpen(), day.getEndDate(), window.getWindowClose()));
-                        newEntry.setFullDay(false);
-                        int difference = (int) Duration.between(window.getWindowOpen(), window.getWindowClose()).toMinutes();
-                        day.addHealth(difference);
-                        entriesToAdd.add(newEntry);
                     }
+                }
+                else
+                {
+                    break;
                 }
             }
         }
@@ -167,30 +177,30 @@ public class RoutineTwoController {
      * @return String object containing health based event name
      */
     private String getHealthEvent(int index) {
-        switch (index) {
-            case 1:
-                return "Quick Walk";
-            case 2:
-                return "Stretching";
-            case 3:
-                return "Call Family";
-            case 4:
-                return "Meditation";
-            case 5:
-                return "Yoga";
-            case 6:
-                return "Jogging";
-            case 7:
-                return "Plan Meals";
-            case 8:
-                return "Deep Breathing Exercises";
-            case 9:
-                return "Dance";
-            case 10:
-                return "Healthy Snack Preparation";
-            default:
-                return "Invalid activity";
-        }
+        return switch (index) {
+            case 1 -> "Quick Walk";
+            case 2 -> "Stretching";
+            case 3 -> "Power Nap";
+            case 4 -> "Meditation";
+            case 5 -> "Yoga";
+            case 6 -> "Jogging";
+            case 7 -> "Plan Meals";
+            case 8 -> "Breathing Exercises";
+            case 9 -> "Free Time";
+            case 10 -> "Healthy Snack Preparation";
+            case 11 -> "Hydration Break";
+            case 12 -> "Positive Affirmations";
+            case 13 -> "Herbal Tea Break";
+            case 14 -> "Listen to Music";
+            case 15 -> "Watch a Motivational Video";
+            case 16 -> "Write in a Journal";
+            case 17 -> "Acupressure";
+            case 18 -> "Biking";
+            case 19 -> "Mindfulness Coloring";
+            case 20 -> "Balance Exercises";
+            case 21 -> "Light Gardening";
+            default -> "Invalid activity";
+        };
 
     }
 
@@ -212,11 +222,7 @@ public class RoutineTwoController {
         {
             return true;
         }
-        else if ((work / health) > healthRatio) {
-            int ratio = (work/health);
-            return true;
-        }
-        return false;
+        else return (work / health) > healthRatio;
     }
 
 
