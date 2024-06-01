@@ -217,7 +217,7 @@ public class EventDAO {
 
             for (Event event : allEventsByTitle) {
                 // Check if the event date is strictly after the specified date
-                if (event.getInterval().getStartDate().isAfter(date)) {
+                if (event.getInterval().getStartDate().isAfter(date.minusDays(1))) {
                     String idToDelete = event.getId();
                     deleteEvent(idToDelete);
                     idsToRemove.add(idToDelete);
