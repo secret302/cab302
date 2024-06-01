@@ -22,6 +22,7 @@ import com.calendarfx.view.DetailedDayView;
 import com.calendarfx.view.DetailedWeekView;
 import com.calendarfx.view.YearMonthView;
 
+import com.serenitask.util.routine.OptimizerUtil;
 import fr.brouillard.oss.cssfx.CSSFX;
 import impl.com.calendarfx.view.NavigateDateView;
 import javafx.application.Application;
@@ -85,7 +86,7 @@ public class CalendarApp extends Application {
             Text addGoalText = new Text("Add Goal");
             StackPane addGoalButton = new StackPane();
             Rectangle addGoalViewBox = new Rectangle(120, 50);
-            addGoalButton.setOnMouseClicked(event -> RightPanelComponent.addGoalClick(dailygoals));
+            addGoalButton.setOnMouseClicked(event -> RightPanelComponent.addGoalClick(dailygoals, OptimizerUtil.getGoalCalendar(mainCalendarSource.getCalendars(),"Goals")));
             // Add Event Button
             Text addEventText = new Text("Add Event");
             StackPane addEventButton = new StackPane();
